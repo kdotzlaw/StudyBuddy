@@ -1,6 +1,5 @@
 <p align="center">
 <img height="300" width="300" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/starters-assets-and-designs/frontend/public/assets/title_sq.png" alt="Study Buddy logo" align="center">
-<b><i>✨📖 Study with a buddy 🐶🌟</i></b>
 </p><br>
 
 # Project Summary and Vision
@@ -136,4 +135,5 @@ The Study buddy will have a capacity of 100 users and can handle 1000 requests p
 |Ryan Dotzlaw| Backend, API Designer | Python, Java, C, SQL |
 |Millan David| Frontend, Presenter | HTML/CSS, Vue.Js, Java, JavaScript |
 
-![Study Buddy banner](/frontend/public/assets/title_sq.png)
+***The Procrastinators © 2023***
+![Study Buddy banner](/frontend/public/assets/banner.png)

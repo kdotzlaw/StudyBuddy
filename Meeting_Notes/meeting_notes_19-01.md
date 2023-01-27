@@ -1,5 +1,4 @@
 # Meeting Notes - 19/01/2023
-
 ## Group Roles
 **Team Leader: Andrea**   
 Note: frontend and backend pairs could be reogranized if project is ahead of schedule
@@ -11,3 +10,4 @@ Description: prepare milestone documents (via Google Docs), document tests, take
 #### Meeting Summary:
 - assigned group roles and discussed technology to use in frontend/backend
 - set next meeting to _**21-01-2023 at 5pm**_
+

@@ -1,10 +1,4 @@
 # Meeting Notes - 19/01/2023
-## TO DO:
-1. Finalize project idea
-2. Write project proposal
-3. Create github repo
-4. Liason with TA
-
 
 ## Group Roles
 **Team Leader: Andrea**   

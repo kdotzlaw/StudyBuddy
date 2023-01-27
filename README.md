@@ -33,7 +33,14 @@ This feature will allow for users to level up their buddy.
 ### V. Capacity and User Requests
 The Study buddy will have a capacity of 100 users and can handle 1000 requests per minute.
 
-## Technologies
+# Technologies
+
+<p align="center">
+<img height="150" width="150" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/starters-assets-and-designs/frontend/public/assets/tech/docker.png" alt="Vue logo" align="center">
+<img height="150" width="150" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/starters-assets-and-designs/frontend/public/assets/tech/vue.png" alt="Vue logo" align="center">
+<img height="150" width="150" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/starters-assets-and-designs/frontend/public/assets/tech/ghactions.png" alt="Vue logo" align="center">
+<img height="150" width="150" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/starters-assets-and-designs/frontend/public/assets/tech/postgresql.png" alt="Vue logo" align="center">
+</p>
 
 ### CI/CD
 
@@ -135,5 +142,9 @@ The Study buddy will have a capacity of 100 users and can handle 1000 requests p
 |Ryan Dotzlaw| Backend, API Designer | Python, Java, C, SQL |
 |Millan David| Frontend, Presenter | HTML/CSS, Vue.Js, Java, JavaScript |
 
-***The Procrastinators © 2023***
+<p align="center">
+<br>
+<b><i>The Procrastinators © 2023</i></b>
+<br>
+</p>
 ![Study Buddy banner](/frontend/public/assets/banner.png)

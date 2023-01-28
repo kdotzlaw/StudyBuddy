@@ -58,9 +58,10 @@ The Study buddy will have a capacity of 100 users and can handle 1000 requests p
 
 ### Backend
 
-- Application logic written in either **Java** or **Python**
-- **Microsoft SQL Server Management Studio** to manage a database written in either **SQL** or **PostgreSQL**
-- Testing done with either **JUnit** or **Unittest** (Python equivalent JUnit)
+- Backend framework: **Flask**
+- Application logic : **Python**
+- **Microsoft SQL Server Management Studio** to manage a database written in **SQL**
+- Testing: **Unittest**
 
 ## Software Architecture
 

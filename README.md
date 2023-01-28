@@ -59,6 +59,10 @@ The Study buddy will have a capacity of 100 users and can handle 1000 requests p
 - **Microsoft SQL Server Management Studio** to manage a database written in either **SQL** or **PostgreSQL**
 - Testing done with either **JUnit** or **Unittest** (Python equivalent JUnit)
 
+### Architecture Diagram
+
+![Study Buddy architecture diagram](/docs/architecture_v1.png)
+
 # User Stories
 
 **_As a new user, I want to be able to create an account._**

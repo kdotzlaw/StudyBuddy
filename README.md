@@ -1,5 +1,5 @@
 <p align="center">
-<img height="300" width="300" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/starters-assets-and-designs/frontend/public/assets/title_sq.png" alt="Study Buddy logo" align="center">
+<img height="300" width="300" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/title_sq.png" alt="Study Buddy logo" align="center">
 </p><br>
 
 # Project Summary and Vision
@@ -36,13 +36,13 @@ The Study buddy will have a capacity of 100 users and can handle 1000 requests p
 # Technologies
 
 <p align="center">
-<img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/starters-assets-and-designs/frontend/public/assets/tech/docker.png" alt="Vue logo" align="center">
-<img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/starters-assets-and-designs/frontend/public/assets/tech/nodejs.png" alt="NodeJS logo" align="center">
-<img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/starters-assets-and-designs/frontend/public/assets/tech/vue.png" alt="Docker logo" align="center">
-<img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/starters-assets-and-designs/frontend/public/assets/tech/ghactions.png" alt="Github Actions logo" align="center">
-<img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/starters-assets-and-designs/frontend/public/assets/tech/flask.png" alt="Flask logo" align="center">
-<img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/starters-assets-and-designs/frontend/public/assets/tech/python.png" alt="Python logo" align="center">
-<img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/starters-assets-and-designs/frontend/public/assets/tech/sql.png" alt="SQL logo" align="center">
+<img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/docker.png" alt="Vue logo" align="center">
+<img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/nodejs.png" alt="NodeJS logo" align="center">
+<img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/vue.png" alt="Docker logo" align="center">
+<img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/ghactions.png" alt="Github Actions logo" align="center">
+<img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/flask.png" alt="Flask logo" align="center">
+<img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/python.png" alt="Python logo" align="center">
+<img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/sql.png" alt="SQL logo" align="center">
 </p>
 
 ### CI/CD

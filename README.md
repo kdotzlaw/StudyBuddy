@@ -19,7 +19,7 @@ The Study Buddy will have at least four functional features and one non-function
 
 ## Track Study Time
 
-This feature will allow users to track their study time and be presented with the progress of their time usage over a period of time. 
+This feature will allow users to track their study time and be presented with the progress of their time usage over a period of time.
 
 ## Calendar
 
@@ -59,8 +59,8 @@ The Study buddy will have a capacity of 100 users and can handle 1000 requests p
 # User Stories
 
 ## As a new user, I want to be able to create an account.
-- Given I’m a new user on the log-in page. 
-- When I hit the “Create Account” button and fill out the username and password fields in the dialogue and click the confirmation button. 
+- Given I’m a new user on the log-in page.
+- When I hit the “Create Account” button and fill out the username and password fields in the dialogue and click the confirmation button.
 - Then the system creates my account and logs me in.
 
 ## As a returning user, I want to be able to log in.
@@ -68,7 +68,7 @@ The Study buddy will have a capacity of 100 users and can handle 1000 requests p
 - When I fill in the username and password fields and click the “Log-In” button.
 - Then the system logs me in.
 
-## As a user, I want to be able to create a new tracking workspace for each of my classes. (Feature 1, 2) 
+## As a user, I want to be able to create a new tracking workspace for each of my classes. (Feature 1, 2)
 - Given I’m logged into my account.
 - When I click the “Add a Class” button on my homepage, fill out the fields in the dialogue box, and click the confirmation button.
 - Then the system creates a new tracking workspace for my new class.
@@ -83,7 +83,7 @@ The Study buddy will have a capacity of 100 users and can handle 1000 requests p
 - When I click the “Track Task” button, and fill out the associated fields (name, type of task, weight, due date, etc.), and click the confirmation button.
 - Then the system should create a task with the associated information in the current workspace.
 
-## As a user, I want to edit tasks that have been created. (Feature 1, 2, 3) 
+## As a user, I want to edit tasks that have been created. (Feature 1, 2, 3)
 - Given I’m in the tracking workspace for my class.
 - When I expand a task and change the information fields in the dialog and click the “Save” button.
 - The system modifies my task to reflect the changes I just made.
@@ -143,3 +143,4 @@ The Study buddy will have a capacity of 100 users and can handle 1000 requests p
 |Katrina Dotzlaw| Backend, Database| Python, C#, SQL, Java|
 |Ryan Dotzlaw| Backend, API Designer | Python, Java, C, SQL |
 |Millan David| Frontend, Presenter | HTML/CSS, Vue.Js, Java, JavaScript |
+|Elieser Capillar| Frontend, Graphic Designer | React Native, Java, JavaScript |

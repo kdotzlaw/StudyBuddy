@@ -23,3 +23,5 @@
 - compile meeting minutes
 - designs (background, components) based on mockups
 - squash bugs
+## Grading
+![](/docs/sprint2_grade.png)

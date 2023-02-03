@@ -82,4 +82,3 @@ def logout():
 @flask_login.login_required
 def testlogin():
     return "<h1>you're logged in</h1>"
->>>>>>> Stashed changes

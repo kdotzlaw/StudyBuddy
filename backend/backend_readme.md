@@ -2,4 +2,4 @@
 
 ## Running flask server
 
-        python3 flask -m --app server.py
+        python3 -m flask --app server.py run

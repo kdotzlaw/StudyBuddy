@@ -6,7 +6,7 @@
     const showOptions = ref(false);
 
     function switchOptions(newVal){
-        showOptions.value = newVal
+        showOptions.value = newVal;
     }
 </script>
 

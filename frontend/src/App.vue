@@ -1,30 +1,30 @@
 <script setup>
   import "./global.css";
-  import { ref } from "vue";
+  import { storeToRefs } from "pinia";
   import Header from "./components/Header.vue";
   import Dashboard from "./pages/Dashboard.vue";
   import Wallpaper from "./components/Wallpaper.vue";
   import Modal from "./components/Modal.vue";
   import YayButton from "./components/Button.vue";
+  import { useStore } from "./stores";
 
-  const isModalOpen = ref(false);
-  function openModal(){
-    isModalOpen.value = !isModalOpen.value;
-  }
+  const store = useStore();
+  const { toggleModal } = store;
+  const { isModalOpen } = storeToRefs(store);
 </script>
 
 <template>
   <Header />
   <div id="workspace">
-    <button @click="openModal">Toggle the modal</button>
+    <button @click="toggleModal">Toggle the modal</button>
     <Dashboard>
       <YayButton text="Click here to print 'Yay'" />
     </Dashboard>
   </div>
   <Wallpaper />
-  <div v-if="isModalOpen" id="modal">
+  <div v-if="isModalOpen" id="modal-ctr">
     <Modal title="Success!">
-      <p>A badoogie doogie</p>
+      <p>Click anywhere outside modal to close</p>
       <img src="/assets/title_sq.png" :style="`height:4em; width:4em;`" alt="Study Buddy title" /> I am passed through a slot!
     </Modal>
   </div>
@@ -40,20 +40,10 @@
     overflow-y: scroll;
   }
 
-  #modal{
+  #modal-ctr{
     position: fixed;
     z-index: 20;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-  }
-
-  #modal{
-      background: var(--box);
-      height: 60vh;
-      width: 40vw;
-      display: grid;
-      justify-items: center;
-      align-items: center;
+    height: 100vh;
+    width: 100vw;
   }
 </style>

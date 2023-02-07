@@ -7,6 +7,13 @@ let stubContent = `
 `;
 
 export const useStore = defineStore('store', () => {
+    // Global timer state in seconds
+    const studyTime = ref(0);
+    function setStudyTime(time){
+        if(time)
+            studyTime.value = time;
+    }
+
     // Toggle modal on and off
     const isModalOpen = ref(false);
     function toggleModal(){
@@ -29,6 +36,7 @@ export const useStore = defineStore('store', () => {
     }
 
     return { 
+        studyTime, setStudyTime,
         isModalOpen, toggleModal,
         modalTitle, modalContent, setModal,
         uiSkin, updateSkin,

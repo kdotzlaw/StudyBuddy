@@ -6,10 +6,18 @@
   import Wallpaper from "./components/Wallpaper.vue";
   import Modal from "./components/Modal.vue";
   import YayButton from "./components/Button.vue";
+  import Timer from "./logic/timer";
   import { useStore } from "./stores";
 
   const store = useStore();
   const { isModalOpen, modalTitle, modalContent, uiSkin } = storeToRefs(store);
+
+  // Globals
+  let userId = "user123";
+
+  // Create Timer class
+  let sessionTimer = new Timer(userId, "COMP2080", 0);
+  sessionTimer.start();
 </script>
 
 <template>

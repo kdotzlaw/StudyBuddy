@@ -1,12 +1,40 @@
 <script setup>
     import { ref } from "vue";
     import Logo from "/assets/logo.png";
+    import PauseIcon from "/artifacts/pausegold.png";
     import { useStore } from "../stores";
 
     const store = useStore();
     const { setModal } = store;
 
     let displayName = "User123";
+    let studyCourse = "COMP2080";
+
+    // Integer: Current study time in milliseconds
+    const currentTime = ref(310);
+    const showPause = ref(false);
+
+    // Turn seconds into hh:mm:ss time string
+    function toTimeString(s){
+        let timeString = ""
+        let hours = Math.floor(s / 3600);
+        if(hours > 0)
+            timeString += hours.toString(10).padStart(2, "0") + ":"
+        s = s % 3600;
+        let minutes = Math.floor(s / 60);
+        let seconds = s % 60;
+        return ( 
+            timeString + 
+            minutes.toString(10).padStart(2, "0") + ":" + 
+            seconds.toString(10).padStart(2, "0")
+        );
+    }
+
+    // Change express timer content to pause button on click and mouse events
+    function switchPause(newVal){
+        showPause.value = newVal;
+        console.log("Brrr")
+    }
 
     // Toggle dropdown options on click and mouse events
     const showOptions = ref(false);
@@ -26,11 +54,23 @@
 
 <template>
     <div id="header">
-        <h1 id="pageNameSection">
+        <h1 class="pageNameSection">
             Page Name
         </h1>
-        <div id="timerSection">
-            Current time 0:00
+        <div class="timerSection">
+            <div>Currently studying for <b>{{ studyCourse }}</b></div>
+            <button 
+                id="timerExpress"
+                @mouseover="switchPause(true)"
+                @mouseleave="switchPause(false)"
+            >
+                <div v-if="showPause">
+                    <img :src=PauseIcon alt="Pause study session" />
+                </div>
+                <div v-else>
+                    {{ toTimeString(currentTime) }}
+                </div>
+            </button>
         </div>
     </div>
     <div 
@@ -59,6 +99,7 @@
 <style scoped>
     #header{
         position: absolute;
+        height: 13vh;
         width: 100vw;
         z-index: 10;
         color: var(--fadegold);
@@ -81,8 +122,46 @@
         flex-direction: column;
     }
 
+    .timerSection{
+        justify-self: center;
+        display: grid;
+        grid-template-columns: max-content 5em;
+        justify-items: center;
+        align-items: center;
+    }
+
+    #timerExpress{
+        margin-left: 1vw;
+        border-radius: 0.8em;
+        border: 3px solid var(--gold);
+        background: var(--button);
+        color: var(--fadegold);
+        height: 2.5em;
+        width: max-content;
+        min-width: 3.5em;
+        padding: 0;
+        overflow: hidden;
+        display: grid;
+        justify-items: center;
+        align-items: center;
+    }
+
+    #timerExpress div{
+        font-size: 1.2em;
+        width: 100%;
+        box-shadow: inset 2px 2px 4px rgba(0,0,0,0.3);
+        padding: 0 0.5em 0 0.5em;
+    }
+
+    #timerExpress img{
+        height: 1em;
+        width: max-content;
+        margin-top: 0.4em;
+    }
+
     .userSection{
         height: 12vh;
+        margin-top: 0.5vh;
         display: flex;
         justify-content: center;
         align-items: center;

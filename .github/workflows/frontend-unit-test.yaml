@@ -22,4 +22,5 @@ jobs:
           npm run build
 
       - name: Run Unit Tests
+        run:
           npm test

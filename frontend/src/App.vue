@@ -9,23 +9,20 @@
   import { useStore } from "./stores";
 
   const store = useStore();
-  const { toggleModal } = store;
-  const { isModalOpen } = storeToRefs(store);
+  const { isModalOpen, modalTitle, modalContent, uiSkin } = storeToRefs(store);
 </script>
 
 <template>
   <Header />
   <div id="workspace">
-    <button @click="toggleModal">Toggle the modal</button>
     <Dashboard>
       <YayButton text="Click here to print 'Yay'" />
     </Dashboard>
   </div>
-  <Wallpaper />
+  <Wallpaper :skin=uiSkin />
   <div v-if="isModalOpen" id="modal-ctr">
-    <Modal title="Success!">
-      <p>Click anywhere outside modal to close</p>
-      <img src="/assets/title_sq.png" :style="`height:4em; width:4em;`" alt="Study Buddy title" /> I am passed through a slot!
+    <Modal :title="modalTitle">
+      <div v-html="modalContent"></div>
     </Modal>
   </div>
 </template>

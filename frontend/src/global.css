@@ -2,7 +2,6 @@
     Study Buddy COLOR KIT
   ===============================*/
 :root{
-	--background: url("/default-background.png");
     /* Component colors */
 	--heading: #FFC446;
     --text: #DEDEDE;
@@ -63,6 +62,22 @@
 }
 
 /*================================
+    Study Buddy UI SKINS
+  ===============================*/
+
+.skin-default{
+	background: url("/default-background.png");
+}
+
+.skin-forest{
+	background: url("/forest-background.png");
+}
+
+.skin-sunset{
+	background: url("/sunset-background.png");
+}
+
+/*================================
     GLOBAL document styles
   ===============================*/
 html, body {
@@ -77,12 +92,6 @@ html, body {
     color: var(--text);
     background: var(--indigo);
     position: relative;
-}
-
-#wallpaper{
-    background: var(--background);
-    background-size: contain;
-    background-repeat: no-repeat;
 }
 
 h1 {

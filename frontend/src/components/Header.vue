@@ -1,12 +1,26 @@
 <script setup>
     import { ref } from "vue";
     import Logo from "/assets/logo.png";
+    import { useStore } from "../stores";
+
+    const store = useStore();
+    const { setModal } = store;
 
     let displayName = "User123";
-    const showOptions = ref(false);
 
+    // Toggle dropdown options on click and mouse events
+    const showOptions = ref(false);
     function switchOptions(newVal){
         showOptions.value = newVal;
+    }
+
+    // Execute option
+    function openSettings(){
+        setModal("Settings");
+    }
+
+    function logOut(){
+        setModal("Log out", "<button>Imagine this will Log you Out</button>");
     }
 </script>
 
@@ -32,8 +46,12 @@
         </div>
         
         <div v-if="showOptions">
-            <button class="dropdown-tab">Manage Settings</button>
-            <button class="dropdown-tab">Log Out</button>
+            <button class="dropdown-tab" @click="openSettings">
+                Manage Settings
+            </button>
+            <button class="dropdown-tab" @click="logOut">
+                Log Out
+            </button>
         </div>
     </div>
 </template>

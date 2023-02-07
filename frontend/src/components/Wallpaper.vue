@@ -1,6 +1,12 @@
+<script setup>
+    const props = defineProps({ 
+        skin: {type: String, required: false, default: "skin-default"}
+    })
+</script>
+
 <template>
-    <div id="wallpaper"></div>
-    <div id="bg-gradient"></div>
+    <div id="wallpaper" :class=props.skin  />
+    <div id="bg-gradient" />
 </template>
 
 <style scoped>
@@ -9,8 +15,7 @@
         height: 100%;
         width: 100%;
         z-index: 1;
-        background: var(--background);
-        background-size: contain;
+        background-size: cover;
         background-repeat: no-repeat;
     }
 

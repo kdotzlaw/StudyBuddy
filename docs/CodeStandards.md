@@ -25,4 +25,8 @@ tbd
 ## Backend
 ### Python
 ### SQL
+- Comments will be done using `/*  */`
+- All SQL keywords will be capitalized
+- Table names, row names, column names, and variable names will be camel case. For example, `userGrades`
+- All SQL files will be pushed to `backend/`
 ### Testing

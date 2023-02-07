@@ -1,7 +1,140 @@
-html, body{
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-    width: 100vw;
-    background: beige;
+/*================================
+    Study Buddy COLOR KIT
+  ===============================*/
+:root{
+	--background: url("/default-background.png");
+    /* Component colors */
+	--heading: #FFC446;
+    --text: #DEDEDE;
+    --text-disabled: #C4C4C4;
+    --highlight: #EFFFC0;
+    --button: #992E26;
+    --button-hover: #FF5343;
+    --button-disabled: #474645;
+    --button-plus: #D9D9D9;
+    --border: #9B9B9B;
+    --border-gold: #B99970;
+    --border-disabled: #4A4A4A;
+    --box: rgb(34, 36, 42, 0.9);
+    --textbox: #E8E8E8;
+    --textbox-placeholder: #393939;
+    --textbox-dark: #22242A;
+    --textbox-dark-placeholder: #9B9B9B;
+    --textbox-disabled: #9B9B9B;
+    /* Core colors */
+    --white: #FEFEFE;
+    --black: #0D0F0E;
+	--indigo: #1E1358;
+    --gold: #FFC446;
+    --darkteal: #03124D;
+    --darkteal: #102556;
+    --teal: #0F3156;
+    --lightteal: #144274;
+    --teal-gradient: linear-gradient(#222826, #0F3156, #222826);
+    /* Tints and shades */
+    --lightindigo: #4241A9;
+    --fadegold: #BFB24F;
+    --brightgreen: #39C658;
+    --slate: #959DA8;
+    /* Tag colors */
+    --green: #5E8036;
+    --blue: #5A6F9C;
+    --red: #992E26;
+    --yellow: #B69A06;
+}
+
+/*================================
+    Study Buddy FONT KIT
+  ===============================*/
+.croissantOne{
+    font-family: 'Croissant One', cursive;
+}
+
+.eczar{
+    font-family: 'Eczar', serif;
+}
+
+.gabriela{
+    font-family: 'Gabriela', serif;
+}
+
+.delius{
+    font-family: 'Delius', cursive;
+}
+
+/*================================
+    GLOBAL document styles
+  ===============================*/
+html, body {
+	margin: 0;
+  	padding: 0;
+  	height: 100vh;
+  	width: 100vw;
+	overflow-x: hidden;
+	scrollbar-width: 0.5em;
+	font-family: 'Eczar', serif;
+    color: var(--text);
+    background: var(--indigo);
+}
+
+#wallpaper{
+    background: var(--background);
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+h1 {
+    font-family: 'Croissant One', cursive;
+    color: var(--heading);
+    text-shadow: 0 1.5px var(--highlight);
+}
+
+h2 {
+    font-family: 'Gabriela', serif;
+    color: var(--heading);
+}
+
+h3 {
+    font-family: 'Eczar', serif;
+    color: var(--heading);
+}
+
+a, button {
+	text-decoration: none;
+	cursor: pointer;
+}
+
+::selection{
+	background-color: rgba(0,0,0,0.5);
+}
+
+::-webkit-scrollbar {
+	width: 15px;
+}
+  
+::-webkit-scrollbar-track {
+	box-shadow: inset 0 0 4px rgba(0,0,0,0.3); 
+	border-radius: 10px;
+}
+   
+::-webkit-scrollbar-thumb {
+	background: var(--heading); 
+	box-shadow: inset -1px -2px 8px rgba(0,0,0,0.3); 
+	border-radius: 10px;
+}
+
+/* Invisible scrollbar on mobile */
+@media screen and (max-width: 600px) {
+	::-webkit-scrollbar {
+		width: 0px;
+	}
+	  
+	::-webkit-scrollbar-track {
+		box-shadow: none; 
+	}
+	   
+	::-webkit-scrollbar-thumb {
+		background: rgba(0,0,0,0); 
+		box-shadow: none; 
+	}
 }

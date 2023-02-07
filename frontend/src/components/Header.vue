@@ -1,40 +1,47 @@
 <script setup>
-    // Javascript
-    // Props
-    // Imports
+    import Logo from "/assets/logo.png";
+
+    let displayName = "User123";
 </script>
 
 <template>
     <div id="header">
-        <div id="pageNameSection">
+        <h1 id="pageNameSection">
             Page Name
-        </div>
+        </h1>
         <div id="timerSection">
             Current time 0:00
         </div>
         <div id="userSection">
-            Welcome User123!
+            <img class="logo-thumb" :src='Logo' alt="Study Buddy logo" />
+            <div> Welcome <b>{{displayName}}</b>! </div>
         </div>
     </div>
 </template>
 
 <style scoped>
     #header{
-        color: wheat;
+        color: var(--fadegold);
+        background: var(--darkteal);
         display: grid;
         grid-template-columns: 25% 1fr 20%;
         text-align: center;
-    }
-
-    #pageNameSection{
-        background: darkcyan;
-    }
-    
-    #timerSection{
-        background: darkslategray;
+        align-items: center;
+        box-shadow: 0 0.5em 1em rgba(0,0,0,0.3);
     }
     
     #userSection{
-        background: darkgreen;
+        height: 100%;
+        width: 100%;
+        background: var(--teal);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .logo-thumb{
+        height: 2em;
+        width: 2em;
+        margin: 0 0.5em 0.5em 0;
     }
 </style>

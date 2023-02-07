@@ -26,7 +26,7 @@
     --black: #0D0F0E;
 	--indigo: #1E1358;
     --gold: #FFC446;
-    --darkteal: #03124D;
+    --darkerteal: #03124D;
     --darkteal: #102556;
     --teal: #0F3156;
     --lightteal: #144274;
@@ -71,10 +71,12 @@ html, body {
   	height: 100vh;
   	width: 100vw;
 	overflow-x: hidden;
+    overflow-y: hidden;
 	scrollbar-width: 0.5em;
 	font-family: 'Eczar', serif;
     color: var(--text);
     background: var(--indigo);
+    position: relative;
 }
 
 #wallpaper{
@@ -102,10 +104,13 @@ h3 {
 a, button {
 	text-decoration: none;
 	cursor: pointer;
+    font-family: 'Eczar', serif;
+    outline: none;
+    border: none;
 }
 
 ::selection{
-	background-color: rgba(0,0,0,0.5);
+	background-color: rgba(0,0,0,0.3);
 }
 
 ::-webkit-scrollbar {
@@ -118,7 +123,7 @@ a, button {
 }
    
 ::-webkit-scrollbar-thumb {
-	background: var(--heading); 
+	background: var(--black); 
 	box-shadow: inset -1px -2px 8px rgba(0,0,0,0.3); 
 	border-radius: 10px;
 }

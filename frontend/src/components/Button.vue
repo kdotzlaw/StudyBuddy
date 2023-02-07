@@ -7,7 +7,6 @@
 
   function clickButt(){ yayText.value += "Yay!<br>" }
   const yayText = ref("")
-
 </script>
 
 <template>

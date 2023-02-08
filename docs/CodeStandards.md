@@ -24,6 +24,7 @@ For example: **Dont do:** `if(file){console.log(file.name)}`
 tbd
 ## Backend
 ### Python
+- All SQL queries in python will be done using **Prepared Statements** to avoid SQL Injection. A valid SQL query using a prepared statement is: `cursor.execute("SELECT * FROM <tableName> WHERE <colName> = ?", username)`
 ### SQL
 - Comments will be done using `/*  */`
 - All SQL keywords will be capitalized

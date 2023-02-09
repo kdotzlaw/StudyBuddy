@@ -9,6 +9,8 @@
   import Timer from "./logic/timer";
   import { useStore } from "./stores";
 
+  import Login from "./components/Login.vue"
+
   const store = useStore();
   const { isModalOpen, modalTitle, modalContent, uiSkin } = storeToRefs(store);
 
@@ -26,11 +28,13 @@
     <Dashboard>
       <YayButton text="Click here to print 'Yay'" />
     </Dashboard>
+   
   </div>
   <Wallpaper :skin=uiSkin />
   <div v-if="isModalOpen" id="modal-ctr">
     <Modal :title="modalTitle">
-      <div v-html="modalContent"></div>
+      <!-- <div v-html="modalContent"></div> -->
+      <Login></Login>
     </Modal>
   </div>
 </template>

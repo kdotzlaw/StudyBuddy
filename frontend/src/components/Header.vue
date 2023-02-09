@@ -50,6 +50,10 @@
     function logOut(){
         setModal("Log out", "<button>Imagine this will Log you Out</button>");
     }
+
+    function login(){
+        setModal("Log In", "<Login></Login>");
+    }
 </script>
 
 <template>
@@ -92,6 +96,9 @@
             <button class="dropdown-tab" @click="logOut">
                 Log Out
             </button>
+            <button class="dropdown-tab" @click="login">
+                Login
+          </button>
         </div>
     </div>
 </template>

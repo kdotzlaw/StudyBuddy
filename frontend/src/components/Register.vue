@@ -1,26 +1,31 @@
-<template>form__message
-  <div class="container">
-    <form class="form" id="login">
-        <h1 class="form-title">Login</h1>
-        <div class="form-message form-message--error"></div>
-        <div class="login-container">
-          <div class="form-input-group">
-            <input type="text" class="form-input" autofocus placeholder="Username or email">
-            <div class="form-input-error-message"></div>
-          </div>
-          <div class="form-input-group">
-              <input type="password" class="form-input" autofocus placeholder="Password">
-              <div class="form-input-error-message"></div>
-          </div>
-          <button class="login-button" type="submit">Continue</button>
-          <p class="form-text">
-              <a href="#" class="form-link">Forgot your password?</a>
-          </p>
-          <p class="form-text">
-              <a class="form-link" href="./" id="linkCreateAccount">Don't have an account? Create account</a>
-          </p>
+<template>
+  <div>
+    <form class="form " id="createAccount">
+      <h1 class="register-title">Create Account</h1>
+      <!-- <div class="form-message form-message--error"></div> -->
+      <div class="register-container">
+        <div class="form-input-group">
+          <input type="text" id="signupUsername" class="form-input" autofocus placeholder="Username">
+          <div class="form-input-error-message"></div>
         </div>
-    </form>
+        <div class="form-input-group">
+            <input type="text" class="form-input" autofocus placeholder="Email Address">
+            <div class="form-input-error-message"></div>
+        </div>
+        <div class="form-input-group">
+            <input type="password" class="form-input" autofocus placeholder="Password">
+            <div class="form-input-error-message"></div>
+        </div>
+        <div class="form-input-group">
+            <input type="password" class="form-input" autofocus placeholder="Confirm password">
+            <div class="form-input-error-message"></div>
+        </div>
+        <button class="register-button" type="submit">Register</button>
+        <p class="form-text">
+            <a class="form-link" href="./" id="linkLogin">Already have an account? Sign in</a>
+        </p>
+      </div>
+  </form>
     
 </div>
 </template>
@@ -42,9 +47,7 @@ body {
   --border-radius: 4px;
 
   margin: 0;
-
   display: flex;
-
   font-size: 18px;
 }
 
@@ -57,11 +60,11 @@ body {
 
 .container,
 .form-input,
-.login-button {
+.register-button {
   font: 500 1rem 'Quicksand', sans-serif;
 }
 
-.login-container{
+.register-container{
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -76,7 +79,7 @@ body {
   margin-bottom: 0;
 }
 
-.form-title {
+.register-title {
   margin-bottom: 2rem;
   text-align: center;
 }
@@ -96,6 +99,8 @@ body {
 
 .form-input-group {
   margin-bottom: 1rem;
+  margin-left: auto;
+  margin-right: auto;  
 }
 
 .form-input {
@@ -126,7 +131,7 @@ body {
   color: var(--color-error);
 }
 
-.login-button {
+.register-button {
   width: 100%;
   padding: 1rem 2rem;
   font-weight: bold;
@@ -139,11 +144,11 @@ body {
   background: var(--color-primary);
 }
 
-.login-button:hover {
+.register-buttonn:hover {
   background: var(--color-primary-dark);
 }
 
-.login-button:active {
+.register-button:active {
   transform: scale(0.98);
 }
 

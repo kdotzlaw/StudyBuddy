@@ -52,7 +52,11 @@
     }
 
     function login(){
-        setModal("Log In", "<Login></Login>");
+        setModal("", "<Login></Login>");
+    }
+
+    function register(){
+        setModal("", "<Register></Register>");
     }
 </script>
 
@@ -99,6 +103,9 @@
             <button class="dropdown-tab" @click="login">
                 Login
           </button>
+          <button class="dropdown-tab" @click="register">
+                Register
+      </button>
         </div>
     </div>
 </template>

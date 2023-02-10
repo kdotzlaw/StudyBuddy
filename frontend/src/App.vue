@@ -10,6 +10,7 @@
   import { useStore } from "./stores";
 
   import Login from "./components/Login.vue"
+  import Register from "./components/Register.vue"
 
   const store = useStore();
   const { isModalOpen, modalTitle, modalContent, uiSkin } = storeToRefs(store);
@@ -35,6 +36,7 @@
     <Modal :title="modalTitle">
       <!-- <div v-html="modalContent"></div> -->
       <Login></Login>
+      <!-- <Register></Register> -->
     </Modal>
   </div>
 </template>

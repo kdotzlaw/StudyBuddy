@@ -6,20 +6,25 @@
   import Wallpaper from "./components/Wallpaper.vue";
   import Modal from "./components/Modal.vue";
   import YayButton from "./components/Button.vue";
-  import Timer from "./logic/timer";
   import { useStore } from "./stores";
 
   import Login from "./components/Login.vue"
 
   const store = useStore();
-  const { isModalOpen, modalTitle, modalContent, uiSkin } = storeToRefs(store);
+  const { setStudyTime } = store;
+  const { isModalOpen, modalTitle, modalContent } = storeToRefs(store);
 
   // Globals
-  let userId = "user123";
-
-  // Create Timer class
-  let sessionTimer = new Timer(userId, "COMP2080", 0);
-  sessionTimer.start();
+  globalThis.userId = "user123";
+  
+  // Update timer every 0.5 second
+  setInterval(updateTimer, 500)
+  function updateTimer(){
+    if(globalThis.sessionTimer){
+      let elapsed = globalThis.sessionTimer.getTime();
+      setStudyTime(parseInt(elapsed/1000));
+    }
+  }
 </script>
 
 <template>

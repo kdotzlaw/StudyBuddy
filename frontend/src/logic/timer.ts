@@ -2,31 +2,24 @@ export default class Timer{
 
     private userId: String;
     private currentClass: String;
-    private time: Number; // in seconds
+    private startTime: Number;
     
-    public constructor(userId: String, currentClass: String, startTime: Number){
+    public constructor(userId: String, currentClass: String){
         this.userId = userId;
         this.currentClass = currentClass;
-        this.time = startTime;
+        this.startTime = Date.now();
     }
 
-    public start(): void{
-        setInterval(function() {
-            console.log("tick");
-        }, 1000);
-    }
-
-    private getSessionUser(): String{
+    public getSessionUser(): String{
         return this.userId;
     }
 
-    private getCurrentClass(): String{
+    public getCurrentClass(): String{
         return this.currentClass;
     }
 
-    private getTime(): Number{
-        return this.time;
+    public getTime(): Number{
+        return Date.now() - this.startTime;
     }
-
 
 }

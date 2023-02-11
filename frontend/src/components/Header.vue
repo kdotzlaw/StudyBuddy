@@ -1,20 +1,52 @@
 <script setup>
+    import { storeToRefs } from "pinia";
     import { ref } from "vue";
     import Logo from "/assets/logo.png";
     import PauseIcon from "/artifacts/pausegold.png";
+    import Timer from "../logic/timer";
     import { useStore } from "../stores";
-
     const store = useStore();
-    const { setModal } = store;
-
-    let displayName = "User123";
+    
+    // Temporary env vars
+    let userId = globalThis.userId
+    let displayName = "My Buddy";
     let studyCourse = "COMP2080";
 
-    // Integer: Current study time in milliseconds
-    const currentTime = ref(310);
-    const showPause = ref(false);
+    /*===========================
+       TIMER MANAGEMENT
+     *===========================*/
 
-    // Turn seconds into hh:mm:ss time string
+    // manageTimer
+    //   Start new Timer instance if no Timer running
+    //   Pause current Timer if provided class or user params are current
+    //   Create new Timer instance if provided class or user params are new
+    let { setStudyTime } = store;
+    function manageTimer(userId, course){
+        if(!globalThis.sessionTimer){
+            initTimer(userId, course);
+        }
+        else{
+            if(globalThis.sessionTimer.getSessionUser() != userId || globalThis.sessionTimer.getCurrentClass() != course){
+                initTimer(userId, course);
+            }
+            else{
+                // Start and reset Timer for now
+                globalThis.sessionTimer = null;
+                setStudyTime(0);
+                studyTime.value = 0;
+            }
+        }
+    }
+
+    // Initiate Timer class
+    function initTimer(userId, course){
+        globalThis.sessionTimer = new Timer(userId, course);
+    }
+
+    // Current study time in milliseconds
+    const { studyTime } = storeToRefs(store);
+
+    // Parse seconds into hh:mm:ss time string
     function toTimeString(s){
         let timeString = ""
         let hours = Math.floor(s / 3600);
@@ -30,11 +62,17 @@
         );
     }
 
-    // Change express timer content to pause button on click and mouse events
+    // Pause button ref. Switch between pause and time view on hover
+    const showPause = ref(false);
+
     function switchPause(newVal){
         showPause.value = newVal;
-        console.log("Brrr")
     }
+
+    /*===========================
+       DROPDOWN MENU AND MODALS
+     *===========================*/
+    const { setModal } = store;
 
     // Toggle dropdown options on click and mouse events
     const showOptions = ref(false);
@@ -69,6 +107,7 @@
             <div>Currently studying for <b>{{ studyCourse }}</b></div>
             <button 
                 id="timerExpress"
+                @click="manageTimer(userId,studyCourse)"
                 @mouseover="switchPause(true)"
                 @mouseleave="switchPause(false)"
             >
@@ -76,7 +115,7 @@
                     <img :src=PauseIcon alt="Pause study session" />
                 </div>
                 <div v-else>
-                    {{ toTimeString(currentTime) }}
+                    {{ toTimeString(studyTime) }}
                 </div>
             </button>
         </div>
@@ -165,6 +204,11 @@
         width: 100%;
         box-shadow: inset 2px 2px 4px rgba(0,0,0,0.3);
         padding: 0 0.5em 0 0.5em;
+    }
+
+    #timerExpress:active{
+        filter: brightness(0.3);
+        transition: 0.5;
     }
 
     #timerExpress img{

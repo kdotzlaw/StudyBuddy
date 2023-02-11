@@ -1,17 +1,25 @@
 <script setup>
     import Accordion from "../components/Accordion.vue";
+    import ClassCards from "../components/ClassCards.vue";
+    import Buddy from "../components/Buddy.vue";
     import { useStore } from "../stores";
     
     const store = useStore();
-    const { updateSkin, setStudyClass } = store;
+    const { updateSkin } = store;
+
+    // Stubbed requirements for now
+    let reqs = [
+        { name: "COMP2080", timeStudied: 2.5 },
+        { name: "COMP4350", timeStudied: 6.2 },
+        { name: "COMP4620", timeStudied: 0.0 },
+        { name: "COMP4380", timeStudied: 10.0 },
+    ]
 </script>
 
 <template>
     <div id="dashboard">
-        <div>
-            Buddy's body is being produced. <br/>
-            Buddy will go here soon! <br/>
-            <slot />
+        <div id="buddy-ctr">
+            <Buddy :showLevel=true chat="Buddy's body is being produced" />
         </div>
         <div>
             <Accordion title="Calendar Overview" :toggled="false">
@@ -19,17 +27,7 @@
                 <p class="delius">You have an assignment due tomorrow for COMP2080!</p>
             </Accordion>
             <Accordion title="Choose a Class to Study for">
-                <div class="skins">
-                    <div :class="`skin-preview skin-default`" @click="setStudyClass('COMP2080')">
-                        COMP2080
-                    </div>
-                    <div :class="`skin-preview skin-forest`" @click="setStudyClass('COMP4350')">
-                        COMP4350
-                    </div>
-                    <div :class="`skin-preview skin-sunset`" @click="setStudyClass('COMP4620')">
-                        COMP4620
-                    </div>
-                </div>
+                <ClassCards :reqs="reqs" />
             </Accordion>
             <Accordion title="Choose a UI Skin">
                 <div class="skins">
@@ -70,5 +68,14 @@
     .skin-preview:hover{
         transition: 0.3s;
         filter: brightness(110%) opacity(80%);
+    }
+
+    #buddy-ctr{
+        position: relative;
+        height: 70vh;
+        width: 40vw;
+        margin-top: 5vh;
+        display: grid;
+        justify-items: center;
     }
 </style>

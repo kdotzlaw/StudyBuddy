@@ -7,6 +7,15 @@ let stubContent = `
 `;
 
 export const useStore = defineStore('store', () => {
+    // User ID
+    const userId = ref(null);
+    function loginUser(newId){
+        userId.value = newId;
+    }
+    function logoutUser(){
+        userId.value = null;
+    }
+
     // Global timer state in seconds
     const studyTime = ref(0);
     function setStudyTime(time){
@@ -42,6 +51,7 @@ export const useStore = defineStore('store', () => {
     }
 
     return { 
+        userId, loginUser, logoutUser,
         studyTime, studyClass, setStudyTime, setStudyClass,
         isModalOpen, toggleModal,
         modalTitle, modalContent, setModal,

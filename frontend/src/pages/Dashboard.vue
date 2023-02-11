@@ -2,9 +2,11 @@
     import Accordion from "../components/Accordion.vue";
     import ClassCards from "../components/ClassCards.vue";
     import Buddy from "../components/Buddy.vue";
+    import { storeToRefs } from "pinia";
     import { useStore } from "../stores";
     
     const store = useStore();
+    const { userId } = storeToRefs(store);
     const { updateSkin } = store;
 
     // Stubbed requirements for now
@@ -18,10 +20,13 @@
 
 <template>
     <div id="dashboard">
-        <div id="buddy-ctr">
+        <div v-if="userId" id="buddy-ctr">
             <Buddy :showLevel=true chat="Buddy's body is being produced" />
         </div>
-        <div>
+        <div v-else id="buddy-ctr">
+            <Buddy chat="Ples log in" />
+        </div>
+        <div v-if="userId">
             <Accordion title="Calendar Overview" :toggled="false">
                 <h3>Current Quests</h3>
                 <p class="delius">You have an assignment due tomorrow for COMP2080!</p>

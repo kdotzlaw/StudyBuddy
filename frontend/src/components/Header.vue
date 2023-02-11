@@ -8,9 +8,9 @@
     const store = useStore();
     
     // Temporary env vars
-    let userId = globalThis.userId
     let displayName = "My Buddy";
-    const { studyClass } = storeToRefs(store);
+    const { loginUser, logoutUser } = store;
+    const { userId, studyClass } = storeToRefs(store);
 
     /*===========================
        TIMER MANAGEMENT
@@ -95,10 +95,12 @@
     }
 
     function logOut(){
-        setModal("Log out", "<button>Imagine this will Log you Out</button>");
+        logoutUser();
+        setModal("Log out", "You successfully logged out. See you soon!");
     }
 
     function login(){
+        loginUser("user123");
         setModal("", "<Login></Login>");
     }
 

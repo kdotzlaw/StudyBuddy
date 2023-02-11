@@ -13,9 +13,6 @@
   const store = useStore();
   const { setStudyTime } = store;
   const { isModalOpen, modalTitle, modalContent } = storeToRefs(store);
-
-  // Globals
-  globalThis.userId = "user123";
   
   // Update timer every 0.5 second
   setInterval(updateTimer, 500)

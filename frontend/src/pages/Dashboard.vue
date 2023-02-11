@@ -2,7 +2,7 @@
     import { useStore } from "../stores";
     
     const store = useStore();
-    const { updateSkin } = store;
+    const { updateSkin, setStudyClass } = store;
 </script>
 
 <template>
@@ -15,6 +15,18 @@
             <div :class="`skin-preview skin-default`" @click="updateSkin('skin-default')" />
             <div :class="`skin-preview skin-forest`" @click="updateSkin('skin-forest')" />
             <div :class="`skin-preview skin-sunset`" @click="updateSkin('skin-sunset')" />
+        </div>
+        <h2>Choose a class to Study for</h2>
+        <div class="skins">
+            <div :class="`skin-preview skin-default`" @click="setStudyClass('COMP2080')">
+                COMP2080
+            </div>
+            <div :class="`skin-preview skin-forest`" @click="setStudyClass('COMP4350')">
+                COMP4350
+            </div>
+            <div :class="`skin-preview skin-sunset`" @click="setStudyClass('COMP4620')">
+                COMP4620
+            </div>
         </div>
         <slot />
     </div>

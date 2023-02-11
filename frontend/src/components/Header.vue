@@ -10,7 +10,7 @@
     // Temporary env vars
     let userId = globalThis.userId
     let displayName = "My Buddy";
-    let studyCourse = "COMP2080";
+    const { studyClass } = storeToRefs(store);
 
     /*===========================
        TIMER MANAGEMENT
@@ -26,14 +26,23 @@
             initTimer(userId, course);
         }
         else{
-            if(globalThis.sessionTimer.getSessionUser() != userId || globalThis.sessionTimer.getCurrentClass() != course){
-                initTimer(userId, course);
-            }
-            else{
-                // Start and reset Timer for now
+            // Destroy Timer
+            if(!userId){
                 globalThis.sessionTimer = null;
                 setStudyTime(0);
                 studyTime.value = 0;
+            }
+            // Start new Timer instance
+            else if(globalThis.sessionTimer.getSessionUser() != userId || globalThis.sessionTimer.getCurrentClass() != course){
+                initTimer(userId, course);
+            }
+            // Pause current Timer
+            else{
+                let timer = globalThis.sessionTimer;
+                if(timer.isPaused())
+                    timer.resume();
+                else
+                    timer.pause();
             }
         }
     }
@@ -104,10 +113,10 @@
             Page Name
         </h1>
         <div class="timerSection">
-            <div>Currently studying for <b>{{ studyCourse }}</b></div>
+            <div>Currently studying for <b>{{ studyClass }}</b></div>
             <button 
                 id="timerExpress"
-                @click="manageTimer(userId,studyCourse)"
+                @click="manageTimer(userId,studyClass)"
                 @mouseover="switchPause(true)"
                 @mouseleave="switchPause(false)"
             >

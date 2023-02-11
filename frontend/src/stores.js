@@ -14,6 +14,12 @@ export const useStore = defineStore('store', () => {
             studyTime.value = time;
     }
 
+    // Class being studied
+    const studyClass = ref("COMP2080");
+    function setStudyClass(newClass){
+        studyClass.value = newClass;
+    }
+
     // Toggle modal on and off
     const isModalOpen = ref(false);
     function toggleModal(){
@@ -36,7 +42,7 @@ export const useStore = defineStore('store', () => {
     }
 
     return { 
-        studyTime, setStudyTime,
+        studyTime, studyClass, setStudyTime, setStudyClass,
         isModalOpen, toggleModal,
         modalTitle, modalContent, setModal,
         uiSkin, updateSkin,

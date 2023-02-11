@@ -25,9 +25,8 @@
             <a class="form-link" href="./" id="linkLogin">Already have an account? Sign in</a>
         </p>
       </div>
-  </form>
-    
-</div>
+    </form>
+  </div>
 </template>
 
 <script>

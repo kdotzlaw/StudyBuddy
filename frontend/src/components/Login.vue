@@ -1,4 +1,4 @@
-<template>form__message
+<template>
   <div class="container">
     <form class="form" id="login">
         <h1 class="form-title">Login</h1>
@@ -21,8 +21,7 @@
           </p>
         </div>
     </form>
-    
-</div>
+  </div>
 </template>
 
 <script>

@@ -26,17 +26,17 @@
             initTimer(userId, course);
         }
         else{
-            // Destroy Timer
+            // Destroy Timer when user not authenticated or logged out
             if(!userId){
                 globalThis.sessionTimer = null;
                 setStudyTime(0);
                 studyTime.value = 0;
             }
-            // Start new Timer instance
+            // Start new Timer instance for new class
             else if(globalThis.sessionTimer.getSessionUser() != userId || globalThis.sessionTimer.getCurrentClass() != course){
                 initTimer(userId, course);
             }
-            // Pause current Timer
+            // Pause Timer for current class
             else{
                 let timer = globalThis.sessionTimer;
                 if(timer.isPaused())

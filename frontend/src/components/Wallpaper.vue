@@ -1,12 +1,13 @@
 <script setup>
-    const props = defineProps({ 
-        skin: {type: String, required: false, default: "skin-default"}
-    })
+    import { storeToRefs } from "pinia";
+    import { useStore } from "../stores";
+    const store = useStore();
+    const { uiSkin } = storeToRefs(store);
 </script>
 
 <template>
-    <div id="wallpaper" :class=props.skin  />
-    <div id="bg-gradient" />
+    <div id="wallpaper" :class=uiSkin  />
+    <div id="bg-gradient" :class=uiSkin />
 </template>
 
 <style scoped>
@@ -24,6 +25,5 @@
         height: 100%;
         width: 100%;
         z-index: 2;
-        background: linear-gradient(to bottom, rgba(0,0,0,0) 40%, var(--indigo) 70%);
     }
 </style>

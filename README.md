@@ -17,21 +17,25 @@ Our primary stakeholders and stakeholders for this application are students who 
 # Core Features
 The Study Buddy will have at least four functional features and one non-functional feature implemented.
 
-### I. Track Study Time
+### I. User Accounts
+This feature will allow users to create accounts that will allow them to sign in and out of the Study Buddy to save their progress.
+
+### II. Track Study Time
 This feature will allow users to track their study time and be presented with the progress of their time usage over a period of time. 
 
-### II. Calendar
+### III. Calendar
 This feature will allow users to store any important dates and reminders and have it displayed in a scrollable list. This list will display the up coming important dates and how close it is to that date.
 
-### III. Grade Calculator
+### IV. Grade Calculator
 The grade tracker will allow users to enter and store their grades and also calculate their current grade in the course. An extension of this feature would be able to calculate grades a user would need to achieve on future assignments/tests/projects in order to obtain a certain letter grade.
-
-### IV. Buddy Level System
-This feature will allow for users to level up their buddy.
-
 
 ### V. Capacity and User Requests
 The Study buddy will have a capacity of 100 users and can handle 1000 requests per minute.
+
+## Future Features
+
+### VI. Buddy Level System
+This feature will allow for users to level up their buddy.
 
 # Technologies
 
@@ -69,60 +73,60 @@ The Study buddy will have a capacity of 100 users and can handle 1000 requests p
 
 # User Stories
 
-**_As a new user, I want to be able to create an account._**
+**_As a new user, I want to be able to create an account._** *(ref. [Feature 1](#i-user-accounts))*
 - Given I’m a new user on the log-in page. 
 - When I hit the “Create Account” button and fill out the username and password fields in the dialogue and click the confirmation button. 
 - Then the system creates my account and logs me in.
 
-**_As a returning user, I want to be able to log in._**
+**_As a returning user, I want to be able to log in._** *(ref. [Feature 1](#i-user-accounts))*
 - Given I’m a returning user on the log-in page.
 - When I fill in the username and password fields and click the “Log-In” button.
 - Then the system logs me in.
 
-**_As a user, I want to be able to create a new tracking workspace for each of my classes._** *(ref. [Feature 1](#i-track-study-time), [2](#ii-calendar))*
+**_As a user, I want to be able to create a new tracking workspace for each of my classes._** *(ref. [Feature 2](#ii-track-study-time), [3](#iii-calendar))*
 - Given I’m logged into my account.
 - When I click the “Add a Class” button on my homepage, fill out the fields in the dialogue box, and click the confirmation button.
 - Then the system creates a new tracking workspace for my new class.
 
-**_As a user, I want to set up metadata about my class, such as section, classroom, location, professor name, email, phone number, and office hours._** *(ref. [Feature 1](#i-track-study-time))*
+**_As a user, I want to set up metadata about my class, such as section, classroom, location, professor name, email, phone number, and office hours._** *(ref. [Feature 2](#ii-track-study-time))*
 - Given I’m in the tracking workspace for my class.
 - When I click the metadata fields, enter the metadata, and click the “Save” button.
 - Then the system should store that metadata for my class.
 
-**_As a user, I want to track assignments, tests, etc. that contribute to my grade for a class._** *(ref. [Feature 1](#i-track-study-time), [2](#ii-calendar), [3](#iii-grade-calculator))*
+**_As a user, I want to track assignments, tests, etc. that contribute to my grade for a class._** *(ref. [Feature 2](#ii-track-study-time), [3](#iii-calendar), [4](#iv-grade-calculator))*
 - Given I’m in the tracking workspace for my class.
 - When I click the “Track Task” button, and fill out the associated fields (name, type of task, weight, due date, etc.), and click the confirmation button.
 - Then the system should create a task with the associated information in the current workspace.
 
-**_As a user, I want to edit tasks that have been created._**  *(ref. [Feature 1](#i-track-study-time), [2](#ii-calendar), [3](#iii-grade-calculator))*
+**_As a user, I want to edit tasks that have been created._**  *(ref. [Feature 2](#ii-track-study-time), [3](#iii-calendar), [4](#iv-grade-calculator))*
 - Given I’m in the tracking workspace for my class.
 - When I expand a task and change the information fields in the dialog and click the “Save” button.
 - The system modifies my task to reflect the changes I just made.
 
-**_As a user, I want to delete tasks that have been created._** *(ref. [Feature 1](#i-track-study-time), [2](#ii-calendar), [3](#iii-grade-calculator))*
+**_As a user, I want to delete tasks that have been created._** *(ref. [Feature 2](#ii-track-study-time), [3](#iii-calendar), [4](#iv-grade-calculator))*
 - Given I’m in the tracking workspace for my class.
 - When I expand a class, click the delete button, and click “Yes” in the confirmation dialog.
 - The system removes the task from my tracking workspace.
 
-**_As a user, I want to keep track of my grades for tasks._** *(ref. [Feature 3](#iii-grade-calculator))*
+**_As a user, I want to keep track of my grades for tasks._** *(ref. [Feature 4](#iv-grade-calculator))*
 - Given I’m in the tracking workspace for my class.
 - When I click on a task that is being tracked, in the dialog that appears, after I input a value in the “Grade” field, and click the “Complete Task” button.
 - Then the system should mark the task as complete and record the grade I got.
 
-**_As a user, I want to know an estimated letter grade for a class._** *(ref. [Feature 3](#iii-grade-calculator))*
+**_As a user, I want to know an estimated letter grade for a class._** *(ref. [Feature 4](#iv-grade-calculator))*
 - Given I’m in the tracking workspace for my class, and I have created and completed some tasks that contribute to my class grade.
 - The system should display an estimate of my class grade using the weights of the completed tasks, and the grades input for completed tasks.
 
-**_As a user, I want to be able to keep track of the time spent studying in each class._** *(ref. [Feature 1](#i-track-study-time))*
+**_As a user, I want to be able to keep track of the time spent studying in each class._** *(ref. [Feature 2](#ii-track-study-time))*
 - Given I’m in the tracking workspace for my class.
 - When I click on the “Track Studying” button and fill out the fields and click the confirmation button.
 - The system records the time spent studying for that class.
 
-**_As a user, I want to be able to view important dates for each class._** *(ref. [Feature 2](#ii-calendar))*
+**_As a user, I want to be able to view important dates for each class._** *(ref. [Feature 3](#iii-calendar))*
 - Given I’m in the tracking workspace for my class.
 - Then I should be able to see a list of important dates.
 
-**_As a user, I want my companion to let me know about approaching deadlines._** *(ref. [Feature 2](#ii-calendar))*
+**_As a user, I want my companion to let me know about approaching deadlines._** *(ref. [Feature 3](#iii-calendar))*
 - Given I’m a user at my homepage.
 - Then my companion should give me a list of approaching deadlines
 
@@ -130,12 +134,12 @@ The Study buddy will have a capacity of 100 users and can handle 1000 requests p
 - Given I’m a user at my homepage
 - Then my companion should give me a breakdown of my study progress for each class.
 
-**_As a user, I want to be able to unlock customization options as I progress in my class._** *(ref. [Feature 4](#iv-buddy-level-system))*
+**_As a user, I want to be able to unlock customization options as I progress in my class._** *(ref. [Feature 6](#iv-buddy-level-system))*
 - Given I’m a user tracking at least one class.
 - When I reach milestones in that class (complete a certain amount of tasks, reach a certain grade in task/class, etc.).
 - The system will unlock customization options associated with the milestone for me to use.
 
-**_As a user, I want to be able to customize my companion with unlockables._** *(ref. [Feature 4](#iv-buddy-level-system))*
+**_As a user, I want to be able to customize my companion with unlockables._** *(ref. [Feature 6](#iv-buddy-level-system))*
 - Given I’m a user with some customization options unlocked on my homepage..
 - When I click on the customization button and select an unlocked customizable option for my companion.
 - The system changes the appearance of my companion to reflect the selected customizable.

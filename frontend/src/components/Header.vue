@@ -16,11 +16,14 @@
        TIMER MANAGEMENT
      *===========================*/
 
-    // manageTimer
-    //   Start new Timer instance if no Timer running
-    //   Pause current Timer if provided class or user params are current
-    //   Create new Timer instance if provided class or user params are new
     let { setStudyTime } = store;
+    
+    /* manageTimer
+     *   Starts new Timer instance if no Timer running
+     *   Pauses current Timer if provided class or user params are current
+     *   Create new Timer instance if provided class or user params are new
+     *   @params - userId: string , course: string
+     */
     function manageTimer(userId, course){
         if(!globalThis.sessionTimer){
             initTimer(userId, course);
@@ -114,7 +117,7 @@
         <h1 class="pageNameSection">
             Page Name
         </h1>
-        <div class="timerSection">
+        <div v-if="studyClass" class="timerSection">
             <div>Currently studying for <b>{{ studyClass }}</b></div>
             <button 
                 id="timerExpress"

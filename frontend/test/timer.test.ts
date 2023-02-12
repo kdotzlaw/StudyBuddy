@@ -8,8 +8,10 @@ let class1: String = "classA";
 let class2: String = "classB";
 
 describe('Construct Timer', () => {
+
   test('Constructing Timer class', () => {
     timer = new Timer(userId1,class1); 
     expect(timer).not.toBeNull();
-  });
-});
+  })
+
+})

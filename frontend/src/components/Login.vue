@@ -5,7 +5,7 @@
         <div class="form-message form-message--error"></div>
         <div class="login-container">
           <div class="form-input-group">
-            <input type="text" class="form-input" autofocus placeholder="Username or email">
+            <input type="text" class="form-input" autofocus placeholder="Username">
             <div class="form-input-error-message"></div>
           </div>
           <div class="form-input-group">

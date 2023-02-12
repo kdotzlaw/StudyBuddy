@@ -5,24 +5,24 @@
       <!-- <div class="form-message form-message--error"></div> -->
       <div class="register-container">
         <div class="form-input-group">
-          <input type="text" id="signupUsername" class="form-input" autofocus placeholder="Username">
-          <div class="form-input-error-message"></div>
+          <input type="text" id="signupUsername" class="form-input" autofocus placeholder="Username" v-model="username">
+          <div class="form-input-error-message" v-if="usernameError">{{ usernameError }}</div>
         </div>
         <div class="form-input-group">
-            <input type="text" class="form-input" autofocus placeholder="Email Address">
-            <div class="form-input-error-message"></div>
+            <input type="text" class="form-input" autofocus placeholder="Email Address" v-model="email">
+            <div class="form-input-error-message" v-if="emailError">{{ emailError }}</div>
         </div>
         <div class="form-input-group">
-            <input type="password" class="form-input" autofocus placeholder="Password">
-            <div class="form-input-error-message"></div>
+            <input type="password" class="form-input" autofocus placeholder="Password" v-model="password">
+            <div class="form-input-error-message" v-if="passwordError">{{ passwordError }}</div>
         </div>
         <div class="form-input-group">
-            <input type="password" class="form-input" autofocus placeholder="Confirm password">
-            <div class="form-input-error-message"></div>
+            <input type="password" class="form-input" autofocus placeholder="Confirm password" v-model="confirmPassword">
+            <div class="form-input-error-message" v-if="confirmPasswordError">{{ confirmPasswordError }}</div>
         </div>
-        <button class="register-button" type="submit">Register</button>
+        <button class="register-button" type="button" @click="validateForm">Register</button>
         <p class="form-text">
-            <a class="form-link" href="./" id="linkLogin">Already have an account? Sign in</a>
+            <!-- <a class="form-link" href="./" id="linkLogin">Already have an account? Sign in</a> -->
         </p>
       </div>
     </form>
@@ -30,9 +30,82 @@
 </template>
 
 <script>
-
 export default {
-  
+  data() {
+    return {
+      username: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      usernameError: '',
+      emailError: '',
+      passwordError: '',
+      confirmPasswordError: ''
+    };
+  },
+  methods: {
+    validateForm() {
+      var passwordError = false;
+
+      if (!this.username) {
+        this.usernameError = 'Username is required';
+      } else {
+        this.usernameError = '';
+      }
+
+      if (!this.email) {
+        this.emailError = 'Email is required';
+      } else {
+        this.emailError = '';
+      }
+
+      if (!this.password) {
+        this.passwordError = 'Password is required';
+      } else if(this.password.length < 8){
+        this.passwordError = 'Password length must be more than 8 or more characters';
+        passwordError = true;
+      } else {
+        this.passwordError = '';
+        passwordError = false;
+      }
+
+      if (!this.confirmPassword) {
+        this.confirmPasswordError = 'Confirm password is required';
+      } else {
+        this.confirmPasswordError = '';
+      }
+
+      if(!passwordError && !(this.password === this.confirmPassword) && this.confirmPassword.length > 0){
+        this.passwordError = 'Password does not match';
+        this.confirmPasswordError = 'Password does not match';
+      }
+      if (!this.usernameError && !this.emailError && !this.passwordError && !this.confirmPasswordError) {
+        const apiUrl = '127.0.0.1:5000/api'; 
+        const data = {
+          username: this.username,
+          email: this.email,
+          password: this.password
+        };
+        fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Success:', data);
+          // Handle the response from the API here, e.g., show a success message or redirect the user to a different page
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          // Handle the error here, e.g., show an error message
+        });
+      }
+      
+    }
+  }
 };
 </script>
 
@@ -143,7 +216,7 @@ body {
   background: var(--color-primary);
 }
 
-.register-buttonn:hover {
+.register-button:hover {
   background: var(--color-primary-dark);
 }
 

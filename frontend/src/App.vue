@@ -9,6 +9,7 @@
   import { useStore } from "./stores";
 
   import Login from "./components/Login.vue"
+  import Register from "./components/Register.vue"
 
   const store = useStore();
   const { setStudyTime } = store;
@@ -29,6 +30,7 @@
   <div id="workspace">
     <Dashboard>
       <YayButton text="Click here to print 'Yay'" />
+      <Register></Register>
     </Dashboard>
    
   </div>
@@ -36,7 +38,8 @@
   <div v-if="isModalOpen" id="modal-ctr">
     <Modal :title="modalTitle">
       <!-- <div v-html="modalContent"></div> -->
-      <Login></Login>
+      <!-- <Login></Login> -->
+      <Register></Register>
     </Modal>
   </div>
 </template>

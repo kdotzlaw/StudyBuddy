@@ -2,17 +2,16 @@
   <div class="container">
     <form class="form" id="login">
         <h1 class="form-title">Login</h1>
-        <div class="form-message form-message--error"></div>
         <div class="login-container">
           <div class="form-input-group">
-            <input type="text" class="form-input" autofocus placeholder="Username">
-            <div class="form-input-error-message"></div>
+            <input type="text" id="signinUsername" class="form-input" autofocus placeholder="Username" v-model="username">
+            <div class="form-input-error-message" v-if="usernameError">{{ usernameError }}</div>
           </div>
           <div class="form-input-group">
-              <input type="password" class="form-input" autofocus placeholder="Password">
-              <div class="form-input-error-message"></div>
+            <input type="password" class="form-input" autofocus placeholder="Password" v-model="password">
+            <div class="form-input-error-message" v-if="passwordError">{{ passwordError }}</div>
           </div>
-          <button class="login-button" type="submit">Continue</button>
+          <button class="login-button" type="button" @click="validateForm">Log In</button>
           <p class="form-text">
               <a href="#" class="form-link">Forgot your password?</a>
           </p>
@@ -25,9 +24,56 @@
 </template>
 
 <script>
-
 export default {
-  
+  data() {
+    return {
+      username: '',
+      password: '',
+      usernameError: '',
+      passwordError: '',
+    };
+  },
+  methods: {
+    validateForm() {
+
+      if (!this.username) {
+        this.usernameError = 'Username is required';
+      } else {
+        this.usernameError = '';
+      }
+
+      if (!this.password) {
+        this.passwordError = 'Password is required';
+      } else {
+        this.passwordError = '';
+      }
+
+      if (!this.usernameErrorr && !this.passwordError) {
+        const apiUrl = '127.0.0.1:5000/api'; 
+        const data = {
+          username: this.username,
+          password: this.password
+        };
+        fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Success:', data);
+          // Handle the response from the API here, e.g., show a success message or redirect the user to a different page
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          // Handle the error here, e.g., show an error message
+        });
+      }
+      
+    }
+  }
 };
 </script>
 

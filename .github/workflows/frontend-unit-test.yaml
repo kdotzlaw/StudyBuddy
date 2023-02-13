@@ -1,12 +1,18 @@
-name: Frontend Unit Test
+name: Frontend Unit & Regression Test
 
 on:
   push:
-    branches: [frontend]
+    branches: [ frontend ]
+  pull_request:
+    branches: [ main ] # Run regression tests upon PR to main
+    # No integration tests as of Sprint 2, so only unit tests will be ran
 
 jobs:
   run_unit_tests:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
     steps:
       - name: Push Code onto VM
         uses: actions/checkout@v3.3.0

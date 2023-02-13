@@ -1,4 +1,4 @@
-name: Docker Deployment
+name: Frontend Docker Deployment
 
 on:
   push:
@@ -14,6 +14,9 @@ env:
 jobs:
   deploy_to_docker:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
     steps:
       - name: Push Code onto VM
         uses: actions/checkout@v3.3.0

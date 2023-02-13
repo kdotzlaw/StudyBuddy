@@ -1,0 +1,79 @@
+openapi: "3.0.0"
+
+info:
+  version: "0.1"
+  title: StudyBuddy API
+  description: "Provides access to the StudyBuddy backend."
+
+servers:
+  - url: 127.0.0.1:5000/api
+    description: Locally Hosted Development Server
+
+paths:
+  /login:
+    post:
+      tags: ["Account Related"]
+      summary: "Submit a login request"
+      description: "Send a request to the API server asking to check if the username and password values in request header match a valid user."
+      operationId: login
+      parameters:
+      - name: username
+        in: header
+        required: true
+        content:
+          'application/json': {}
+      - name: password
+        in: header
+        required: true
+        content:
+          'application/json': {}
+      responses:
+        200:
+          description: "The user has successfully logged in."
+        400:
+          description: "The user has made an invalid login attempt."
+        500:
+          description: "Server error, problem with backend."
+  /logout:
+    post:
+      tags: ["Account Related"]
+      summary: "Submit a logout request"
+      responses:
+        200:
+          description: "The user has successfully logged out."
+        401:
+          description: "The user is forbidden from performing this operation, likely because they aren't logged in currently."
+        500:
+          description: "Sever error, problem with the backend."
+  /newuser:
+    post:
+      tags: ["Account Related"]
+      summary: "Submit a request to create a new account."
+      description: "Send a request to the API server asking to create a new user account in the database."
+      operationId: newuser
+      parameters:
+      - name: username
+        in: header
+        required: true
+        content:
+          'application/json': {}
+      - name: password
+        in: header
+        required: true
+        content:
+          'application/json': {}
+      responses:
+        200:
+          description: "The user has successfully created an account."
+        400:
+          description: "The user has made a bad request; either the username is already taken, or parameters are missing."
+        500:
+          description: "Server error, problem with backend."
+
+tags:
+  - name: Account Related
+    description: "Operations that pertain to a user's account management."
+  - name: Tracking Related
+    description: "Operations that pertain to tracking progress, classes, study time, etc."
+  - name: Leveling Related
+    description: "Operations that pertain to the leveling system."

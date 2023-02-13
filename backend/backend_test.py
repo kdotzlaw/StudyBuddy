@@ -36,7 +36,8 @@ class dbTests(unittest.TestCase):
     def test_getUser(self):
         username = 'katDot'
         result = db.getUser(username)
-        self.assertIn(username, result)
+
+        self.assertIn(username, result.username)
 
     '''
     Test passes if user is sucessfully inserted into the db (asserting that user appears in retrieved record)
@@ -45,6 +46,7 @@ class dbTests(unittest.TestCase):
 
     def test_removeUser(self):
         username = "test"
+        db.removeUser(username)
         password = "testing"
         db.createAccount(username, password)
         # remove user
@@ -58,7 +60,7 @@ class dbTests(unittest.TestCase):
         db.createAccount(username, password)
         # retrieve the mock user from the db
         result = db.getUser(username)
-        self.assertIn(username, result)
+        self.assertIn(username, result.username)
         # remove user
         db.removeUser(username)
 

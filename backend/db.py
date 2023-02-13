@@ -18,14 +18,8 @@ cursor = cnxn.cursor()
 PRECONDITION: passed string <username> which will be used to find the user in the db
 POSTCONDITION: if the user with <username> exists in the database, return their information (form of string)
 '''
-
-
 def getUser(name):
-    temp = cursor.execute("SELECT * FROM Users WHERE username = ?", name)
-    # make returned record nice
-    # return result.fetchall()
-    for [uID, username, password, user_email, xp] in temp:
-        result = str(uID) + " " + str(username) + " " + str(password) + " " + str(user_email) + " " + str(xp)
+    result = cursor.execute("SELECT * FROM Users WHERE username = ?", name).fetchone()
     return result
 
 

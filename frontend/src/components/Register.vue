@@ -9,15 +9,15 @@
           <div class="form-input-error-message" v-if="usernameErrorMsg">{{ usernameErrorMsg }}</div>
         </div>
         <div class="form-input-group">
-            <input type="text" id="email" class="form-input" autofocus placeholder="Email Address" v-model="email">
+            <input type="text" id="signupEmail" class="form-input" autofocus placeholder="Email Address" v-model="email">
             <div class="form-input-error-message" v-if="emailErrorMsg">{{ emailErrorMsg }}</div>
         </div>
         <div class="form-input-group">
-            <input type="password" id = "password" class="form-input" autofocus placeholder="Password" v-model="password">
+            <input type="password" id="signupPassword" class="form-input" autofocus placeholder="Password" v-model="password">
             <div class="form-input-error-message" v-if="passwordErrorMsg">{{ passwordErrorMsg }}</div>
         </div>
         <div class="form-input-group">
-            <input type="password" id = "passwordConfirm" class="form-input" autofocus placeholder="Confirm password" v-model="confirmPassword">
+            <input type="password" id="signupPasswordConfirm" class="form-input" autofocus placeholder="Confirm password" v-model="confirmPassword">
             <div class="form-input-error-message" v-if="confirmpasswordErrorMsg">{{ confirmpasswordErrorMsg }}</div>
         </div>
         <button class="register-button" type="button" @click="validateForm">Register</button>
@@ -39,60 +39,60 @@
 
   function validateForm() {
     let username = document.getElementById("signupUsername").value;
-    let email = document.getElementById("email").value;
-    let password = document.getElementById("password").value;
-    let confirmPassword = document.getElementById("passwordConfirm").value;
+    let email = document.getElementById("signupEmail").value;
+    let password = document.getElementById("signupPassword").value;
+    let confirmPassword = document.getElementById("signupPasswordConfirm").value;
 
-    var userNameCheck = false;
-    var emailCheck = false;
-    var passwordErrorCheck = false;
-    var passwordConfirmErrorCheck = false;
-    var passwordLengthCheck = false;
+    var userNameValid = true;
+    var emailValid = true;
+    var passwordErrorValid = true;
+    var passwordConfirmErrorValid = true;
+    var passwordLengthValid = true;
 
     if (username.length == 0) {
       usernameErrorMsg.value = 'Username is required';
-      userNameCheck = true;
+      userNameValid = false;
     } else {
       usernameErrorMsg.value = '';
-      userNameCheck = false;
+      userNameValid = true;
     }
 
     if (email.length == 0) {
       emailErrorMsg.value = 'Email is required';
-      emailCheck = true;
+      emailValid = false;
     } else {
       emailErrorMsg.value = '';
-      emailCheck = false;
+      emailValid = true;
     }
 
     if (password.length == 0) {
       passwordErrorMsg.value = 'Password is required';
     } else if(password.length < 8){
       passwordErrorMsg.value = 'Password length must be more than 8 or more characters';
-      passwordErrorCheck = true;
+      passwordErrorValid = false;
     } else {
       passwordErrorMsg.value = '';
-      passwordErrorCheck = false;
+      passwordErrorValid = true;
     }
 
     if (confirmPassword.length == 0) {
       confirmpasswordErrorMsg.value = 'Confirm password is required';
-      passwordConfirmErrorCheck = true;
+      passwordConfirmErrorValid = false;
     } else {
       confirmpasswordErrorMsg.value = '';
-      passwordConfirmErrorCheck = false;
+      passwordConfirmErrorValid = true;
     }
 
-    if(!passwordErrorMsgCheck && !(password == confirmPassword) && confirmPassword.length > 0){
+    if(passwordErrorValid && !(password == confirmPassword) && confirmPassword.length > 0){
       passwordErrorMsg.value = 'Password does not match';
       confirmpasswordErrorMsg.value = 'Password does not match';
-      passwordLengthCheck = true;
+      passwordLengthValid = false;
     } else{
-      passwordLengthCheck = false;
+      passwordLengthValid = true;
     }
     
 
-    if (!userNameCheck && !emailCheck && !passwordErrorCheck && !passwordConfirmErrorCheck && !passwordLengthCheck) {
+    if (!userNameValid && !emailValid && !passwordErrorValid && !passwordConfirmErrorValid && !passwordLengthValid) {
       const apiUrl = '/api/login'; 
       const data = {
         username: username,

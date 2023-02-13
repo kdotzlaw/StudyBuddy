@@ -5,11 +5,11 @@
         <div class="login-container">
           <div class="form-input-group">
             <input type="text" id="signinUsername" class="form-input" autofocus placeholder="Username" v-model="username">
-            <div class="form-input-error-message" v-if="usernameError">{{ usernameError }}</div>
+            <div class="form-input-error-message" v-if="usernameErrorMsg">{{ usernameErrorMsg }}</div>
           </div>
           <div class="form-input-group">
-            <input type="password" class="form-input" autofocus placeholder="Password" v-model="password">
-            <div class="form-input-error-message" v-if="passwordError">{{ passwordError }}</div>
+            <input type="password" id="signinPassword" class="form-input" autofocus placeholder="Password" v-model="password">
+            <div class="form-input-error-message" v-if="passwordErrorMsg">{{ passwordErrorMsg }}</div>
           </div>
           <button class="login-button" type="button" @click="validateForm">Log In</button>
           <p class="form-text">
@@ -23,58 +23,62 @@
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      username: '',
-      password: '',
-      usernameError: '',
-      passwordError: '',
-    };
-  },
-  methods: {
-    validateForm() {
+<script setup>
+  import{ ref } from "vue"
 
-      if (!this.username) {
-        this.usernameError = 'Username is required';
-      } else {
-        this.usernameError = '';
-      }
+  const usernameErrorMsg = ref('');
+  const passwordErrorMsg = ref('');
 
-      if (!this.password) {
-        this.passwordError = 'Password is required';
-      } else {
-        this.passwordError = '';
-      }
+  function validateForm() {
+    let username = document.getElementById("signinUsername").value;
+    let password = document.getElementById("signinPassword").value;
 
-      if (!this.usernameErrorr && !this.passwordError) {
-        const apiUrl = '127.0.0.1:5000/api'; 
-        const data = {
-          username: this.username,
-          password: this.password
-        };
-        fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(data => {
-          console.log('Success:', data);
-          // Handle the response from the API here, e.g., show a success message or redirect the user to a different page
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          // Handle the error here, e.g., show an error message
-        });
-      }
-      
+    var userNameCheck = false;
+    var passwordErrorCheck = true;
+
+    console.log(username.length)
+
+    if (username.length == 0) {
+      usernameErrorMsg.value = 'Username is required';
+      userNameCheck = true;
+    } else {
+      usernameErrorMsg.value = '';
+      userNameCheck = false;
+    }
+
+    if (password.length == 0) {
+      passwordErrorMsg.value = 'Password is required';
+      passwordErrorCheck = true;
+    } else {
+      passwordErrorMsg.value = '';
+      passwordErrorCheck = false;
+    }
+
+    if (!userNameCheck && !passwordErrorCheck) {
+      const apiUrl = '/api/login'; 
+      const data = {
+        username: this.username,
+        password: this.password
+      };
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Success:', data);
+        // Handle the response from the API here, e.g., show a success message or redirect the user to a different page
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        // Handle the error here, e.g., show an error message
+      });
     }
   }
-};
+
 </script>
 
 <style>

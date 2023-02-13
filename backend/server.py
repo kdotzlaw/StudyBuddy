@@ -11,7 +11,7 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 # mock persistence layer
-users = {"testuser": {"password": "123"}}
+users = {"testuser": [{"username": "testuser", "password": "123"}]}
 
 
 # tell flask how to load a user from a flask request and from its session
@@ -19,10 +19,17 @@ class User(flask_login.UserMixin):
     pass
 
 
+def user_check(username):
+    if app.testing:
+        selection = users[username]
+    else:
+        selection = db.getUser(username)
+    return selection
+
 # loads user from session
 @login_manager.user_loader
 def user_loader(username):
-    selection = db.getUser(username)
+    selection = user_check(username)
     if len(selection) == 1 and selection[0]['username'] == username:
         user = User()
         user.id = username
@@ -30,13 +37,12 @@ def user_loader(username):
     else:
         return None
 
-
 # loads user from flask request
 @login_manager.request_loader
 def request_loader(request):
     username = request.form.get("username")
     # check database for username
-    selection = db.getUser(username)
+    selection = user_check(username)
     if len(selection) == 1 and selection[0]['username'] == username:
         user = User()
         user.id = username
@@ -53,7 +59,7 @@ def unauthorized_handler():
 
 @app.route("/")
 def hello_world():
-    return "<h1>hello world</h1>"
+    return flask.make_response(flask.render_template("../../frontend/index.html"))
 
 
 # login api request
@@ -65,7 +71,7 @@ def login():
         username = flask.headers['username']
         # check db for username and password
         # selection is a list of rows (SHOULD BE LENGTH 1)
-        selection = db.getUser(username)
+        selection = user_check(username)
         if len(selection) != 1:
             # multiple entries in database with same username (PROBLEM)
             response = flask.make_response(flask.render_template('server_error.html'), 500)
@@ -79,7 +85,7 @@ def login():
                 user = User()
                 user.id = username
                 flask_login.login_user(user)
-                return flask.redirect(flask.url_for('testlogin'))
+                return flask.make_response(flask.render_template("../../frontend/index.html"), 200)
             else:
                 # invalid password
                 # send 400 bad request response

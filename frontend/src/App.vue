@@ -37,8 +37,8 @@
   <div v-if="isModalOpen" id="modal-ctr">
     <Modal :title="modalTitle">
       <!-- <div v-html="modalContent"></div> -->
-      <Login></Login>
-      <!-- <Register></Register> -->
+      <!-- <Login></Login> -->
+      <Register></Register>
     </Modal>
   </div>
 </template>

@@ -6,19 +6,19 @@
       <div class="register-container">
         <div class="form-input-group">
           <input type="text" id="signupUsername" class="form-input" autofocus placeholder="Username" v-model="username">
-          <div class="form-input-error-message" v-if="usernameError">{{ usernameError }}</div>
+          <div class="form-input-error-message" v-if="usernameErrorMsg">{{ usernameErrorMsg }}</div>
         </div>
         <div class="form-input-group">
-            <input type="text" class="form-input" autofocus placeholder="Email Address" v-model="email">
-            <div class="form-input-error-message" v-if="emailError">{{ emailError }}</div>
+            <input type="text" id="email" class="form-input" autofocus placeholder="Email Address" v-model="email">
+            <div class="form-input-error-message" v-if="emailErrorMsg">{{ emailErrorMsg }}</div>
         </div>
         <div class="form-input-group">
-            <input type="password" class="form-input" autofocus placeholder="Password" v-model="password">
-            <div class="form-input-error-message" v-if="passwordError">{{ passwordError }}</div>
+            <input type="password" id = "password" class="form-input" autofocus placeholder="Password" v-model="password">
+            <div class="form-input-error-message" v-if="passwordErrorMsg">{{ passwordErrorMsg }}</div>
         </div>
         <div class="form-input-group">
-            <input type="password" class="form-input" autofocus placeholder="Confirm password" v-model="confirmPassword">
-            <div class="form-input-error-message" v-if="confirmPasswordError">{{ confirmPasswordError }}</div>
+            <input type="password" id = "passwordConfirm" class="form-input" autofocus placeholder="Confirm password" v-model="confirmPassword">
+            <div class="form-input-error-message" v-if="confirmpasswordErrorMsg">{{ confirmpasswordErrorMsg }}</div>
         </div>
         <button class="register-button" type="button" @click="validateForm">Register</button>
         <p class="form-text">
@@ -29,84 +29,94 @@
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      username: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      usernameError: '',
-      emailError: '',
-      passwordError: '',
-      confirmPasswordError: ''
-    };
-  },
-  methods: {
-    validateForm() {
-      var passwordError = false;
+<script setup>
+  import{ ref } from "vue"
 
-      if (!this.username) {
-        this.usernameError = 'Username is required';
-      } else {
-        this.usernameError = '';
-      }
+  const usernameErrorMsg = ref('');
+  const emailErrorMsg = ref('');
+  const passwordErrorMsg = ref('');
+  const confirmpasswordErrorMsg = ref('');
 
-      if (!this.email) {
-        this.emailError = 'Email is required';
-      } else {
-        this.emailError = '';
-      }
+  function validateForm() {
+    let username = document.getElementById("signupUsername").value;
+    let email = document.getElementById("email").value;
+    let password = document.getElementById("password").value;
+    let confirmPassword = document.getElementById("passwordConfirm").value;
 
-      if (!this.password) {
-        this.passwordError = 'Password is required';
-      } else if(this.password.length < 8){
-        this.passwordError = 'Password length must be more than 8 or more characters';
-        passwordError = true;
-      } else {
-        this.passwordError = '';
-        passwordError = false;
-      }
+    var userNameCheck = false;
+    var emailCheck = false;
+    var passwordErrorCheck = false;
+    var passwordConfirmErrorCheck = false;
+    var passwordLengthCheck = false;
 
-      if (!this.confirmPassword) {
-        this.confirmPasswordError = 'Confirm password is required';
-      } else {
-        this.confirmPasswordError = '';
-      }
+    if (username.length == 0) {
+      usernameErrorMsg.value = 'Username is required';
+      userNameCheck = true;
+    } else {
+      usernameErrorMsg.value = '';
+      userNameCheck = false;
+    }
 
-      if(!passwordError && !(this.password === this.confirmPassword) && this.confirmPassword.length > 0){
-        this.passwordError = 'Password does not match';
-        this.confirmPasswordError = 'Password does not match';
-      }
-      if (!this.usernameError && !this.emailError && !this.passwordError && !this.confirmPasswordError) {
-        const apiUrl = '127.0.0.1:5000/api'; 
-        const data = {
-          username: this.username,
-          email: this.email,
-          password: this.password
-        };
-        fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(data => {
-          console.log('Success:', data);
-          // Handle the response from the API here, e.g., show a success message or redirect the user to a different page
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          // Handle the error here, e.g., show an error message
-        });
-      }
-      
+    if (email.length == 0) {
+      emailErrorMsg.value = 'Email is required';
+      emailCheck = true;
+    } else {
+      emailErrorMsg.value = '';
+      emailCheck = false;
+    }
+
+    if (password.length == 0) {
+      passwordErrorMsg.value = 'Password is required';
+    } else if(password.length < 8){
+      passwordErrorMsg.value = 'Password length must be more than 8 or more characters';
+      passwordErrorCheck = true;
+    } else {
+      passwordErrorMsg.value = '';
+      passwordErrorCheck = false;
+    }
+
+    if (confirmPassword.length == 0) {
+      confirmpasswordErrorMsg.value = 'Confirm password is required';
+      passwordConfirmErrorCheck = true;
+    } else {
+      confirmpasswordErrorMsg.value = '';
+      passwordConfirmErrorCheck = false;
+    }
+
+    if(!passwordErrorMsgCheck && !(password == confirmPassword) && confirmPassword.length > 0){
+      passwordErrorMsg.value = 'Password does not match';
+      confirmpasswordErrorMsg.value = 'Password does not match';
+      passwordLengthCheck = true;
+    } else{
+      passwordLengthCheck = false;
+    }
+    
+
+    if (!userNameCheck && !emailCheck && !passwordErrorCheck && !passwordConfirmErrorCheck && !passwordLengthCheck) {
+      const apiUrl = '/api/login'; 
+      const data = {
+        username: username,
+        email: email,
+        password: password
+      };
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Success:', data);
+        // Handle the response from the API here, e.g., show a success message or redirect the user to a different page
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        // Handle the error here, e.g., show an error message
+      });
     }
   }
-};
 </script>
 
 <style>

@@ -1,20 +1,24 @@
 <script setup>
     import Happy from "/artifacts/happydog.svg";
     import Sad from "/artifacts/saddog.svg";
-    import SuccessIcon from "/artifacts/success.svg";
-    import FailureIcon from "/artifacts/error.svg";
+    import { storeToRefs } from "pinia";
     import { useStore } from "../stores";
 
     const store = useStore();
     const { toggleModal } = store;
+    const { modalContent } = storeToRefs(store);
 
     const props = defineProps({ 
         title: {type: String, required: false, default: "Modal Title"}
     })
+
+    let DogIcon = Happy;
+    if(modalContent.value == "error")
+        DogIcon = Sad;
 </script>
 
 <template>
-    <div id="dog" :style="`background:url(${Happy});`" />
+    <div id="dog" :style="`background:url(${DogIcon});`" />
     <div id="modal">
         <div id="modal-title">
             <h1>{{ title }}</h1>

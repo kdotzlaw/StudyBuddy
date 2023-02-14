@@ -93,7 +93,7 @@
     }
 
     // Execute option
-    function openSettings(){
+    function settings(){
         setModal("Settings", "settings", "Made with ❤️ The Procrastinators © 2023");
     }
 
@@ -147,7 +147,7 @@
         </div>
         
         <div v-if="showOptions">
-            <button class="dropdown-tab" @click="openSettings">
+            <button class="dropdown-tab" @click="settings">
                 Manage Settings
             </button>
             <button class="dropdown-tab" @click="logOut">
@@ -155,10 +155,10 @@
             </button>
             <button class="dropdown-tab" @click="login">
                 Login
-          </button>
-          <button class="dropdown-tab" @click="register">
+            </button>
+            <button class="dropdown-tab" @click="register">
                 Register
-      </button>
+            </button>
         </div>
     </div>
 </template>

@@ -1,4 +1,6 @@
 <script setup>
+    import SuccessIcon from "/artifacts/success.svg";
+    import ErrorIcon from "/artifacts/error.svg";
     import Login from "./Login.vue";
     import Register from "./Register.vue"; 
     import Settings from "./Settings.vue";
@@ -10,7 +12,13 @@
 </script>
 
 <template>
-    <div v-if="contentId=='register'" class="form-ctr">
+    <div v-if="contentId=='success'" class="form-ctr">
+        <img :src="SuccessIcon" alt="Success Party hat!" :style="`height:6em;width:6em;`" />
+    </div>
+    <div v-else-if="contentId=='error'" class="form-ctr">
+        <img :src="ErrorIcon" alt="Error, snap" :style="`height:6em;width:6em;`" />
+    </div>
+    <div v-else-if="contentId=='register'" class="form-ctr">
         <Register/>
     </div>
     <div v-else-if="contentId=='login'" class="form-ctr">

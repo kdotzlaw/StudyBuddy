@@ -14,6 +14,7 @@ export const useStore = defineStore('store', () => {
     }
     function logoutUser(){
         userId.value = null;
+        studyClass.value = null;
     }
 
     // Global timer state in seconds
@@ -24,7 +25,7 @@ export const useStore = defineStore('store', () => {
     }
 
     // Class being studied
-    const studyClass = ref("COMP2080");
+    const studyClass = ref(null);
     function setStudyClass(newClass){
         studyClass.value = newClass;
     }

@@ -1,0 +1,4 @@
+flask
+flask_login
+pyodbc
+flask_unittest

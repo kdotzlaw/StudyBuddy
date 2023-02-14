@@ -5,35 +5,120 @@
       <!-- <div class="form-message form-message--error"></div> -->
       <div class="register-container">
         <div class="form-input-group">
-          <input type="text" id="signupUsername" class="form-input" autofocus placeholder="Username">
-          <div class="form-input-error-message"></div>
+          <input type="text" id="signupUsername" class="form-input" autofocus placeholder="Username" v-model="username">
+          <div class="form-input-error-message" v-if="usernameErrorMsg">{{ usernameErrorMsg }}</div>
         </div>
         <div class="form-input-group">
-            <input type="text" class="form-input" autofocus placeholder="Email Address">
-            <div class="form-input-error-message"></div>
+            <input type="text" id="signupEmail" class="form-input" autofocus placeholder="Email Address" v-model="email">
+            <div class="form-input-error-message" v-if="emailErrorMsg">{{ emailErrorMsg }}</div>
         </div>
         <div class="form-input-group">
-            <input type="password" class="form-input" autofocus placeholder="Password">
-            <div class="form-input-error-message"></div>
+            <input type="password" id="signupPassword" class="form-input" autofocus placeholder="Password" v-model="password">
+            <div class="form-input-error-message" v-if="passwordErrorMsg">{{ passwordErrorMsg }}</div>
         </div>
         <div class="form-input-group">
-            <input type="password" class="form-input" autofocus placeholder="Confirm password">
-            <div class="form-input-error-message"></div>
+            <input type="password" id="signupPasswordConfirm" class="form-input" autofocus placeholder="Confirm password" v-model="confirmPassword">
+            <div class="form-input-error-message" v-if="confirmpasswordErrorMsg">{{ confirmpasswordErrorMsg }}</div>
         </div>
-        <button class="register-button" type="submit">Register</button>
+        <button class="register-button" type="button" @click="validateForm">Register</button>
         <p class="form-text">
-            <a class="form-link" href="./" id="linkLogin">Already have an account? Sign in</a>
+            <!-- <a class="form-link" href="./" id="linkLogin">Already have an account? Sign in</a> -->
         </p>
       </div>
     </form>
   </div>
 </template>
 
-<script>
+<script setup>
+  import{ ref } from "vue"
 
-export default {
-  
-};
+  const usernameErrorMsg = ref('');
+  const emailErrorMsg = ref('');
+  const passwordErrorMsg = ref('');
+  const confirmpasswordErrorMsg = ref('');
+
+  function validateForm() {
+    let username = document.getElementById("signupUsername").value;
+    let email = document.getElementById("signupEmail").value;
+    let password = document.getElementById("signupPassword").value;
+    let confirmPassword = document.getElementById("signupPasswordConfirm").value;
+
+    var userNameValid = true;
+    var emailValid = true;
+    var passwordErrorValid = true;
+    var passwordConfirmErrorValid = true;
+    var passwordLengthValid = true;
+
+    if (username.length == 0) {
+      usernameErrorMsg.value = 'Username is required';
+      userNameValid = false;
+    } else {
+      usernameErrorMsg.value = '';
+      userNameValid = true;
+    }
+
+    if (email.length == 0) {
+      emailErrorMsg.value = 'Email is required';
+      emailValid = false;
+    } else {
+      emailErrorMsg.value = '';
+      emailValid = true;
+    }
+
+    if (password.length == 0) {
+      passwordErrorMsg.value = 'Password is required';
+    } else if(password.length < 8){
+      passwordErrorMsg.value = 'Password length must be more than 8 or more characters';
+      passwordErrorValid = false;
+    } else {
+      passwordErrorMsg.value = '';
+      passwordErrorValid = true;
+    }
+
+    if (confirmPassword.length == 0) {
+      confirmpasswordErrorMsg.value = 'Confirm password is required';
+      passwordConfirmErrorValid = false;
+    } else {
+      confirmpasswordErrorMsg.value = '';
+      passwordConfirmErrorValid = true;
+    }
+
+    if(passwordErrorValid && !(password == confirmPassword) && confirmPassword.length > 0){
+      passwordErrorMsg.value = 'Password does not match';
+      confirmpasswordErrorMsg.value = 'Password does not match';
+      passwordLengthValid = false;
+    } else{
+      passwordLengthValid = true;
+    }
+
+    if (userNameValid && emailValid && passwordErrorValid && passwordConfirmErrorValid && passwordLengthValid) {
+      console.log("Gotta fetch");
+      const host = 'http://localhost:5000';
+      const apiUrl = '/api/newuser'; 
+      const data = {
+        username: username,
+        email: email,
+        password: password
+      };
+      fetch(host + apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        mode: 'no-cors',
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Success:', data);
+        // Handle the response from the API here, e.g., show a success message or redirect the user to a different page
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        // Handle the error here, e.g., show an error message
+      });
+    }
+  }
 </script>
 
 <style>
@@ -143,7 +228,7 @@ body {
   background: var(--color-primary);
 }
 
-.register-buttonn:hover {
+.register-button:hover {
   background: var(--color-primary-dark);
 }
 

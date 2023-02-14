@@ -66,6 +66,7 @@ This feature will allow for users to level up their buddy.
 - Application logic : **Python**
 - **Microsoft SQL Server Management Studio** to manage a database written in **SQL**
 - Testing: **Unittest**
+- [Backend API](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/backend/api.yaml)
 
 ## Software Architecture
 

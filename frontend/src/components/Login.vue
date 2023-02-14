@@ -2,17 +2,16 @@
   <div class="container">
     <form class="form" id="login">
         <h1 class="form-title">Login</h1>
-        <div class="form-message form-message--error"></div>
         <div class="login-container">
           <div class="form-input-group">
-            <input type="text" class="form-input" autofocus placeholder="Username or email">
-            <div class="form-input-error-message"></div>
+            <input type="text" id="signinUsername" class="form-input" autofocus placeholder="Username" v-model="username">
+            <div class="form-input-error-message" v-if="usernameErrorMsg">{{ usernameErrorMsg }}</div>
           </div>
           <div class="form-input-group">
-              <input type="password" class="form-input" autofocus placeholder="Password">
-              <div class="form-input-error-message"></div>
+            <input type="password" id="signinPassword" class="form-input" autofocus placeholder="Password" v-model="password">
+            <div class="form-input-error-message" v-if="passwordErrorMsg">{{ passwordErrorMsg }}</div>
           </div>
-          <button class="login-button" type="submit">Continue</button>
+          <button class="login-button" type="button" @click="validateForm">Log In</button>
           <p class="form-text">
               <a href="#" class="form-link">Forgot your password?</a>
           </p>
@@ -24,11 +23,64 @@
   </div>
 </template>
 
-<script>
+<script setup>
+  import{ ref } from "vue"
 
-export default {
-  
-};
+  const usernameErrorMsg = ref('');
+  const passwordErrorMsg = ref('');
+
+  function validateForm() {
+    let username = document.getElementById("signinUsername").value;
+    let password = document.getElementById("signinPassword").value;
+
+    var userNameCheck = false;
+    var passwordErrorCheck = true;
+
+    console.log(username.length)
+
+    if (username.length == 0) {
+      usernameErrorMsg.value = 'Username is required';
+      userNameCheck = true;
+    } else {
+      usernameErrorMsg.value = '';
+      userNameCheck = false;
+    }
+
+    if (password.length == 0) {
+      passwordErrorMsg.value = 'Password is required';
+      passwordErrorCheck = true;
+    } else {
+      passwordErrorMsg.value = '';
+      passwordErrorCheck = false;
+    }
+
+    if (!userNameCheck && !passwordErrorCheck) {
+      const host = 'http://localhost:5000'; 
+      const apiUrl = '/api/login';
+      const data = {
+        username: username,
+        password: password
+      };
+      fetch(host + apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        mode: 'no-cors',
+        body: JSON.stringify(data)
+      })
+      .then(response => console.log(response))
+      .then(data => {
+        console.log('Success:', data);
+        // Handle the response from the API here, e.g., show a success message or redirect the user to a different page
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        // Handle the error here, e.g., show an error message
+      });
+    }
+  }
+
 </script>
 
 <style>

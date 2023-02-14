@@ -9,6 +9,7 @@
   import { useStore } from "./stores";
 
   import Login from "./components/Login.vue"
+  import Register from "./components/Register.vue"
 
   const store = useStore();
   const { setStudyTime } = store;
@@ -26,17 +27,20 @@
 
 <template>
   <Header />
+  
   <div id="workspace">
-    <Dashboard>
+    <!-- <Dashboard>
       <YayButton text="Click here to print 'Yay'" />
-    </Dashboard>
-   
+    </Dashboard> -->
+
+    <router-view></router-view>
   </div>
   <Wallpaper />
   <div v-if="isModalOpen" id="modal-ctr">
     <Modal :title="modalTitle">
       <!-- <div v-html="modalContent"></div> -->
       <Login></Login>
+      <!-- <Register></Register> -->
     </Modal>
   </div>
 </template>

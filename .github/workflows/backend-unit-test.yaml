@@ -7,6 +7,9 @@ on:
     branches: [ main ] # Run regression tests upon PR to main
     # No integration tests as of Sprint 2, so only unit tests will be ran
 
+    # Allows this workflow to be ran manually from the Actions tab
+    workflow_dispatch:
+
 jobs:
   run_unit_tests:
     runs-on: ubuntu-latest
@@ -22,6 +25,22 @@ jobs:
         with:
           python-version: '3.11.1'
 
+      - name: Install Packages and Dependencies
+        run:
+          pip install -r requirements.txt
+
+      - name: Install a SQL Server suite of tools
+        uses: potatoqualitee/mssqlsuite@v1.7
+        with:
+          install: sqlengine, sqlclient, sqlpackage, localdb
+          version: 2022
+
+      - name: Download and start the MSSQL container
+        run: docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=dbtools.IO" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2022-latest
+
+      - name: Connect to SQL Server
+        run: sqlcmd -S localhost -U sa -P dbatools.IO -d StudyBuddy.bak -Q "SELECT @@version;"
+
       - name: Run Unit Tests
         run:
-          python -m unittest discover -s ./backend/ -p "*_test.py"
+          python -m unittest discover -p "*_test.py"

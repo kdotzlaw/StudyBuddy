@@ -6,6 +6,7 @@
   import Wallpaper from "./components/Wallpaper.vue";
   import Modal from "./components/Modal.vue";
   import YayButton from "./components/Button.vue";
+  import ModalManager from "./components/ModalManager.vue";
   import { useStore } from "./stores";
 
   import Login from "./components/Login.vue"
@@ -13,7 +14,7 @@
 
   const store = useStore();
   const { setStudyTime } = store;
-  const { isModalOpen, modalTitle, modalContent } = storeToRefs(store);
+  const { isModalOpen, modalTitle, modalContent, modalRender } = storeToRefs(store);
   
   // Update timer every 0.5 second
   setInterval(updateTimer, 500)
@@ -38,9 +39,7 @@
   <Wallpaper />
   <div v-if="isModalOpen" id="modal-ctr">
     <Modal :title="modalTitle">
-      <!-- <div v-html="modalContent"></div> -->
-      <Login></Login>
-      <!-- <Register></Register> -->
+      <ModalManager :contentId="modalContent" :renderString="modalRender" />
     </Modal>
   </div>
 </template>

@@ -94,21 +94,21 @@
 
     // Execute option
     function openSettings(){
-        setModal("Settings");
+        setModal("Settings", "settings", "Made with ❤️ The Procrastinators © 2023");
     }
 
     function logOut(){
         logoutUser();
-        setModal("Log out", "You successfully logged out. See you soon!");
+        setModal("Log out", null, "You successfully logged out. See you soon!");
     }
 
     function login(){
         loginUser("user123");
-        setModal("", "<Login></Login>");
+        setModal("Login", "login");
     }
 
     function register(){
-        setModal("", "<Register></Register>");
+        setModal("Create Account", "register");
     }
 </script>
 

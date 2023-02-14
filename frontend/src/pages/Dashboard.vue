@@ -34,13 +34,6 @@
             <Accordion title="Choose a Class to Study for">
                 <ClassCards :reqs="reqs" />
             </Accordion>
-            <Accordion title="Choose a UI Skin">
-                <div class="skins">
-                    <div :class="`skin-preview skin-default`" @click="updateSkin('skin-default')" />
-                    <div :class="`skin-preview skin-forest`" @click="updateSkin('skin-forest')" />
-                    <div :class="`skin-preview skin-sunset`" @click="updateSkin('skin-sunset')" />
-                </div>
-            </Accordion>
         </div>
     </div>
 </template>
@@ -51,28 +44,6 @@
         display: flex;
         justify-content: space-between;
         margin: 5vh 0 10vh 0;
-    }
-
-    .skins{
-        display: flex;
-        margin: 1em 0 1em 0;
-    }
-
-    .skin-preview{
-        height: 4em;
-        width: 6em;
-        margin: 0 0.5em 0 0.5em;
-        border: 2px solid var(--gold);
-        border-radius: 0.5em;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: cover;
-        cursor: pointer;
-    }
-
-    .skin-preview:hover{
-        transition: 0.3s;
-        filter: brightness(110%) opacity(80%);
     }
 
     #buddy-ctr{

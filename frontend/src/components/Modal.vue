@@ -101,12 +101,14 @@
     }
     .filler:nth-child(3){
         border-color: var(--box);
-        border-top-left-radius: 4px;
-        border-top-right-radius: 4px;
+        border-right-style: none;
         z-index: 4;
     }
     .filler:nth-child(4){
         border-top-right-radius: 2em;
+        background: var(--richgold);
+        box-shadow: inset 0.2em -0.1em 0.8em rgba(0,0,0,0.4);
+        font-size: 130%
     }
 
 

@@ -37,11 +37,13 @@ export const useStore = defineStore('store', () => {
     }
 
     // Set modal contents
-    const modalTitle = ref("Hey!");
-    const modalContent = ref(stubContent);
-    function setModal(title="Hey!", content=stubContent){
+    const modalTitle = ref("Modal Title");
+    const modalContent = ref(null);
+    const modalRender = ref("");
+    function setModal(title="Modal Title", content=null, renderString=""){
         modalTitle.value = title;
         modalContent.value = content;
+        modalRender.value = renderString;
         toggleModal();
     }
 
@@ -55,7 +57,7 @@ export const useStore = defineStore('store', () => {
         userId, loginUser, logoutUser,
         studyTime, studyClass, setStudyTime, setStudyClass,
         isModalOpen, toggleModal,
-        modalTitle, modalContent, setModal,
+        modalTitle, modalContent, modalRender, setModal,
         uiSkin, updateSkin,
     }
 })

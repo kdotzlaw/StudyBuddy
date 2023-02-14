@@ -1,7 +1,6 @@
 <template>
   <div class="container">
     <form class="form" id="login">
-        <h1 class="form-title">Login</h1>
         <div class="login-container">
           <div class="form-input-group">
             <input type="text" id="signinUsername" class="form-input" autofocus placeholder="Username" v-model="username">

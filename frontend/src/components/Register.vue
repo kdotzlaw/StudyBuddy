@@ -1,8 +1,6 @@
 <template>
   <div>
     <form class="form " id="createAccount">
-      <h1 class="register-title">Create Account</h1>
-      <!-- <div class="form-message form-message--error"></div> -->
       <div class="register-container">
         <div class="form-input-group">
           <input type="text" id="signupUsername" class="form-input" autofocus placeholder="Username" v-model="username">

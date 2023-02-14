@@ -63,9 +63,7 @@ class dbTests(unittest.TestCase):
         self.assertIn(username, result.username)
         # remove user
         db.removeUser(username)
-# class tests
 
-# task tests
 
 class apiTest(flask_unittest.ClientTestCase):
     # assign flask app

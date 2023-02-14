@@ -36,7 +36,9 @@ jobs:
           version: 2022
 
       - name: Connect to SQL Server
-        run: sqlcmd -S localhost -U 123 -P 1234 -d StudyBuddy.bak -Q "SELECT @@version;"
+        run: sqlcmd -S localhost -E -d StudyBuddy.bak -Q "SELECT @@version;"
+
+      - name:
 
       - name: Run Unit Tests
         run:

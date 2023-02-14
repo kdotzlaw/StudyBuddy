@@ -33,6 +33,10 @@ jobs:
         uses: potatoqualitee/mssqlsuite@v1.7
         with:
           install: sqlengine
+          version: 2022
+
+      - name: Connect to SQL Server
+        run: sqlcmd -S localhost -U 123 -P 1234 -d StudyBuddy.bak -Q "SELECT @@version;"
 
       - name: Run Unit Tests
         run:

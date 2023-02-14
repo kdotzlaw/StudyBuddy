@@ -38,8 +38,6 @@ jobs:
       - name: Connect to SQL Server
         run: sqlcmd -S localhost -E -d StudyBuddy.bak -Q "SELECT @@version;"
 
-      - name:
-
       - name: Run Unit Tests
         run:
           python -m unittest discover -p "*_test.py"

@@ -90,20 +90,22 @@
     } else{
       passwordLengthValid = true;
     }
-    
 
-    if (!userNameValid && !emailValid && !passwordErrorValid && !passwordConfirmErrorValid && !passwordLengthValid) {
-      const apiUrl = '/api/login'; 
+    if (userNameValid && emailValid && passwordErrorValid && passwordConfirmErrorValid && passwordLengthValid) {
+      console.log("Gotta fetch");
+      const host = 'http://localhost:5000';
+      const apiUrl = '/api/newuser'; 
       const data = {
         username: username,
         email: email,
         password: password
       };
-      fetch(apiUrl, {
+      fetch(host + apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
+        mode: 'no-cors',
         body: JSON.stringify(data)
       })
       .then(response => response.json())

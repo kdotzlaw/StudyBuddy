@@ -55,19 +55,21 @@
     }
 
     if (!userNameCheck && !passwordErrorCheck) {
-      const apiUrl = '/api/login'; 
+      const host = 'http://localhost:5000'; 
+      const apiUrl = '/api/login';
       const data = {
-        username: this.username,
-        password: this.password
+        username: username,
+        password: password
       };
-      fetch(apiUrl, {
+      fetch(host + apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
+        mode: 'no-cors',
         body: JSON.stringify(data)
       })
-      .then(response => response.json())
+      .then(response => console.log(response))
       .then(data => {
         console.log('Success:', data);
         // Handle the response from the API here, e.g., show a success message or redirect the user to a different page

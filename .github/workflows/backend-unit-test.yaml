@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ main ] # Run regression tests upon PR to main
     # No integration tests as of Sprint 2, so only unit tests will be ran
-    
+
     # Allows this workflow to be ran manually from the Actions tab
     workflow_dispatch:
 
@@ -24,6 +24,10 @@ jobs:
         uses: actions/setup-python@v4.5.0
         with:
           python-version: '3.11.1'
+
+      - name: Install Packages and Dependencies
+        run:
+          pip install -r requirements.txt
 
       - name: Run Unit Tests
         run:

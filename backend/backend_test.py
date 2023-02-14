@@ -69,26 +69,23 @@ class apiTest(flask_unittest.ClientTestCase):
     # assign flask app
     app = server.app
 
+    # server.setTest(True)
+
     def setUp(self, client: FlaskClient):
         pass
 
     def tearDown(self, client: FlaskClient):
         pass
 
-
     def test_login(self, client: FlaskClient):
         # send post request to login api
-        resp = client.get("127.0.0.1:5000/")
-        # request = flask.testing.
-        self.assertStatus(resp, 200)
-        resp = client.post("/", json={'Username': 'testuser', 'Password': '123'})
-        # expect success
-        print(resp)
+        resp = client.post("/api/login", json={'username': 'ryan2023', 'password': 'password'})
+        # check the status
         self.assertStatus(resp, 200)
 
     def test_logout(self, client):
         # log in
-        resp = client.post('/api/login', json={'Username': 'testuser', 'Password': '123'})
+        resp = client.post('/api/login', json={'username': 'ryan2023', 'password': 'password'})
         # check valid login
         self.assertStatus(resp, 200)
         # send post request to log out
@@ -98,11 +95,13 @@ class apiTest(flask_unittest.ClientTestCase):
 
     def test_newuser(self, client):
         # send invalid login to ensure user doesn't exist
-        resp = client.post('/api/login', json={'username': 'newuser', 'password': 'newpassword'})
-        self.assertStatus(resp, 200)
+        resp = client.post('/api/login', json={'username': 'newuser', 'password': 'pass'})
+        self.assertStatus(resp, 400)
         # create user
-        resp = client.post('/api/newuser', json={'username': 'newuser', 'password': 'newpassword'})
-        resp = client.post('/api/login', json={'username': 'newuser', 'password': 'newpassword'})
+        resp = client.post('/api/newuser', json={'username': 'newuser', 'password': 'pass'})
+        self.assertStatus(resp, 200)
+        # log in as user
+        resp = client.post('/api/login', json={'username': 'newuser', 'password': 'pass'})
         self.assertStatus(resp, 200)
 
 

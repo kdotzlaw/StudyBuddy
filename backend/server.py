@@ -15,6 +15,10 @@ login_manager.login_view = 'login'
 users = {"testuser": {"username": "testuser", "password": "123"}}
 
 
+def setTest(boo):
+    app.config["TESTING"] = boo
+
+
 # tell flask how to load a user from a flask request and from its session
 class User(flask_login.UserMixin):
     pass
@@ -26,6 +30,7 @@ def user_check(username):
     else:
         selection = db.getUser(username)
     return selection
+
 
 # loads user from session
 @login_manager.user_loader
@@ -42,10 +47,11 @@ def user_loader(username):
     else:
         return None
 
+
 # loads user from flask request
 @login_manager.request_loader
 def request_loader(request):
-    username = request.form.get("Username")
+    username = request.get_json()['username']
     # check database for username
     selection = user_check(username)
     if app.testing:
@@ -74,17 +80,22 @@ def hello_world():
 # login api request
 @app.route("/api/login", methods=["POST"])
 def login():
+    # print("attempting login")
     # grab the username from the header
-    if flask.request.headers.get('username'):
+    # print(flask.request.get_json())
+    if flask.request.get_json() is not None:
         # username header exists
-        username = flask.request.headers.get('username')
+        username = flask.request.get_json()['username']
+        password = flask.request.get_json()['password']
+        # print(username)
+        # print(password)
         # check db for username and password
         # selection is a list of rows (SHOULD BE LENGTH 1)
         selection = user_check(username)
 
         if selection is None:
             # not in database
-            response = "Bad Request", 400
+            response = "Bad Request: User not found in database", 400
             return response
         else:
             # selection returned
@@ -96,7 +107,7 @@ def login():
                 uname = selection.username
                 pword = selection.password
 
-            if uname == username and pword == flask.request.headers.get('Password'):
+            if uname == username and pword == password:
                 user = User()
                 user.id = username
                 flask_login.login_user(user)
@@ -106,11 +117,12 @@ def login():
             else:
                 # invalid password
                 # send 401 bad request response
+                print("Incorrect password")
                 response = "Incorrect Password", 401
                 return response
     else:
         # send 400 bad request response
-        response = "Bad Request", 400
+        response = "Bad Request: Missing required JSON", 400
         return response
 
 
@@ -125,8 +137,8 @@ def logout():
 # create user api request
 @app.route("/api/newuser", methods=["POST"])
 def newuser():
-    username = flask.request.headers.get('Username')
-    password = flask.request.headers.get('Password')
+    username = flask.request.get_json()['username']
+    password = flask.request.get_json()['password']
     # check database for already existing user with the same name
     selection = db.getUser(username)
     if selection is None:

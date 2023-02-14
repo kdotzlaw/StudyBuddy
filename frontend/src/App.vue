@@ -27,11 +27,13 @@
 
 <template>
   <Header />
+  
   <div id="workspace">
-    <Dashboard>
+    <!-- <Dashboard>
       <YayButton text="Click here to print 'Yay'" />
-    </Dashboard>
-   
+    </Dashboard> -->
+
+    <router-view></router-view>
   </div>
   <Wallpaper />
   <div v-if="isModalOpen" id="modal-ctr">

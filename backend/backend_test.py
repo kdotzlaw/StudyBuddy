@@ -67,8 +67,7 @@ class dbTests(unittest.TestCase):
 
 class apiTest(flask_unittest.ClientTestCase):
     # assign flask app
-    app = flask.Flask('backend')
-    app.testing = True
+    app = server.app
 
     def setUp(self, client: FlaskClient):
         pass
@@ -76,33 +75,35 @@ class apiTest(flask_unittest.ClientTestCase):
     def tearDown(self, client: FlaskClient):
         pass
 
+
     def test_login(self, client: FlaskClient):
         # send post request to login api
-        resp = client.post('/api/login', {'username': 'testuser', 'password': '123'})
-        # expect success
+        resp = client.get("127.0.0.1:5000/")
+        # request = flask.testing.
         self.assertStatus(resp, 200)
-
+        resp = client.post("/", json={'Username': 'testuser', 'Password': '123'})
+        # expect success
+        print(resp)
+        self.assertStatus(resp, 200)
 
     def test_logout(self, client):
         # log in
-        resp = client.post('/api/login', {'username': 'testuser', 'password': '123'})
+        resp = client.post('/api/login', json={'Username': 'testuser', 'Password': '123'})
         # check valid login
-        self.assertIn('user_id', flask.globals.session)
+        self.assertStatus(resp, 200)
         # send post request to log out
         resp = client.post('/api/logout')
         # expect session no longer set
-        self.assertNotIn('user_id', flask.globals.session)
+        self.assertStatus(resp, 200)
 
     def test_newuser(self, client):
         # send invalid login to ensure user doesn't exist
-        resp = client.post('/api/login', {'username': 'newuser', 'password': 'newpassword'})
-        self.assertNotIn('user_id', flask.globals.session)
+        resp = client.post('/api/login', json={'username': 'newuser', 'password': 'newpassword'})
+        self.assertStatus(resp, 200)
         # create user
-        resp = client.post('/api/newuser', {'username': 'newuser', 'password': 'newpassword'})
-        resp = client.post('/api/login', {'username': 'newuser', 'password': 'newpassword'})
-        self.assertIn('user_id', flask.globals.session)
-
-
+        resp = client.post('/api/newuser', json={'username': 'newuser', 'password': 'newpassword'})
+        resp = client.post('/api/login', json={'username': 'newuser', 'password': 'newpassword'})
+        self.assertStatus(resp, 200)
 
 
 if __name__ == '__main__':

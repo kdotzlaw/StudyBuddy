@@ -17,13 +17,13 @@ Our primary stakeholders and stakeholders for this application are students who 
 # Core Features
 The Study Buddy will have at least four functional features and one non-functional feature implemented.
 
-### I. User Accounts
+### I. User Accounts (sprint 2)
 This feature will allow users to create accounts that will allow them to sign in and out of the Study Buddy to save their progress.
 
-### II. Track Study Time
+### II. Track Study Time (sprint 2)
 This feature will allow users to track their study time and be presented with the progress of their time usage over a period of time. 
 
-### III. Calendar
+### III. Calendar 
 This feature will allow users to store any important dates and reminders and have it displayed in a scrollable list. This list will display the up coming important dates and how close it is to that date.
 
 ### IV. Grade Calculator

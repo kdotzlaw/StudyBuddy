@@ -8,7 +8,8 @@
     const { updateSkin } = store;
 
     onMounted(() => {
-        //document.getElementById("");
+        let selected = document.querySelector(`.skins .${uiSkin.value}`);
+        selected.classList.add("skin-active");
     });
 
     function updateTheSkin(skinId){
@@ -26,7 +27,7 @@
 <template>
     <h2>Update UI Skin</h2>
     <div class="skins">
-        <div :class="`skin-preview skin-default skin-active`" @click="updateTheSkin('skin-default')" />
+        <div :class="`skin-preview skin-default`" @click="updateTheSkin('skin-default')" />
         <div :class="`skin-preview skin-forest`" @click="updateTheSkin('skin-forest')" />
         <div :class="`skin-preview skin-sunset`" @click="updateTheSkin('skin-sunset')" />
     </div>

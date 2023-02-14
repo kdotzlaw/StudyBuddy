@@ -132,6 +132,7 @@
         border: 1px solid var(--richgold);
         border-radius: 2em;
         background: var(--darkerteal);
+        overflow-x: scroll;
     }
 
     #modal-inner-content{

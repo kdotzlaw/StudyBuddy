@@ -62,6 +62,7 @@ The Study buddy will have a capacity of 100 users and can handle 1000 requests p
 - Application logic : **Python**
 - **Microsoft SQL Server Management Studio** to manage a database written in **SQL**
 - Testing: **Unittest**
+- [Backend API](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/backend/api.yaml)
 
 ## Software Architecture
 

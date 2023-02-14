@@ -1,6 +1,13 @@
 import unittest
+
+import flask.app
+import flask_unittest
+from flask.testing import FlaskClient
+
 import db
+import server
 import pyodbc
+import tempfile
 
 
 class dbTests(unittest.TestCase):
@@ -29,7 +36,8 @@ class dbTests(unittest.TestCase):
     def test_getUser(self):
         username = 'katDot'
         result = db.getUser(username)
-        self.assertIn(username, result)
+
+        self.assertIn(username, result.username)
 
     '''
     Test passes if user is sucessfully inserted into the db (asserting that user appears in retrieved record)
@@ -38,6 +46,7 @@ class dbTests(unittest.TestCase):
 
     def test_removeUser(self):
         username = "test"
+        db.removeUser(username)
         password = "testing"
         db.createAccount(username, password)
         # remove user
@@ -51,9 +60,50 @@ class dbTests(unittest.TestCase):
         db.createAccount(username, password)
         # retrieve the mock user from the db
         result = db.getUser(username)
-        self.assertIn(username, result)
-        #remove user
+        self.assertIn(username, result.username)
+        # remove user
         db.removeUser(username)
+
+
+class apiTest(flask_unittest.ClientTestCase):
+    # assign flask app
+    app = server.app
+
+    def setUp(self, client: FlaskClient):
+        pass
+
+    def tearDown(self, client: FlaskClient):
+        pass
+
+
+    def test_login(self, client: FlaskClient):
+        # send post request to login api
+        resp = client.get("127.0.0.1:5000/")
+        # request = flask.testing.
+        self.assertStatus(resp, 200)
+        resp = client.post("/", json={'Username': 'testuser', 'Password': '123'})
+        # expect success
+        print(resp)
+        self.assertStatus(resp, 200)
+
+    def test_logout(self, client):
+        # log in
+        resp = client.post('/api/login', json={'Username': 'testuser', 'Password': '123'})
+        # check valid login
+        self.assertStatus(resp, 200)
+        # send post request to log out
+        resp = client.post('/api/logout')
+        # expect session no longer set
+        self.assertStatus(resp, 200)
+
+    def test_newuser(self, client):
+        # send invalid login to ensure user doesn't exist
+        resp = client.post('/api/login', json={'username': 'newuser', 'password': 'newpassword'})
+        self.assertStatus(resp, 200)
+        # create user
+        resp = client.post('/api/newuser', json={'username': 'newuser', 'password': 'newpassword'})
+        resp = client.post('/api/login', json={'username': 'newuser', 'password': 'newpassword'})
+        self.assertStatus(resp, 200)
 
 
 if __name__ == '__main__':

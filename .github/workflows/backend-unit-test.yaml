@@ -32,11 +32,14 @@ jobs:
       - name: Install a SQL Server suite of tools
         uses: potatoqualitee/mssqlsuite@v1.7
         with:
-          install: sqlengine
+          install: sqlengine, sqlclient, sqlpackage, localdb
           version: 2022
 
+      - name: Download and start the MSSQL container
+        run: docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=dbtools.IO" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2022-latest
+
       - name: Connect to SQL Server
-        run: sqlcmd -S localhost -U sa -d StudyBuddy.bak -Q "SELECT @@version -P;"
+        run: sqlcmd -S localhost -U sa -P dbatools.IO -d StudyBuddy.bak -Q "SELECT @@version;"
 
       - name: Run Unit Tests
         run:

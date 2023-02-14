@@ -83,8 +83,8 @@ def login():
         selection = user_check(username)
 
         if selection is None:
-            # multiple entries in database with same username (PROBLEM)
-            response = "Server Error", 500
+            # not in database
+            response = "Bad Request", 400
             return response
         else:
             # selection returned

@@ -116,7 +116,32 @@ class dbTests(unittest.TestCase):
         record = db.getClasses(username)
         for i in range(len(record)):
             self.assertNotIn(className,record[i])
-    #def test_completeClass(self):
+    def test_completeClass(self):
+        username = 'katDot'
+        className = "COMP 2150"
+        timeslot = "9:00:00.0000000"
+        # add new class to complete
+        db.addClass(username, className, timeslot)
+        db.completeClass(username, className)
+        record = db.getSingleClass(username, "COMP 2150")
+        self.assertEqual(1, record.is_complete)
+        #remove
+        db.removeClass(username, className)
+    '''def test_addStudyTime_base(self):
+        #studytime is 0 by default
+        #t = datetime.time(hour=1,minute=0, second=0)
+        username = "katDot"
+        className = "COMP 2150"
+        timeslot = "9:00:00.0000000"
+        db.addClass(username,className,timeslot)
+        print(db.getSingleClass(username, className))
+        #base = db.addClass(username, className, timeslot)
+        totalTime = db.addStudyTime(username, className, 1.30)
+        self.assertEqual(totalTime.studyTime, 1.30)
+    def test_addStudyTime_existing(self):
+    
+    def test_editClass(self):
+    '''
 
 class apiTest(flask_unittest.ClientTestCase):
     # assign flask app

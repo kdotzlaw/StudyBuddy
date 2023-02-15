@@ -1,14 +1,15 @@
 <script setup>
     import ArrowBack from "/artifacts/arrowback.svg";
     import Gear from "/artifacts/gear.svg";
+    import Play from "/artifacts/play.svg";
     import Pause from "/artifacts/pausegold.svg";
     import RequirementCards from "../components/RequirementCards.vue";
-    import { onMounted } from "vue";
+    import { ref, computed, onMounted } from "vue";
     import { storeToRefs } from "pinia";
     import { useStore } from "../stores";
     
     const store = useStore();
-    const { userId } = storeToRefs(store);
+    const { userId, studyClass } = storeToRefs(store);
     const { updateSkin, setPageName } = store;
 
     onMounted(() => {
@@ -17,11 +18,84 @@
 
     // Stubbed requirements for now
     let reqs = [
-        { name: "COMP2080", timeStudied: 2.5 },
-        { name: "COMP4350", timeStudied: 6.2 },
-        { name: "COMP4620", timeStudied: 0.0 },
-        { name: "COMP4380", timeStudied: 10.0 },
+        { name: "Quiz 5", type: "quiz", due: new Date("February 12, 2023"), goal: "C" },
+        { name: "Catch up", type: "haha", due: new Date("February 17, 2023"), goal: "C" },
+        { name: "Assignment 4", type: "assignment", due: new Date("March 1, 2023"), goal: "C" },
+        { name: "Quiz 6", type: "quiz", due: new Date("March 5, 2023"), goal: "B" },
+        { name: "Assignment 5", type: "assignment", due: new Date("March 8, 2023"), goal: "C" },
+        { name: "Midterm Exam", type: "test", due: new Date("March 9, 2023"), goal: "B" },
+        { name: "Become a Bee", type: "dne", due: new Date("October 10, 2023"), goal: "" },
     ]
+
+    let classInfo = {
+        name: "COMP2080", // primary key
+        timeStudied: 2.3,
+        grade: "C+",
+        details: {
+            name: "Analysis of Algorithms",
+            section: "A02",
+            room: "Armes 201"
+        },
+        professor: {
+            name: "Hello surname",
+            email: "hellosur@email.com",
+            phone: "204-505-6060",
+            officeLocation: "Machray 200",
+            officeHours: "5:00-6:00"
+        }
+    }
+
+    // Reflect study state
+    const studyNote = computed(() => {
+        if(studyClass.value == classInfo.name)
+            return "Pause session";
+        return "Study now";
+    });
+    const studyIcon = computed(() => {
+        if(studyClass.value == classInfo.name)
+            return Pause;
+        return Play;
+    });
+
+    // Filter requirements by current or expired
+    const current = ref(true);
+    let today = Date.now();
+
+    const currentReqs = computed(() => {
+        return reqs.filter(req => {
+            let diffTime = req.due - today;
+            let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            if(diffDays > -1)
+                return req;
+        })
+    });
+
+    const expiredReqs = computed(() => {
+        return reqs.filter(req => {
+            let diffTime = req.due - today;
+            let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            if(diffDays < 0)
+                return req;
+        })
+    });
+
+    function changeView(){
+        current.value = !current.value;
+    }
+
+    // Filter by current or expired requirements
+    const reqSet = computed(() => {
+        if(current.value)
+            return currentReqs.value;
+        return expiredReqs.value;
+    });
+
+    const viewNote = computed(() => {
+        if(current.value)
+            return "View expired requirements";
+        return "View current requirements";
+    });
+
 </script>
 
 <template>
@@ -38,32 +112,32 @@
             </div>
             <div id="hero-items">
                 <div>
-                    <h1> COMP2080 </h1>
-                    <h2> Studied 2 hours this week </h2>
+                    <h1> {{ classInfo.name }} </h1>
+                    <h2> Studied {{ classInfo.timeStudied }} hours this week </h2>
                 </div>
                 <div>
                     <button class="button round">
-                        <img id="study-ctrl" :src="Pause" alt="Pause study session" />
+                        <img id="study-ctrl" :src="studyIcon" alt="Pause study session" />
                     </button>
-                    <span id="study-note"> Study now </span>
+                    <span id="study-note"> {{ studyNote }} </span>
                 </div>
             </div>
         </section>
         <section v-if="userId && reqs" id="class-items">
             <div id="req-ctr">
                 <div id="req-head">
-                    <button class="button bar">
+                    <button id="add-req" class="button bar">
                         Add Requirements
                     </button>
-                    <button class="button bar">
-                        View elapsed requirements
+                    <button id="change-view" class="button bar" @click="changeView">
+                        {{ viewNote }}
                     </button>
                 </div>
-                <RequirementCards />
+                <RequirementCards :reqs="reqSet" />
             </div>
             <div>
                 <div id="grade-ctr">
-                    <h1 id="grade"> C+ </h1>
+                    <h1 id="grade"> {{ classInfo.grade }} </h1>
                     <div id="grade-note" class="delius">
                         Wow! <br/>
                         You are doing okay
@@ -77,15 +151,15 @@
                     <table>
                         <tr>
                             <td> Name </td>
-                            <td> Analysis of Algorithms </td>
+                            <td> {{ classInfo.details.name }} </td>
                         </tr>
                         <tr>
                             <td> Section </td>
-                            <td> A02 </td>
+                            <td> {{ classInfo.details.section }} </td>
                         </tr>
                         <tr>
                             <td> Room </td>
-                            <td> Armes 201 </td>
+                            <td> {{ classInfo.details.room }} </td>
                         </tr>
                     </table>
                     
@@ -93,23 +167,23 @@
                     <table>
                         <tr>
                             <td> Name </td>
-                            <td> Hello Surname </td>
+                            <td> {{ classInfo.professor.name }} </td>
                         </tr>
                         <tr>
                             <td> Email </td>
-                            <td> hellosur@email.com </td>
+                            <td> {{ classInfo.professor.email }} </td>
                         </tr>
                         <tr>
                             <td> Phone </td>
-                            <td> 204-505-6060 </td>
+                            <td> {{ classInfo.professor.phone }} </td>
                         </tr>
                         <tr>
                             <td> Office Location </td>
-                            <td> Machray 200 </td>
+                            <td> {{ classInfo.professor.officeLocation }} </td>
                         </tr>
                         <tr>
                             <td> Office Hours </td>
-                            <td> 5:00-6:00 </td>
+                            <td> {{ classInfo.professor.officeHours }} </td>
                         </tr>
                     </table>
                 </div>
@@ -224,6 +298,11 @@
         font-family: 'Croissant One', cursive;
     }
 
+    .button:hover{
+        transition: 0.3s;
+        background: var(--button-shade);
+    }
+
     .round{
         height: 7em;
         width: 7em;
@@ -253,10 +332,23 @@
         justify-content: space-between;
     }
 
+    #change-view{
+        background: var(--lightteal);
+        border: 1px solid var(--black);
+        border-radius: 0;
+        box-shadow: none;
+        color: var(--text-disabled);
+    }
+
+    #change-view:hover{
+        transition: 0.3s;
+        background: var(--teal);
+    }
+
     #grade-ctr{
         width: 100%;
         background: var(--black);
-        padding: 1.5em 0 1.5em 0;
+        padding: 1.5em 0 2.5em 0;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -278,24 +370,6 @@
 
     #details-ctr table{
         width: 100%;
-    }
-
-    @keyframes spin{
-        0%{
-            transform: rotate(0deg);
-        }
-        100%{
-            transform: rotate(360deg);
-        }
-    }
-
-    @keyframes hop{
-        0%,100%{
-            transform: translateY(0px);
-        }
-        60%{
-            transform: translateY(-15px);
-        }
     }
 
     @media screen and (max-width: 800px) {

@@ -39,15 +39,12 @@ class dbTests(unittest.TestCase):
         result = db.getUser(username)
 
         self.assertIn(username, result.username)
-
     '''
-    Test passes if user is sucessfully inserted into the db (asserting that user appears in retrieved record)
-    Mock user is removed at the end of the test
+    Test passes if mock user successfully removed from db
     '''
-
     def test_removeUser(self):
         username = "test"
-        db.removeUser(username)
+        #db.removeUser(username)
         password = "testing"
         db.createAccount(username, password)
         # remove user
@@ -55,6 +52,10 @@ class dbTests(unittest.TestCase):
         result = db.getAllUsers()
         self.assertNotIn(username, result)
 
+    '''
+    Test passes if user is sucessfully inserted into the db (asserting that user appears in retrieved record)
+    Mock user is removed at the end of the test
+    '''
     def test_createAccount(self):
         username = "test"
         password = "testing"
@@ -66,7 +67,14 @@ class dbTests(unittest.TestCase):
         db.removeUser(username)
     def test_getClasses(self):
         username = "katDot"
+# Class Tests
+    #def test_getClasses(self):
 
+    def test_ClassId(self):
+        username = 'katDot'
+        className = 'Comp 4350'
+        record = db.getClassID(username,className)
+        self.assertEqual(3,record)
 
 class apiTest(flask_unittest.ClientTestCase):
     # assign flask app

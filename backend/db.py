@@ -54,12 +54,12 @@ POSTCONDITION: formatted records of all users returned
 '''
 
 
-def getAllUsers():
+'''def getAllUsers():
     temp = cursor.execute("SELECT * FROM Users")
     for [uID, username, password, user_email, xp] in temp:
         result = str(uID) + " " + str(username) + " " + str(password) + " " + str(user_email) + " " + str(xp)
     return result
-
+'''
 
 # Class Methods
 '''
@@ -71,7 +71,7 @@ POSTCONDITION: all classes for user 'username' have been retrieved (if the class
 def getClasses(username):
     # get user id
     userID = getUser(username).uID
-    return cursor.execute("SELECT * FROM Classes WHERE uID = ? AND is_complete = 0", userID).fetchall()
+    return cursor.execute("SELECT * FROM Classes WHERE FK_uID = ? AND is_complete = 0", userID).fetchall()
 
 
 '''
@@ -82,7 +82,7 @@ POSTCONDITION: returns classID for specified user and specified class
 
 def getClassID(username, className):
     userID = getUser(username).uID
-    return cursor.execute("SELECT cID FROM Classes WHERE uID = ? AND className =? ", userID, className).cID
+    return cursor.execute("SELECT cID FROM Classes WHERE FK_uID = ? AND className =? ", userID, className).cID
 
 
 '''
@@ -94,11 +94,11 @@ POSTCONDITION: a single class is returned when given username and class id
 def getSingleClass(username, className):
     userID = getUser(username).uID
     classID = getClassID(className)
-    return cursor.execute("SELECT * FROM Classes WHERE uID = ? AND cID = ?", userID, classID)
+    return cursor.execute("SELECT * FROM Classes WHERE FK_uID = ? AND cID = ?", userID, classID)
 
 
 def addClass(username, className, timeslot):
-    prep_stmt = "INSERT INTO Classes (className, timeslot, uID) VALUES (?,?,?)"
+    prep_stmt = "INSERT INTO Classes (className, timeslot, FK_uID) VALUES (?,?,?)"
     id = getUser(username).uID
     return cursor.execute(prep_stmt, className, timeslot, id)
 
@@ -113,7 +113,7 @@ POSTCONDITION: specified class marked complete
 def completeClass(username, className):
     classID = getClassID(className)
     userID = getUser(username).uID
-    return cursor.execute("UPDATE Classes SET is_complete = 1 WHERE cID = ? AND uID = ?", classID, userID)
+    return cursor.execute("UPDATE Classes SET is_complete = 1 WHERE cID = ? AND FK_uID = ?", classID, userID)
 
 
 
@@ -128,7 +128,7 @@ def addStudyTime(username, className, t):
     record = getClassID(username, className)
     classID = record.cID
     uTime = record.study_time + t
-    return cursor.execute("UPDATE Classes SET study_time = ? WHERE cID = ? AND uID = ?", uTime, classID,
+    return cursor.execute("UPDATE Classes SET study_time = ? WHERE cID = ? AND FK_uID = ?", uTime, classID,
                           userID).study_time
 
 
@@ -140,16 +140,16 @@ POSTCONDITION: list of tasks per class retrieved
 def getTaskList(username, className):
     userID = getUser(username).uID
     classID = getClassID(className)
-    return cursor.execute("SELECT * FROM Tasks WHERE uID = ? AND cID = ?", userID, classID).fetchall()
+    return cursor.execute("SELECT * FROM Tasks WHERE FK_uID = ? AND FK_cID = ?", userID, classID).fetchall()
 
 def getTaskID(username, className, taskName):
     userID = getUser(username).uID
     classID = getClassID(className)
-    return cursor.execute("SELECT * FROM Tasks WHERE uID = ? AND cID = ? AND task_name = ?", userID, classID, taskName).tID
+    return cursor.execute("SELECT * FROM Tasks WHERE FK_uID = ? AND FK_cID = ? AND task_name = ?", userID, classID, taskName).tID
 
 def completeTask(username, className, taskName, grade):
     taskID = getTaskID(username, className,taskName)
     userID = getUser(username).uID
     classID = getClassID()
-    return cursor.execute("UPDATE Tasks SET task_grade = ? WHERE uID = ? AND cID = ? AND tID = ?", grade, userID, classID, taskID)
+    return cursor.execute("UPDATE Tasks SET task_grade = ? WHERE FK_uID = ? AND FK_cID = ? AND tID = ?", grade, userID, classID, taskID)
 

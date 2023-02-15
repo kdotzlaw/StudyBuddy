@@ -29,6 +29,7 @@
 
 <script setup>
   import{ ref } from "vue"
+  import validate from "../logic/validate"
 
   const usernameErrorMsg = ref('');
   const emailErrorMsg = ref('');
@@ -47,7 +48,7 @@
     var passwordConfirmErrorValid = true;
     var passwordLengthValid = true;
 
-    if (username.length == 0) {
+    if (validate.isInputEmpty(username)) {
       usernameErrorMsg.value = 'Username is required';
       userNameValid = false;
     } else {
@@ -55,7 +56,7 @@
       userNameValid = true;
     }
 
-    if (email.length == 0) {
+    if (validate.isInputEmpty(email)) {
       emailErrorMsg.value = 'Email is required';
       emailValid = false;
     } else {
@@ -63,9 +64,9 @@
       emailValid = true;
     }
 
-    if (password.length == 0) {
+    if (validate.isInputEmpty(password)) {
       passwordErrorMsg.value = 'Password is required';
-    } else if(password.length < 8){
+    } else if(isValidPassword(password)){
       passwordErrorMsg.value = 'Password length must be more than 8 or more characters';
       passwordErrorValid = false;
     } else {
@@ -73,7 +74,7 @@
       passwordErrorValid = true;
     }
 
-    if (confirmPassword.length == 0) {
+    if (validate.isInputEmpty(confirmPassword)) {
       confirmpasswordErrorMsg.value = 'Confirm password is required';
       passwordConfirmErrorValid = false;
     } else {
@@ -81,7 +82,7 @@
       passwordConfirmErrorValid = true;
     }
 
-    if(passwordErrorValid && !(password == confirmPassword) && confirmPassword.length > 0){
+    if(passwordErrorValid && !(password == confirmPassword) && !validate.isInputEmpty(confirmPassword)){
       passwordErrorMsg.value = 'Password does not match';
       confirmpasswordErrorMsg.value = 'Password does not match';
       passwordLengthValid = false;

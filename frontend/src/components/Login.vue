@@ -24,6 +24,7 @@
 
 <script setup>
   import{ ref } from "vue"
+  import validate from "../logic/validate"
 
   const usernameErrorMsg = ref('');
   const passwordErrorMsg = ref('');
@@ -37,7 +38,7 @@
 
     console.log(username.length)
 
-    if (username.length == 0) {
+    if (validate.isInputEmpty(username)) {
       usernameErrorMsg.value = 'Username is required';
       userNameCheck = true;
     } else {
@@ -45,7 +46,7 @@
       userNameCheck = false;
     }
 
-    if (password.length == 0) {
+    if (validate.isInputEmpty(password)) {
       passwordErrorMsg.value = 'Password is required';
       passwordErrorCheck = true;
     } else {

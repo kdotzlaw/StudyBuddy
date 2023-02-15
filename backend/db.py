@@ -9,7 +9,8 @@ import pyodbc
 conn = (r'Driver=SQL Server;'
         r'Server=(local);'
         r'Database=StudyBuddy;'
-        r'Trusted_Connection=yes'
+        r'username=SA;'
+        r'password=dbtools.IO'
         )
 cnxn = pyodbc.connect(conn)
 cursor = cnxn.cursor()

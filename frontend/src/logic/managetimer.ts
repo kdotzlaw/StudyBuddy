@@ -16,7 +16,7 @@ function manageTimer(userId: String, course: String){
         initTimer(userId, course);
     }
     else{
-        // Destroy Timer when user not authenticated or logged out
+        // No Timer when user not authenticated or logged out
         if(!userId){
             setTimer(null);
             setStudyTime(0);
@@ -24,6 +24,7 @@ function manageTimer(userId: String, course: String){
         }
         // Start new Timer instance for new class
         else if(sessionTimer.value.getSessionUser() != userId || sessionTimer.value.getCurrentClass() != course){
+            // commitTimer(userId, course, studyTime.value);
             initTimer(userId, course);
         }
         // Pause Timer for current class
@@ -44,4 +45,37 @@ function initTimer(userId: String, course: String){
     setTimer(new Timer(userId, course));
 }
 
-export default { manageTimer }
+/* commitTimer
+ *   Writes total accumulated time to backend before Timer destroy
+ *   Triggers: New timer init replacing old instance AND Logging out
+ *   @params - userId: string , classId: string, total: number 
+ */
+function commitTimer(userId: String, classId: String, total: number){
+    // Using hypothetical endpoint for now
+    const host = 'http://localhost:5000';
+    const apiUrl = '/api/update_time_studied';
+    const data = {
+        username: userId,
+        classname: classId,
+        added: total
+    };
+    fetch(host + apiUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        mode: 'no-cors',
+        body: JSON.stringify(data)
+    })
+        .then(response => console.log(response))
+        .then(data => {
+            console.log('Success:', data);
+            // Handle the response from the API here, e.g., show a success message or redirect the user to a different page
+        })
+    .catch(error => {
+        console.error('Error:', error);
+        // Handle the error here, e.g., show an error message
+    });
+}
+
+export default { manageTimer, initTimer, commitTimer }

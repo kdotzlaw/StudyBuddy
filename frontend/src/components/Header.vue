@@ -11,15 +11,12 @@
     
     // Temporary env vars
     let displayName = "My Buddy";
-    const { loginUser, logoutUser } = store;
-    const { userId, studyClass, pageName } = storeToRefs(store);
+    const { loginUser, logoutUser, setStudyClass, setStudyTime, setTimer } = store;
+    const { userId, studyClass, studyTime, pageName } = storeToRefs(store);
 
     /*===========================
        TIMER MANAGEMENT
      *===========================*/
-
-    // Current study time in milliseconds
-    const { studyTime } = storeToRefs(store);
 
     // Parse seconds into hh:mm:ss time string
     function toTimeString(s){
@@ -61,6 +58,15 @@
     }
 
     function logOut(){
+        // Commit timer totals to database
+        // Mgmt.commitTimer(userId, studyClass, studyTime);
+        
+        // Destroy timer and purge relevant stores
+        setStudyClass(null);
+        setStudyTime(0);
+        setTimer(null);
+
+        // Purge userId
         logoutUser();
         setModal("Log out", "success", "You successfully logged out. See you soon!");
     }

@@ -11,15 +11,6 @@ on:
 jobs:
   run_unit_tests:
     runs-on: ubuntu-latest
-    services:
-      mssql:
-        image: mcr.microsoft.com/mssql/server:2022-latest
-        env:
-          SA_PASSWORD: admin
-          ACCEPT_EULA: 'Y'
-        ports:
-          - 1433:1433
-
     defaults:
       run:
         working-directory: ./backend
@@ -42,15 +33,15 @@ jobs:
       #    install: sqlengine, sqlclient, sqlpackage, localdb
       #    version: 2022
 
-      #- name: Download and start the MSSQL container
-      #  run:
-      #    docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=dbtools.IO" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2022-latest
+      - name: Download and start the MSSQL container
+        run:
+          docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=dbtools.IO" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2022-latest
 
-      - name: Compile and Test from Build Script
-        shell: pwsh
-        run: .\build.ps1 ci-pr $
-        env:
-          ConnectionStrings__MyConnString: "Server=localhost,1433;Initial Catalog=StudyBuddy.bak;User Id=sa;Password=admin;"
+      #- name: Compile and Test from Build Script
+      #  shell: pwsh
+      #  run: .\build.ps1 ci-pr $
+      #  env:
+      #    ConnectionStrings__MyConnString: "Server=localhost,1433;Initial Catalog=StudyBuddy.bak;User Id=sa;Password=admin;"
 
       - name: Connect to SQL Server
         run:

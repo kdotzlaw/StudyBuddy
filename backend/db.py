@@ -71,7 +71,10 @@ POSTCONDITION: all classes for user 'username' have been retrieved (if the class
 def getClasses(username):
     # get user id
     userID = getUser(username).uID
-    return cursor.execute("SELECT * FROM Classes WHERE FK_uID = ? AND is_complete = 0", userID).fetchall()
+    # count all records
+    #count = cursor.execute("SELECT COUNT(*) FROM Classes WHERE FK_uID = ? ")
+    record = cursor.execute("SELECT * FROM Classes WHERE FK_uID = ? AND is_complete = 0", userID).fetchall()
+    return record
 
 
 '''
@@ -82,8 +85,8 @@ POSTCONDITION: returns classID for specified user and specified class
 
 def getClassID(username, className):
     userID = getUser(username).uID
-    return cursor.execute("SELECT cID FROM Classes WHERE FK_uID = ? AND className =? ", userID, className).cID
-
+    record = cursor.execute("SELECT cID FROM Classes WHERE FK_uID = ? AND class_Name =? ", userID, className).fetchone()
+    return record.cID
 
 '''
 PRECONDITION: no classes retrieved
@@ -93,23 +96,26 @@ POSTCONDITION: a single class is returned when given username and class id
 
 def getSingleClass(username, className):
     userID = getUser(username).uID
-    classID = getClassID(className)
-    return cursor.execute("SELECT * FROM Classes WHERE FK_uID = ? AND cID = ?", userID, classID)
+    classID = getClassID(username, className)
+    return cursor.execute("SELECT * FROM Classes WHERE FK_uID = ? AND cID = ?", userID, classID).fetchone()
 
-
+# returns the record of the class added
 def addClass(username, className, timeslot):
-    prep_stmt = "INSERT INTO Classes (className, timeslot, FK_uID) VALUES (?,?,?)"
+    prep_stmt = "INSERT INTO Classes (class_Name, timeslot, FK_uID) VALUES (?,?,?)"
     id = getUser(username).uID
     return cursor.execute(prep_stmt, className, timeslot, id)
 
-
-
+def removeClass(username, className):
+    id = getUser(username).uID
+    classID = getClassID(username,className)
+    record = cursor.execute("DELETE FROM Classes WHERE FK_uID = ? AND cID = ?", id, classID)
+    return record
 '''
 PRECONDITION: all classes marked uncomplete
 POSTCONDITION: specified class marked complete
 '''
 
-
+# returns record of newly completed class - doesnt remove class from db
 def completeClass(username, className):
     classID = getClassID(className)
     userID = getUser(username).uID
@@ -128,8 +134,9 @@ def addStudyTime(username, className, t):
     record = getClassID(username, className)
     classID = record.cID
     uTime = record.study_time + t
-    return cursor.execute("UPDATE Classes SET study_time = ? WHERE cID = ? AND FK_uID = ?", uTime, classID,
-                          userID).study_time
+    record = cursor.execute("UPDATE Classes SET studyTime = ? WHERE cID = ? AND FK_uID = ?", uTime, classID,
+                          userID)
+    return record.studyTime
 
 
 # Tasks
@@ -145,7 +152,8 @@ def getTaskList(username, className):
 def getTaskID(username, className, taskName):
     userID = getUser(username).uID
     classID = getClassID(className)
-    return cursor.execute("SELECT * FROM Tasks WHERE FK_uID = ? AND FK_cID = ? AND task_name = ?", userID, classID, taskName).tID
+    record = cursor.execute("SELECT * FROM Tasks WHERE FK_uID = ? AND FK_cID = ? AND task_Name = ?", userID, classID, taskName)
+    return record.tID
 
 def completeTask(username, className, taskName, grade):
     taskID = getTaskID(username, className,taskName)

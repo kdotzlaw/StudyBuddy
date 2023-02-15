@@ -1,3 +1,4 @@
+import datetime
 import unittest
 
 import flask.app
@@ -39,12 +40,14 @@ class dbTests(unittest.TestCase):
         result = db.getUser(username)
 
         self.assertIn(username, result.username)
+
     '''
     Test passes if mock user successfully removed from db
     '''
+
     def test_removeUser(self):
         username = "test"
-        #db.removeUser(username)
+        # db.removeUser(username)
         password = "testing"
         db.createAccount(username, password)
         # remove user
@@ -56,6 +59,7 @@ class dbTests(unittest.TestCase):
     Test passes if user is sucessfully inserted into the db (asserting that user appears in retrieved record)
     Mock user is removed at the end of the test
     '''
+
     def test_createAccount(self):
         username = "test"
         password = "testing"
@@ -65,16 +69,54 @@ class dbTests(unittest.TestCase):
         self.assertIn(username, result.username)
         # remove user
         db.removeUser(username)
+
+    # Class Tests
+    '''
+    Test passes if given strings are present in the record retrieved
+    '''
     def test_getClasses(self):
         username = "katDot"
-# Class Tests
-    #def test_getClasses(self):
+        c1 = "COMP 4350"
+        c2 = "COMP 3820"
+        classes = db.getClasses(username)
+        self.assertIn(c1, classes[0])
+        self.assertIn(c2, classes[1])
+
+    '''
+    Test passes if the class ID from the record with username & className matches hardcoded value (3)
+    '''
 
     def test_ClassId(self):
         username = 'katDot'
         className = 'Comp 4350'
-        record = db.getClassID(username,className)
-        self.assertEqual(3,record)
+        record = db.getClassID(username, className)
+        self.assertEqual(3, record)
+    def test_getSingleClass(self):
+        username = 'katDot'
+        className = "COMP 4350"
+        record = db.getSingleClass(username, className)
+        self.assertIn(className, record)
+    def test_addClass(self):
+        username = 'katDot'
+        className = "COMP 2080"
+        timeslot = "16:00:00.0000000"
+        db.addClass(username, className, timeslot)
+        result = db.getSingleClass(username, className)
+        self.assertIn(className, result)
+        self.assertIn(timeslot, result)
+        #remove class once done
+        db.removeClass(username,className)
+    def test_removeClass(self):
+        username = 'katDot'
+        className = "COMP 2150"
+        timeslot = "9:00:00.0000000"
+        db.addClass(username,className,timeslot)
+        #remove it
+        db.removeClass(username, className)
+        record = db.getClasses(username)
+        for i in range(len(record)):
+            self.assertNotIn(className,record[i])
+    #def test_completeClass(self):
 
 class apiTest(flask_unittest.ClientTestCase):
     # assign flask app

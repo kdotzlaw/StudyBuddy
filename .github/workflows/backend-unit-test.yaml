@@ -46,8 +46,13 @@ jobs:
       - name: Connect to SQL Server
         run:
           # sqlcmd -S localhost -U sa -P dbtools.IO -d StudyBuddy -Q "SELECT @@version;"
-          sqlcmd -S localhost -U sa -P dbtools.IO -d tempdb -Q "RESTORE DATABASE StudyBuddy FROM DISK='StudyBuddy.bak'"
-
+          sqlcmd -S localhost -U sa -P dbtools.IO -d tempdb -Q "RESTORE DATABASE [StudyBuddy] FROM DISK=N'./StudyBuddy.bak'"
+      - name: Execute SQL Server
+        run:
+          # sqlcmd -S localhost -U sa -P dbtools.IO -d StudyBuddy -Q "SELECT @@version;"
+          sqlcmd -S localhost -U sa -P dbtools.IO -d tempdb -Q "GO"
       - name: Run Unit Tests
         run:
           python -m unittest discover -p "*_test.py"
+          USE [master]
+

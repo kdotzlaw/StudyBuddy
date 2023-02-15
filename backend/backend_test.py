@@ -21,7 +21,8 @@ class dbTests(unittest.TestCase):
             conn = (r'Driver=SQL Server;'
                     r'Server=(local);'
                     r'Database=StudyBuddy;'
-                    r'Trusted_Connection=yes'
+                    r'username=SA;'
+                    r'password=dbtools.IO'
                     )
             cnxn = pyodbc.connect(conn)
         except Exception:
@@ -63,6 +64,8 @@ class dbTests(unittest.TestCase):
         self.assertIn(username, result.username)
         # remove user
         db.removeUser(username)
+    def test_getClasses(self):
+        username = "katDot"
 
 
 class apiTest(flask_unittest.ClientTestCase):

@@ -31,16 +31,17 @@
   import{ ref } from "vue"
   import validate from "../logic/validate"
 
+  let username, email, password, confirmPassword;
   const usernameErrorMsg = ref('');
   const emailErrorMsg = ref('');
   const passwordErrorMsg = ref('');
   const confirmpasswordErrorMsg = ref('');
 
   function validateForm() {
-    let username = document.getElementById("signupUsername").value;
-    let email = document.getElementById("signupEmail").value;
-    let password = document.getElementById("signupPassword").value;
-    let confirmPassword = document.getElementById("signupPasswordConfirm").value;
+    username = document.getElementById("signupUsername").value;
+    email = document.getElementById("signupEmail").value;
+    password = document.getElementById("signupPassword").value;
+    confirmPassword = document.getElementById("signupPasswordConfirm").value;
 
     var userNameValid = true;
     var emailValid = true;
@@ -66,7 +67,7 @@
 
     if (validate.isInputEmpty(password)) {
       passwordErrorMsg.value = 'Password is required';
-    } else if(isValidPassword(password)){
+    } else if(validate.isValidPassword(password)){
       passwordErrorMsg.value = 'Password length must be more than 8 or more characters';
       passwordErrorValid = false;
     } else {

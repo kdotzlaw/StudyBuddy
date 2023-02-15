@@ -26,6 +26,7 @@
   import{ ref } from "vue"
   import validate from "../logic/validate"
 
+  let username, password;
   const usernameErrorMsg = ref('');
   const passwordErrorMsg = ref('');
 

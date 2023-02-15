@@ -17,6 +17,7 @@ export const useStore = defineStore('store', () => {
     const pageName = ref("Dashboard");
     function setPageName(newName){
         pageName.value = newName;
+        return pageName.value
     }
 
     // User ID
@@ -33,7 +34,7 @@ export const useStore = defineStore('store', () => {
     const studyTime = ref(0);
     function setStudyTime(time){
         if(time)
-            studyTime.value = time;
+          studyTime.value = time;
     }
 
     // Class being studied

@@ -37,15 +37,15 @@ jobs:
         run:
           docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=dbtools.IO" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2022-latest
 
-      #- name: Compile and Test from Build Script
-      #  shell: pwsh
-      #  run: .\build.ps1 ci-pr $
-      #  env:
-      #    ConnectionStrings__MyConnString: "Server=localhost,1433;Initial Catalog=StudyBuddy.bak;User Id=sa;Password=admin;"
+      - name: Compile and Test from Build Script
+        shell: pwsh
+        run: .\build.ps1 ci-pr $
+        env:
+          ConnectionStrings__MyConnString: "Server=localhost,1433;Initial Catalog=StudyBuddy.bak;User Id=sa;SA_PASSWORD=dbtools.IO;"
 
-      - name: Connect to SQL Server
-        run:
-          sqlcmd -S localhost -U 'sa' -P 'dbatools.IO' -d StudyBuddy.bak -Q "SELECT @@version;"
+      #- name: Connect to SQL Server
+      #  run:
+      #    sqlcmd -S localhost -U sa -P dbatools.IO -d StudyBuddy.bak -Q "SELECT @@version;"
 
       - name: Run Unit Tests
         run:

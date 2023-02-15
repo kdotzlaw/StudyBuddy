@@ -15,18 +15,16 @@
 
 <template>
     <div id="classCards">
-     
         <div v-if="reqs.length==0" :class="`classCard addNew`"> + </div>
         <div v-for="req in reqs" :class="`classCard studyClass`" @click="setStudyClass(req.name)">
-            <router-link to="/test">
-            <h3> {{ req.name }} </h3>
-             </router-link>
+            <router-link to="/class">
+                <h3> {{ req.name }} </h3>
+            </router-link>
             <div>
                 <span class="material-symbols-outlined">timer</span>
                 &nbsp; {{ req.timeStudied }} hrs 
             </div>
         </div>
-   
     </div>
 </template>
 

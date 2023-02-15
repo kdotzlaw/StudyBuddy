@@ -7,6 +7,12 @@ let stubContent = `
 `;
 
 export const useStore = defineStore('store', () => {
+    // Current page name
+    const pageName = ref("Dashboard");
+    function setPageName(newName){
+        pageName.value = newName;
+    }
+
     // User ID
     const userId = ref(null);
     function loginUser(newId){
@@ -54,6 +60,7 @@ export const useStore = defineStore('store', () => {
     }
 
     return { 
+        pageName, setPageName,
         userId, loginUser, logoutUser,
         studyTime, studyClass, setStudyTime, setStudyClass,
         isModalOpen, toggleModal,

@@ -10,7 +10,7 @@
     // Temporary env vars
     let displayName = "My Buddy";
     const { loginUser, logoutUser } = store;
-    const { userId, studyClass } = storeToRefs(store);
+    const { userId, studyClass, pageName } = storeToRefs(store);
 
     /*===========================
        TIMER MANAGEMENT
@@ -99,7 +99,7 @@
 
     function logOut(){
         logoutUser();
-        setModal("Log out", null, "You successfully logged out. See you soon!");
+        setModal("Log out", "success", "You successfully logged out. See you soon!");
     }
 
     function login(){
@@ -115,7 +115,7 @@
 <template>
     <div id="header">
         <h1 class="pageNameSection">
-            Page Name
+            {{ pageName }}
         </h1>
         <div v-if="studyClass" class="timerSection">
             <div>Currently studying for <b>{{ studyClass }}</b></div>
@@ -172,7 +172,7 @@
         color: var(--fadegold);
         background: var(--darkteal);
         display: grid;
-        grid-template-columns: 20% 1fr 20%;
+        grid-template-columns: 25% 1fr 20%;
         grid-gap: 5%;
         text-align: center;
         align-items: center;
@@ -246,6 +246,11 @@
         height: 12vh;
         width: 100%;
         cursor: pointer;
+        font-family: 'Gabriela', serif;
+    }
+
+    #header-dropdown .dropdown-tab{
+        font-size: 15px;
     }
 
     .dropdown-tab:not(:nth-child(1)){

@@ -2,12 +2,17 @@
     import Accordion from "../components/Accordion.vue";
     import ClassCards from "../components/ClassCards.vue";
     import Buddy from "../components/Buddy.vue";
+    import { onMounted } from "vue";
     import { storeToRefs } from "pinia";
     import { useStore } from "../stores";
     
     const store = useStore();
     const { userId } = storeToRefs(store);
-    const { updateSkin } = store;
+    const { updateSkin, setPageName } = store;
+
+    onMounted(() => {
+        setPageName("Dashboard");
+    });
 
     // Stubbed requirements for now
     let reqs = [

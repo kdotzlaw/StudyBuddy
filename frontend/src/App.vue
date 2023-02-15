@@ -5,7 +5,6 @@
   import Dashboard from "./pages/Dashboard.vue";
   import Wallpaper from "./components/Wallpaper.vue";
   import Modal from "./components/Modal.vue";
-  import YayButton from "./components/Button.vue";
   import ModalManager from "./components/ModalManager.vue";
   import { useStore } from "./stores";
 
@@ -30,10 +29,6 @@
   <Header />
   
   <div id="workspace">
-    <!-- <Dashboard>
-      <YayButton text="Click here to print 'Yay'" />
-    </Dashboard> -->
-
     <router-view></router-view>
   </div>
   <Wallpaper />

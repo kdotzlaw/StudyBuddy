@@ -45,7 +45,8 @@ jobs:
 
       - name: Connect to SQL Server
         run:
-          sqlcmd -S localhost -U sa -P dbtools.IO -d StudyBuddy.bak -Q "SELECT @@version;"
+          #sqlcmd -S localhost -U sa -P dbtools.IO -d StudyBuddy.bak -Q "SELECT @@version;"
+          sqlcmd -S localhost -U sa -P dbtools.IO -d tempdb -Q "SELECT @@version;"
 
       - name: Run Unit Tests
         run:

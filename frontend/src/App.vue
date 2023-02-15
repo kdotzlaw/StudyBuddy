@@ -13,13 +13,13 @@
 
   const store = useStore();
   const { setStudyTime } = store;
-  const { isModalOpen, modalTitle, modalContent, modalRender } = storeToRefs(store);
+  const { sessionTimer, isModalOpen, modalTitle, modalContent, modalRender } = storeToRefs(store);
   
-  // Update timer every 0.5 second
+  // Refresh timer every 0.5 second
   setInterval(updateTimer, 500)
   function updateTimer(){
-    if(globalThis.sessionTimer){
-      let elapsed = globalThis.sessionTimer.getTime();
+    if(sessionTimer.value){
+      let elapsed = sessionTimer.value.getTime();
       setStudyTime(parseInt(elapsed/1000));
     }
   }

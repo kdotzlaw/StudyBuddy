@@ -8,6 +8,12 @@ let stubContent = `
 
 export const useStore = defineStore('store', () => {
     // Current page name
+    const sessionTimer = ref(null);
+    function setTimer(newTimer){
+        sessionTimer.value = newTimer;
+    }
+
+    // Current page name
     const pageName = ref("Dashboard");
     function setPageName(newName){
         pageName.value = newName;
@@ -59,7 +65,8 @@ export const useStore = defineStore('store', () => {
         uiSkin.value = skin;
     }
 
-    return { 
+    return {
+        sessionTimer, setTimer,
         pageName, setPageName,
         userId, loginUser, logoutUser,
         studyTime, studyClass, setStudyTime, setStudyClass,

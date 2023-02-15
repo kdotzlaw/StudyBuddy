@@ -2,8 +2,10 @@
     import { storeToRefs } from "pinia";
     import { ref } from "vue";
     import Logo from "/assets/logo.png";
-    import PauseIcon from "/artifacts/pausegold.png";
+    import Play from "/artifacts/play.svg";
+    import Pause from "/artifacts/pausegold.png";
     import Timer from "../logic/timer";
+    import Mgmt from "../logic/managetimer";
     import { useStore } from "../stores";
     const store = useStore();
     
@@ -15,45 +17,6 @@
     /*===========================
        TIMER MANAGEMENT
      *===========================*/
-
-    let { setStudyTime } = store;
-    
-    /* manageTimer
-     *   Starts new Timer instance if no Timer running
-     *   Pauses current Timer if provided class or user params are current
-     *   Create new Timer instance if provided class or user params are new
-     *   @params - userId: string , course: string
-     */
-    function manageTimer(userId, course){
-        if(!globalThis.sessionTimer){
-            initTimer(userId, course);
-        }
-        else{
-            // Destroy Timer when user not authenticated or logged out
-            if(!userId){
-                globalThis.sessionTimer = null;
-                setStudyTime(0);
-                studyTime.value = 0;
-            }
-            // Start new Timer instance for new class
-            else if(globalThis.sessionTimer.getSessionUser() != userId || globalThis.sessionTimer.getCurrentClass() != course){
-                initTimer(userId, course);
-            }
-            // Pause Timer for current class
-            else{
-                let timer = globalThis.sessionTimer;
-                if(timer.isPaused())
-                    timer.resume();
-                else
-                    timer.pause();
-            }
-        }
-    }
-
-    // Initiate Timer class
-    function initTimer(userId, course){
-        globalThis.sessionTimer = new Timer(userId, course);
-    }
 
     // Current study time in milliseconds
     const { studyTime } = storeToRefs(store);
@@ -121,12 +84,12 @@
             <div>Currently studying for <b>{{ studyClass }}</b></div>
             <button 
                 id="timerExpress"
-                @click="manageTimer(userId,studyClass)"
+                @click="Mgmt.manageTimer(userId,studyClass)"
                 @mouseover="switchPause(true)"
                 @mouseleave="switchPause(false)"
             >
                 <div v-if="showPause">
-                    <img :src=PauseIcon alt="Pause study session" />
+                    <img :src=Pause alt="Pause study session" />
                 </div>
                 <div v-else>
                     {{ toTimeString(studyTime) }}
@@ -215,7 +178,7 @@
 
     #timerExpress div{
         font-size: 1.2em;
-        width: 100%;
+        min-width: 3em;
         box-shadow: inset 2px 2px 4px rgba(0,0,0,0.3);
         padding: 0 0.5em 0 0.5em;
     }

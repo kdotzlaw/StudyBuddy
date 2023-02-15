@@ -4,13 +4,15 @@
     import Play from "/artifacts/play.svg";
     import Pause from "/artifacts/pausegold.svg";
     import RequirementCards from "../components/RequirementCards.vue";
+    import Timer from "../logic/timer";
+    import Mgmt from "../logic/managetimer";
     import { ref, computed, onMounted } from "vue";
     import { storeToRefs } from "pinia";
     import { useStore } from "../stores";
     
     const store = useStore();
-    const { userId, studyClass } = storeToRefs(store);
-    const { updateSkin, setPageName } = store;
+    const { sessionTimer, userId, studyClass } = storeToRefs(store);
+    const { updateSkin, setPageName, setStudyClass } = store;
 
     onMounted(() => {
         setPageName("Class View");
@@ -47,12 +49,12 @@
 
     // Reflect study state
     const studyNote = computed(() => {
-        if(studyClass.value == classInfo.name)
+        if(studyClass.value == classInfo.name && !sessionTimer.value.isPaused())
             return "Pause session";
         return "Study now";
     });
     const studyIcon = computed(() => {
-        if(studyClass.value == classInfo.name)
+        if(studyClass.value == classInfo.name && !sessionTimer.value.isPaused())
             return Pause;
         return Play;
     });
@@ -96,6 +98,11 @@
         return "View current requirements";
     });
 
+    // Start or pause study for this class
+    function manageStudy(){
+        setStudyClass(classInfo.name);
+        Mgmt.manageTimer(userId.value,classInfo.name);
+    }
 </script>
 
 <template>
@@ -116,8 +123,8 @@
                     <h2> Studied {{ classInfo.timeStudied }} hours this week </h2>
                 </div>
                 <div>
-                    <button class="button round">
-                        <img id="study-ctrl" :src="studyIcon" alt="Pause study session" />
+                    <button class="button round" @click="manageStudy">
+                        <img id="study-ctrl" :src="studyIcon" :alt="studyNote" />
                     </button>
                     <span id="study-note"> {{ studyNote }} </span>
                 </div>

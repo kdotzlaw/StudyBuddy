@@ -1,11 +1,9 @@
 name: Frontend Docker Deployment
 
 on:
+  workflow_dispatch:    # Allows this workflow to be ran manually from the Actions tab
   push:
     branches: [ main ]
-
-    # Allows this workflow to be ran manually from the Actions tab
-    workflow_dispatch:
 
 env:
   IMAGE_NAME: capillae/studybuddy

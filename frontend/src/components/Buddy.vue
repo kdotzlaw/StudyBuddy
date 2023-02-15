@@ -47,9 +47,10 @@
         z-index: 4;
         right: 0;
         height: 8em;
-        width: 11em;
+        width: 9em;
         background: var(--black);
         border-radius: 50%;
+        padding: 0 1.5em 0 1.5em;
         display: grid;
         justify-items: center;
         align-items: center;

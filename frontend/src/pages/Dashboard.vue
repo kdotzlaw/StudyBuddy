@@ -29,7 +29,7 @@
             <Buddy :showLevel=true chat="Buddy's body is being produced" />
         </div>
         <div v-else id="buddy-ctr">
-            <Buddy chat="Ples log in" />
+            <Buddy chat="Login or Register to use Study Buddy" />
         </div>
         <div v-if="userId">
             <Accordion title="Calendar Overview" :toggled="false">

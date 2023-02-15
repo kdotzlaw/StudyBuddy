@@ -119,14 +119,14 @@
             <button class="dropdown-tab" @click="settings">
                 Manage Settings
             </button>
-            <button class="dropdown-tab" @click="logOut">
-                Log Out
-            </button>
-            <button class="dropdown-tab" @click="login">
+            <button v-if="!userId" class="dropdown-tab" @click="login">
                 Login
             </button>
-            <button class="dropdown-tab" @click="register">
+            <button v-if="!userId" class="dropdown-tab" @click="register">
                 Register
+            </button>
+            <button v-else-if="userId" class="dropdown-tab" @click="logOut">
+                Log Out
             </button>
         </div>
     </div>

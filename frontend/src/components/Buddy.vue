@@ -1,6 +1,8 @@
 <script setup>
-    import TitleSq from "/artifacts/buddytemp.svg"
+    import TitleSq from "/artifacts/buddytemp.svg";
+    import Corgi from "./Corgi.vue";
     import { ref } from "vue";
+    import { useMotion } from "@vueuse/motion";
 
     const props = defineProps({ 
         showLevel: {type: Boolean, required: false, default: false},
@@ -8,21 +10,41 @@
     })
 
     const buddy = ref(`<p>Buddy failed to load</p>`);
+    const chatBalloon = ref();
+    const chatBalloonCurve = ref();
 
-    // Fetch your animated SVG buddy!
-    ;(async ()=>{
-        const res = await fetch(TitleSq);
-        const src = await res.text();
-        buddy.value = src;
-    })()
+    const chatAnimation = (initOpacity) => {
+        return {
+            initial: {
+                x: -75,
+                y: -15,
+                rotate: -40,
+                opacity: 0.5
+            },
+            enter: {
+                x: 0,
+                y: 0,
+                rotate: 0,
+                opacity: 1,
+                transition:{
+                    duration: 300,
+                    ease: "easeIn"
+                }
+            }
+        }
+    }
+    useMotion(chatBalloon, chatAnimation(0.5));
+    useMotion(chatBalloonCurve, chatAnimation(0));
 </script>
 
 <template>
-    <div id="buddy" v-html="buddy" />
-    <div v-if="props.chat" id="chat-balloon" class="delius">
+    <div id="buddy">
+        <Corgi />
+    </div>
+    <div v-if="props.chat" id="chat-balloon" class="delius" ref="chatBalloon">
         <p>{{ chat }}</p>
     </div>
-    <div id="chat-balloon-curve" />
+    <div v-if="props.chat" id="chat-balloon-curve" ref="chatBalloonCurve"/>
     <div v-if="showLevel" id="level-card" class="delius">
         Level 0
     </div>
@@ -61,8 +83,8 @@
     #chat-balloon-curve{
         position: absolute;
         z-index: 4;
-        right: 22%;
-        top: 20%;
+        right: 7em;
+        top: 6em;
         height: 4em;
         width: 6em;
         background: radial-gradient(circle at top left, transparent 60%, var(--black) 61%);
@@ -73,7 +95,7 @@
     #level-card{
         position: absolute;
         z-index: 2;
-        top: 50%;
+        bottom: 3.5em;
         background: var(--box);
         width: 50%;
         height: max-content;

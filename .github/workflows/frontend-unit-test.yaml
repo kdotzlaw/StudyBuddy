@@ -1,14 +1,12 @@
 name: Frontend Unit & Regression Test
 
 on:
+  workflow_dispatch:    # Allows this workflow to be ran manually from the Actions tab
   push:
     branches: [ frontend ]
   pull_request:
     branches: [ main ] # Run regression tests upon PR to main
     # No integration tests as of Sprint 2, so only unit tests will be ran
-
-    # Allows this workflow to be ran manually from the Actions tab
-    workflow_dispatch:
 
 jobs:
   run_unit_tests:

@@ -31,7 +31,7 @@ class dbTests(unittest.TestCase):
                     r'Server=(local);'
                     r'Database=StudyBuddy;'
                     r'Trusted_Connection=yes'
-                    )'''
+                    )''
             cnxn = pyodbc.connect(conn)
         except Exception:
             self.fail("Connection failed")
@@ -39,7 +39,7 @@ class dbTests(unittest.TestCase):
 
     '''
     Test passes if the correct record information is retrieved for the specified username
-    Test fails if incorrect record returned, or 
+    Test fails if incorrect record returned, or
     '''
 
     def test_getUser(self):

@@ -135,8 +135,7 @@ paths:
         - name: added
           in: body
           required: true
-          content:
-            type: integer
+          example: 1024
       responses:
         200:
           description: "The time in the associated class was increased successfully"
@@ -160,28 +159,40 @@ components:
       properties:
         cID:
           type: integer
+          example: 15
         class_Name:
           type: string
+          example: "Comp 1000"
         timeslot:
           type: time
+          example: "11:11"
         is_complete:
           type: integer
+          example: 0
         studyTime:
           type: float
+          example: 1234.56
         section:
           type: string
+          example: "A02"
         classroom:
           type: string
+          example: "EITC 405"
         prof_Name:
           type: string
+          example: "Prof. Professor"
         prof_Email:
           type: string
+          example: "profprof@uni.edu"
         prof_Phone:
           type: string
+          example: "123-456-7890"
         prof_Office:
           type: string
+          example: "EITC 406"
         prof_Hours:
           type: time
+          example: "10:00"
     ArrayOfClasses:
       type: array
       properties:

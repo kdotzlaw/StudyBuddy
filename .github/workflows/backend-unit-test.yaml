@@ -49,8 +49,9 @@ jobs:
       - name: Install a SQL Server suite of tools
         uses: potatoqualitee/mssqlsuite@v1.7
         with:
-          install: sqlengine, sqlclient, sqlpackage, localdb
+          install: sqlengine, sqlclient, sqlpackage
           version: 2019
+          sa-password: dbtools.IO
 
       #- name: Download and start the MSSQL container
       #  run:

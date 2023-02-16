@@ -49,7 +49,7 @@ jobs:
 
       - name: Wait for SQL Server to start
         run:
-          dockerize -wait tcp://localhost:1433 -timeout 1m
+          sleep 90s
 
       #- name: Compile and Test from Build Script
       #  shell: pwsh

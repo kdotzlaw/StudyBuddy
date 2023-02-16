@@ -80,6 +80,9 @@ paths:
           description: "The session cookie for the logged in user"
           in: header
           required: true
+        - name: classname
+          in: url
+          required: true
       responses:
         200:
           description: "The user has received the class: {classname}"
@@ -129,13 +132,11 @@ paths:
         - name: classname
           in: url
           required: true
-          content:
-            application/json: { }
         - name: added
           in: body
           required: true
           content:
-            application/json: { }
+            type: integer
       responses:
         200:
           description: "The time in the associated class was increased successfully"

@@ -143,6 +143,34 @@ paths:
           description: "The request maker wasn't logged in, or forgot to send the session cookie"
         500:
           description: "Internal server error, problem with backend logic or database"
+  /class/{classname}/task:
+    get:
+      tags: ["Tracking Related"]
+      summary: "Get all the tasks for {classname}"
+      description: "Get all the tasks for {classname} associated with the current user"
+      operationId: alltasks
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+        - name: classname
+          in: url
+          required: true
+          description: "The name of the class to get the associated tasks for"
+      responses:
+        200:
+          description: "The user has received all their classes"
+          content:
+            application/json:
+              schemas:
+                $ref: #/components/schemas/ArrayOfTasks
+        400:
+          description: "The user requested tasks for a class that doesn't exist"
+        401:
+          description: "The request maker wasn't logged in, or forgot to send the session cookie"
+        500:
+          description: "Internal server error, problem with backend logic or database"
 
 tags:
   - name: Account Related
@@ -154,6 +182,32 @@ tags:
 
 components:
   schemas:
+    task:
+      type: object
+      properties:
+        tID:
+          type: integer
+          example: "7"
+        taskname:
+          type: string
+          example: "Assignment 4"
+        deadline:
+          type: date
+          example: "2023-04-04"
+        taskweight:
+          type: float
+          example: "30.5"
+        taskgrade:
+          type: float
+          example: "90"
+        taskxp:
+          type: float
+          example: "999.99"
+    ArrayOfTasks:
+      type: array
+      properties:
+        task:
+          $ref: '#/components/schemas/task'
     class:
       type: object
       properties:

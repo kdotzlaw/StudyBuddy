@@ -174,6 +174,18 @@ def getClass(classname):
         return res
 
 
+@app.route("/api/class/<classname>/task")
+@flask_login.login_required
+def all_tasks(classname):
+    username = flask_login.current_user.get_id()
+    res = db.getSingleClass(username, classname)
+    if res is None:
+        # no class found
+        return "Bad Request: No class found"
+    res = db.getTaskList(username, classname)
+    return res
+
+
 @app.route("/api/class", methods=["GET"])
 @flask_login.login_required
 def all_classes():

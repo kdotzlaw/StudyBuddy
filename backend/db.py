@@ -5,13 +5,19 @@ and SQL prepared statements
 import pyodbc
 
 # connection information can change as we include security
-
+# PROD CONNECTION STRING
 conn = (r'Driver=ODBC Driver 17 for SQL Server;'
         r'Server=localhost;'
         r'Database=StudyBuddy;'
         r'UID=sa;'
         r'PWD=dbtools.IO'
         )
+# DEV CONNECTION STRING - D.N.T
+'''conn = (r'Driver=SQL Server;'
+        r'Server=(local);'
+        r'Database=StudyBuddy;'
+        r'Trusted_Connection=yes'
+        )'''
 cnxn = pyodbc.connect(conn)
 cursor = cnxn.cursor()
 
@@ -34,7 +40,7 @@ POSTCONDITION: account has been created and added to users table with given info
 
 def createAccount(username, password):
     # cursor.execute("INSERT INTO Users (username, password) VALUES (?, ?)",username, password)
-    prep_stmt = "INSERT INTO Users (username, password) VALUES (?,?)"
+    prep_stmt = "INSERT INTO Users (username, password) VALUES (?,?);"
     cursor.execute(prep_stmt, username, password)
 
 
@@ -45,7 +51,7 @@ POSTCONDITION: user with 'username' has been removed from the db
 
 
 def removeUser(username):
-    cursor.execute("DELETE FROM Users WHERE username = ?", username)
+    cursor.execute("DELETE FROM Users WHERE username = ?;", username)
 
 
 '''
@@ -53,12 +59,12 @@ PRECONDITION: no users have been retrieved
 POSTCONDITION: formatted records of all users returned
 '''
 
-'''def getAllUsers():
-    temp = cursor.execute("SELECT * FROM Users")
+def getAllUsers():
+    temp = cursor.execute("SELECT * FROM Users;")
     for [uID, username, password, user_email, xp] in temp:
         result = str(uID) + " " + str(username) + " " + str(password) + " " + str(user_email) + " " + str(xp)
     return result
-'''
+
 
 # Class Methods
 '''
@@ -72,7 +78,7 @@ def getClasses(username):
     userID = getUser(username).uID
     # count all records
     # count = cursor.execute("SELECT COUNT(*) FROM Classes WHERE FK_uID = ? ")
-    record = cursor.execute("SELECT * FROM Classes WHERE FK_uID = ? AND is_complete = 0", userID).fetchall()
+    record = cursor.execute("SELECT * FROM Classes WHERE FK_uID = ? AND is_complete = 0;", userID).fetchall()
     return record
 
 
@@ -84,7 +90,7 @@ POSTCONDITION: returns classID for specified user and specified class
 
 def getClassID(username, className):
     userID = getUser(username).uID
-    record = cursor.execute("SELECT cID FROM Classes WHERE FK_uID = ? AND class_Name =? ", userID, className).fetchone()
+    record = cursor.execute("SELECT cID FROM Classes WHERE FK_uID = ? AND class_Name =?;", userID, className).fetchone()
     return record.cID
 
 
@@ -97,12 +103,12 @@ POSTCONDITION: a single class is returned when given username and class id
 def getSingleClass(username, className):
     userID = getUser(username).uID
     classID = getClassID(username, className)
-    return cursor.execute("SELECT * FROM Classes WHERE FK_uID = ? AND cID = ?", userID, classID).fetchone()
+    return cursor.execute("SELECT * FROM Classes WHERE FK_uID = ? AND cID = ?;", userID, classID).fetchone()
 
 
 # returns the record of the class added
 def addClass(username, className, timeslot):
-    prep_stmt = "INSERT INTO Classes (class_Name, timeslot, FK_uID) VALUES (?,?,?)"
+    prep_stmt = "INSERT INTO Classes (class_Name, timeslot, FK_uID) VALUES (?,?,?);"
     id = getUser(username).uID
     return cursor.execute(prep_stmt, className, timeslot, id)
 
@@ -110,7 +116,7 @@ def addClass(username, className, timeslot):
 def removeClass(username, className):
     id = getUser(username).uID
     classID = getClassID(username, className)
-    record = cursor.execute("DELETE FROM Classes WHERE FK_uID = ? AND cID = ?", id, classID)
+    record = cursor.execute("DELETE FROM Classes WHERE FK_uID = ? AND cID = ?;", id, classID)
     return record
 
 
@@ -124,8 +130,9 @@ POSTCONDITION: specified class marked complete
 def completeClass(username, className):
     classID = getClassID(username, className)
     userID = getUser(username).uID
-    record = cursor.execute("UPDATE Classes SET is_complete = ? WHERE cID = ? AND FK_uID = ?", 1, classID,
-                            userID).fetchone()
+    #record = cursor.execute("UPDATE Classes SET [is_complete] = ? WHERE [cID] = ? AND [FK_uID] = ?", 1, classID, userID).fetchone()
+    prep_stmt = "UPDATE Classes SET is_complete = ? WHERE cID = ? AND FK_uID = ?;"
+    record = cursor.execute(prep_stmt, 1, classID, userID)
     return record
 
 
@@ -146,8 +153,8 @@ def addStudyTime(username, className, t):
     classID = record.cID
     # print(record.studyTime)
     uTime = record.studyTime + t
-    return cursor.execute("UPDATE Classes SET studyTime = ? WHERE FK_uID = ? AND cID = ?", uTime, userID,
-                          classID).fetchone()
+    prep_stmt = "UPDATE Classes SET studyTime = ? WHERE FK_uID = ? AND cID = ?;"
+    return cursor.execute(prep_stmt, uTime, userID,classID).fetchone()
 
 
 # Tasks

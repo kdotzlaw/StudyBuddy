@@ -89,7 +89,7 @@ jobs:
       #    sqlcmd -S localhost -U sa -P dbtools.IO -d tempdb -Q "GO"
       - name: Create StudyBuddy Database
         run:
-          sqlcmd -S localhost -U sa -P dbtools.IO -d StudyBuddy.mdf -i ./StudyBuddy_create.sql
+          sqlcmd -S localhost -U sa -P dbtools.IO -i ./StudyBuddy_create.sql
 
       - name: Run Unit Tests
         env:

@@ -11,6 +11,15 @@ on:
 jobs:
   run_unit_tests:
     runs-on: ubuntu-latest
+    services:
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        ports:
+          - 1433:1433
+        env:
+          SA_PASSWORD: <your_sa_password>
+          ACCEPT_EULA: Y
+        options: --health-cmd /opt/mssql-tools/bin/sqlcmd -Q "SELECT 1" --health-interval 10s --health-timeout 5s --health-retries 5
     defaults:
       run:
         working-directory: ./backend
@@ -25,6 +34,7 @@ jobs:
 
       - name: Install Packages and Dependencies
         run:
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       #- name: Install a SQL Server suite of tools
@@ -33,9 +43,13 @@ jobs:
       #    install: sqlengine, sqlclient, sqlpackage, localdb
       #    version: 2022
 
-      - name: Download and start the MSSQL container
+      #- name: Download and start the MSSQL container
+      #  run:
+      #    docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=dbtools.IO" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2022-latest
+
+      - name: Wait for SQL Server to start
         run:
-          docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=dbtools.IO" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2022-latest
+          dockerize -wait tcp://localhost:1433 -timeout 1m
 
       #- name: Compile and Test from Build Script
       #  shell: pwsh
@@ -43,16 +57,33 @@ jobs:
       #  env:
       #    ConnectionStrings__MyConnString: "Server=localhost,1433;Initial Catalog=StudyBuddy.bak;User Id=sa;SA_PASSWORD=dbtools.IO;"
 
-      - name: Connect to SQL Server
-        run:
-          # sqlcmd -S localhost -U sa -P dbtools.IO -d StudyBuddy -Q "SELECT @@version;"
-          sqlcmd -S localhost -U sa -P dbtools.IO -d tempdb -Q "RESTORE DATABASE [StudyBuddy] FROM DISK=N'StudyBuddy.bak'"
-      - name: Execute SQL Server
-        run:
-          # sqlcmd -S localhost -U sa -P dbtools.IO -d StudyBuddy -Q "SELECT @@version;"
-          sqlcmd -S localhost -U sa -P dbtools.IO -d tempdb -Q "GO"
+      #- name: Connect to SQL Server
+      #  run:
+      #    sqlcmd -S localhost -U sa -P dbtools.IO -d StudyBuddy -Q "SELECT @@version;"
+      #    sqlcmd -S localhost -U sa -P dbtools.IO -d tempdb -Q "SELECT @@version;"
+
+      #- name: Connect to SQL Server
+      #  run:
+      #    sqlcmd -S localhost -U sa -P dbtools.IO -d StudyBuddy -Q "SELECT @@version;"
+      #    sqlcmd -S localhost -U sa -P dbtools.IO -d tempdb -Q "RESTORE DATABASE [StudyBuddy] FROM DISK=N'StudyBuddy.bak'"
+
+      #- name: Execute SQL Server
+      #  run:
+      #    sqlcmd -S localhost -U sa -P dbtools.IO -d StudyBuddy -Q "SELECT @@version;"
+      #    sqlcmd -S localhost -U sa -P dbtools.IO -d tempdb -Q "GO"
+      #    sqlcmd -S localhost -U sa -P dbtools.IO -d tempdb -Q "RESTORE DATABASE [StudyBuddy] FROM DISK=N'StudyBuddy.bak'"
+
+      #- name: Execute SQL Server
+      #  run:
+      #    sqlcmd -S localhost -U sa -P dbtools.IO -d StudyBuddy -Q "SELECT @@version;"
+      #    sqlcmd -S localhost -U sa -P dbtools.IO -d tempdb -Q "GO"
+
       - name: Run Unit Tests
+        env:
+          SQL_SERVER: localhost
+          SQL_USER: sa
+          SQL_PASSWORD: dbtools.IO
+          SQL_DATABASE: StudyBuddy
         run:
           python -m unittest discover -p "*_test.py"
-          USE [master]
-
+          #USE [master]

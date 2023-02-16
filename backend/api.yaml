@@ -135,7 +135,7 @@ paths:
         - name: added
           in: body
           required: true
-          example: 1024
+          example: "1024"
       responses:
         200:
           description: "The time in the associated class was increased successfully"
@@ -159,7 +159,7 @@ components:
       properties:
         cID:
           type: integer
-          example: 15
+          example: "15"
         class_Name:
           type: string
           example: "Comp 1000"
@@ -168,10 +168,10 @@ components:
           example: "11:11"
         is_complete:
           type: integer
-          example: 0
+          example: "0"
         studyTime:
           type: float
-          example: 1234.56
+          example: "1234.56"
         section:
           type: string
           example: "A02"

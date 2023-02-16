@@ -1,46 +1,61 @@
-CREATE DATABASE StudyBuddy
+IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'StudyBuddy')
+BEGIN
+	CREATE DATABASE StudyBuddy;
+END;
+GO
+
 USE StudyBuddy;
 GO
 
-CREATE TABLE Users (
-uID INT NOT NULL IDENTITY (1,1) PRIMARY KEY,
-username VARCHAR(50) NOT NULL UNIQUE,
-pass VARCHAR(8) NOT NULL,
-user_email VARCHAR(50),
-xp FLOAT DEFAULT 0.0,
-);
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name = 'Users' AND xtype = 'U')
+BEGIN
+	CREATE TABLE Users (
+	uID INT NOT NULL IDENTITY (1,1) PRIMARY KEY,
+	username VARCHAR(50) NOT NULL UNIQUE,
+	pass VARCHAR(8) NOT NULL,
+	user_email VARCHAR(50),
+	xp FLOAT DEFAULT 0.0,
+	);
+END
 
-CREATE TABLE Classes(
-cID INT NOT NULL IDENTITY (1,1) PRIMARY KEY,
-class_Name VARCHAR(50) NOT NULL,
-timeslot TIME NOT NULL,
-is_complete BIT,
-CONSTRAINT ck_testbool_ischk CHECK (is_complete IN (1,0)),
-studyTime FLOAT DEFAULT 0.0,
-/* Metadata */
-section VARCHAR(8),
-classroom VARCHAR(50), /* room number, building*/
-prof_Name VARCHAR(50),
-prof_Email VARCHAR(50),
-prof_Phone VARCHAR(10),
-prof_Office VARCHAR(50),
-prof_Hours TIME,
-FK_uID INT,
-FOREIGN KEY (FK_uID) REFERENCES Users(uID)
-);
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name = 'Classes' AND xtype = 'U')
+BEGIN
+	CREATE TABLE Classes(
+	cID INT NOT NULL IDENTITY (1,1) PRIMARY KEY,
+	class_Name VARCHAR(50) NOT NULL,
+	timeslot TIME NOT NULL,
+	is_complete BIT,
+	CONSTRAINT ck_testbool_ischk CHECK (is_complete IN (1,0)),
+	studyTime FLOAT DEFAULT 0.0,
+	/* Metadata */
+	section VARCHAR(8),
+	classroom VARCHAR(50), /* room number, building*/
+	prof_Name VARCHAR(50),
+	prof_Email VARCHAR(50),
+	prof_Phone VARCHAR(10),
+	prof_Office VARCHAR(50),
+	prof_Hours TIME,
+	FK_uID INT,
+	FOREIGN KEY (FK_uID) REFERENCES Users(uID)
+	);
+END
 
-CREATE TABLE Tasks(
-tID INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
-task_Name VARCHAR(50) NOT NULL,
-deadline DATETIME,
-task_Weight FLOAT NOT NULL,
-task_grade FLOAT DEFAULT 0.0,
-task_xp FLOAT, /* would be determined by system not user, might drop this*/
-FK_uID INT,
-FK_cID INT,
-FOREIGN KEY (FK_uID) REFERENCES Users(uID),
-FOREIGN KEY (FK_cID) REFERENCES Classes(cID)
-);
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name = 'Classes' AND xtype = 'U')
+BEGIN
+	CREATE TABLE Tasks(
+	tID INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+	task_Name VARCHAR(50) NOT NULL,
+	deadline DATETIME,
+	task_Weight FLOAT NOT NULL,
+	task_grade FLOAT DEFAULT 0.0,
+	task_xp FLOAT, /* would be determined by system not user, might drop this*/
+	FK_uID INT,
+	FK_cID INT,
+	FOREIGN KEY (FK_uID) REFERENCES Users(uID),
+	FOREIGN KEY (FK_cID) REFERENCES Classes(cID)
+	);
+END
+GO
 
 /*Create stub data*/
 

@@ -166,7 +166,7 @@ def update_time(classname):
 @flask_login.login_required
 def getClass(classname):
     username = flask_login.current_user.get_id()
-    res = db.getClassID(username, classname)
+    res = db.getSingleClass(username, classname)
     if res is None:
         # no class found
         return "Bad Request: No class found", 400

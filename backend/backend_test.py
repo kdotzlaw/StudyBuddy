@@ -19,12 +19,19 @@ class dbTests(unittest.TestCase):
 
     def test_cnxn(self):
         try:
+            # PROD CONNECTION STRING
             conn = (r'Driver=ODBC Driver 17 for SQL Server;'
                     r'Server=localhost;'
                     r'Database=StudyBuddy;'
                     r'UID=sa;'
                     r'PWD=dbtools.IO'
                     )
+            # DEV CONNECTION STRING D.N.T
+            '''conn = (r'Driver=SQL Server;'
+                    r'Server=(local);'
+                    r'Database=StudyBuddy;'
+                    r'Trusted_Connection=yes'
+                    )'''
             cnxn = pyodbc.connect(conn)
         except Exception:
             self.fail("Connection failed")
@@ -74,6 +81,7 @@ class dbTests(unittest.TestCase):
     '''
     Test passes if given strings are present in the record retrieved
     '''
+
     def test_getClasses(self):
         username = "katDot"
         c1 = "COMP 4350"
@@ -91,11 +99,13 @@ class dbTests(unittest.TestCase):
         className = 'Comp 4350'
         record = db.getClassID(username, className)
         self.assertEqual(3, record)
+
     def test_getSingleClass(self):
         username = 'katDot'
         className = "COMP 4350"
         record = db.getSingleClass(username, className)
         self.assertIn(className, record)
+
     def test_addClass(self):
         username = 'katDot'
         className = "COMP 2080"
@@ -104,18 +114,20 @@ class dbTests(unittest.TestCase):
         result = db.getSingleClass(username, className)
         self.assertIn(className, result)
         self.assertIn(timeslot, result)
-        #remove class once done
-        db.removeClass(username,className)
+        # remove class once done
+        db.removeClass(username, className)
+
     def test_removeClass(self):
         username = 'katDot'
         className = "COMP 2150"
         timeslot = "9:00:00.0000000"
-        db.addClass(username,className,timeslot)
-        #remove it
+        db.addClass(username, className, timeslot)
+        # remove it
         db.removeClass(username, className)
         record = db.getClasses(username)
         for i in range(len(record)):
-            self.assertNotIn(className,record[i])
+            self.assertNotIn(className, record[i])
+
     def test_completeClass(self):
         username = 'katDot'
         className = "COMP 2150"
@@ -125,23 +137,27 @@ class dbTests(unittest.TestCase):
         db.completeClass(username, className)
         record = db.getSingleClass(username, "COMP 2150")
         self.assertEqual(1, record.is_complete)
-        #remove
+        # remove
         db.removeClass(username, className)
+
     '''def test_addStudyTime_base(self):
-        #studytime is 0 by default
-        #t = datetime.time(hour=1,minute=0, second=0)
+        # studytime is 0 by default
+        # t = datetime.time(hour=1,minute=0, second=0)
         username = "katDot"
         className = "COMP 2150"
         timeslot = "9:00:00.0000000"
-        db.addClass(username,className,timeslot)
+        db.addClass(username, className, timeslot)
         print(db.getSingleClass(username, className))
-        #base = db.addClass(username, className, timeslot)
+        # base = db.addClass(username, className, timeslot)
         totalTime = db.addStudyTime(username, className, 1.30)
         self.assertEqual(totalTime.studyTime, 1.30)
+
+
     def test_addStudyTime_existing(self):
     
     def test_editClass(self):
     '''
+
 
 class apiTest(flask_unittest.ClientTestCase):
     # assign flask app

@@ -12,7 +12,7 @@ BEGIN
 	CREATE TABLE Users (
 	uID INT NOT NULL IDENTITY (1,1) PRIMARY KEY,
 	username VARCHAR(50) NOT NULL UNIQUE,
-	pass VARCHAR(8) NOT NULL,
+	password VARCHAR(8) NOT NULL,
 	user_email VARCHAR(50),
 	xp FLOAT DEFAULT 0.0,
 	);
@@ -60,15 +60,15 @@ GO
 /*Create stub data*/
 
 /* ADD USER STUB DATA */
-INSERT INTO Users (username,pass)
+INSERT INTO Users (username,password)
 	VALUES ('ryan2023','password');
-INSERT INTO Users(username,pass)
+INSERT INTO Users(username,password)
 	VALUES('katDot','1234');
-INSERT INTO Users(username,pass)
+INSERT INTO Users(username,password)
 	VALUES('andrea22','2222');
-INSERT INTO Users(username,pass)
+INSERT INTO Users(username,password)
 	VALUES('EliStudy','2#!6A');
-INSERT INTO Users(username,pass)
+INSERT INTO Users(username,password)
 	VALUES('sneakerbot101','Shoes!');
 
 /* ADD CLASSES STUB DATA */

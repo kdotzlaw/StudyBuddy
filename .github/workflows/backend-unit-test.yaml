@@ -1,18 +1,25 @@
 name: Backend Unit & Regression Test
 
 on:
+  workflow_dispatch:   # Allows this workflow to be ran manually from the Actions tab
   push:
-    branches: [ backend ]
+    branches: [ backend, CICD ]
   pull_request:
     branches: [ main ] # Run regression tests upon PR to main
     # No integration tests as of Sprint 2, so only unit tests will be ran
 
-    # Allows this workflow to be ran manually from the Actions tab
-    workflow_dispatch:
-
 jobs:
   run_unit_tests:
     runs-on: ubuntu-latest
+    services:
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        ports:
+          - 1433:1433
+        env:
+          SA_PASSWORD: dbtools.IO
+          ACCEPT_EULA: Y
+          
     defaults:
       run:
         working-directory: ./backend
@@ -26,21 +33,19 @@ jobs:
           python-version: '3.11.1'
 
       - name: Install Packages and Dependencies
-        run:
+        run: |
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Install a SQL Server suite of tools
-        uses: potatoqualitee/mssqlsuite@v1.7
-        with:
-          install: sqlengine, sqlclient, sqlpackage, localdb
-          version: 2022
-
-      - name: Download and start the MSSQL container
-        run: docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=dbtools.IO" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2022-latest
-
-      - name: Connect to SQL Server
-        run: sqlcmd -S localhost -U sa -P dbatools.IO -d StudyBuddy.bak -Q "SELECT @@version;"
+      - name: Create StudyBuddy Database
+        run:
+          sqlcmd -S localhost -U sa -P dbtools.IO -i ./StudyBuddy_create.sql
 
       - name: Run Unit Tests
+        env:
+          SQL_SERVER: localhost
+          SQL_USER: sa
+          SQL_PASSWORD: dbtools.IO
+          SQL_DATABASE: StudyBuddy
         run:
           python -m unittest discover -p "*_test.py"

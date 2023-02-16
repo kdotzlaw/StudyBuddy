@@ -6,11 +6,11 @@ import pyodbc
 
 # connection information can change as we include security
 
-conn = (r'Driver=SQL Server;'
-        r'Server=(local);'
+conn = (r'Driver=ODBC Driver 17 for SQL Server;'
+        r'Server=localhost;'
         r'Database=StudyBuddy;'
-        r'username=SA;'
-        r'password=dbtools.IO'
+        r'UID=sa;'
+        r'PWD=dbtools.IO'
         )
 cnxn = pyodbc.connect(conn)
 cursor = cnxn.cursor()
@@ -146,7 +146,8 @@ def addStudyTime(username, className, t):
     classID = record.cID
     # print(record.studyTime)
     uTime = record.studyTime + t
-    return cursor.execute("UPDATE Classes SET studyTime = ? WHERE FK_uID = ? AND cID = ?", uTime, userID, classID).fetchone()
+    return cursor.execute("UPDATE Classes SET studyTime = ? WHERE FK_uID = ? AND cID = ?", uTime, userID,
+                          classID).fetchone()
 
 
 # Tasks

@@ -19,11 +19,11 @@ class dbTests(unittest.TestCase):
 
     def test_cnxn(self):
         try:
-            conn = (r'Driver=SQL Server;'
-                    r'Server=(local);'
+            conn = (r'Driver=ODBC Driver 17 for SQL Server;'
+                    r'Server=localhost;'
                     r'Database=StudyBuddy;'
-                    r'username=SA;'
-                    r'password=dbtools.IO'
+                    r'UID=sa;'
+                    r'PWD=dbtools.IO'
                     )
             cnxn = pyodbc.connect(conn)
         except Exception:

@@ -31,7 +31,7 @@ class dbTests(unittest.TestCase):
                     r'Server=(local);'
                     r'Database=StudyBuddy;'
                     r'Trusted_Connection=yes'
-                    )''
+                    )'''
             cnxn = pyodbc.connect(conn)
         except Exception:
             self.fail("Connection failed")

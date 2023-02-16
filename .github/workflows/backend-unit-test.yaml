@@ -57,9 +57,9 @@ jobs:
       #  run:
       #    docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=dbtools.IO" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2022-latest
 
-      - name: Wait for SQL Server to start
-        run:
-          sleep 90s
+      #- name: Wait for SQL Server to start
+      #  run:
+      #    sleep 90s
 
       #- name: Compile and Test from Build Script
       #  shell: pwsh

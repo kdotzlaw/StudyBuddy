@@ -9,7 +9,7 @@ import pyodbc
 conn = (r'Driver=ODBC Driver 17 for SQL Server;'
         r'Server=localhost;'
         r'Database=StudyBuddy;'
-        r'username=SA;'
+        r'username=sa;'
         r'password=dbtools.IO'
         )
 cnxn = pyodbc.connect(conn)

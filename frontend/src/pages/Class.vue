@@ -108,7 +108,7 @@
 <template>
     <div id="classpage">
         <section v-if="userId && reqs" id="hero">
-            <div id="back-items">
+            <div id="back-items" v-motion-slide-right>
                 <router-link to="/">
                     <button id="back">
                         <img :src="ArrowBack" alt="Go back to Dashboard" />
@@ -119,10 +119,10 @@
             </div>
             <div id="hero-items">
                 <div>
-                    <h1> {{ classInfo.name }} </h1>
-                    <h2> Studied {{ classInfo.timeStudied }} hours this week </h2>
+                    <h1 v-motion-pop> {{ classInfo.name }} </h1>
+                    <h2 v-motion-pop> Studied {{ classInfo.timeStudied }} hours this week </h2>
                 </div>
-                <div>
+                <div v-motion-pop>
                     <button class="button round" @click="manageStudy">
                         <img id="study-ctrl" :src="studyIcon" :alt="studyNote" />
                     </button>
@@ -131,7 +131,7 @@
             </div>
         </section>
         <section v-if="userId && reqs" id="class-items">
-            <div id="req-ctr">
+            <div id="req-ctr" v-motion-slide-left>
                 <div id="req-head">
                     <button id="add-req" class="button bar">
                         Add Requirements
@@ -143,7 +143,7 @@
                 <RequirementCards :reqs="reqSet" />
             </div>
             <div>
-                <div id="grade-ctr">
+                <div id="grade-ctr" v-motion-slide-right>
                     <h1 id="grade"> {{ classInfo.grade }} </h1>
                     <div id="grade-note" class="delius">
                         Wow! <br/>
@@ -153,7 +153,7 @@
                         Grade breakdown
                     </button>
                 </div>
-                <div id="details-ctr">
+                <div id="details-ctr" v-motion-slide-bottom>
                     <h3> Class Details </h3>
                     <table>
                         <tr>

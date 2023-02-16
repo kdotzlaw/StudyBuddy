@@ -1,6 +1,6 @@
 <script setup>
     import { storeToRefs } from "pinia";
-    import { ref } from "vue";
+    import { ref, computed } from "vue";
     import Logo from "/assets/logo.png";
     import Play from "/artifacts/play.svg";
     import Pause from "/artifacts/pausegold.png";
@@ -12,7 +12,7 @@
     // Temporary env vars
     let displayName = "My Buddy";
     const { loginUser, logoutUser, setStudyClass, setStudyTime, setTimer } = store;
-    const { userId, studyClass, studyTime, pageName } = storeToRefs(store);
+    const { sessionTimer, userId, studyClass, studyTime, pageName } = storeToRefs(store);
 
     /*===========================
        TIMER MANAGEMENT
@@ -40,6 +40,18 @@
     function switchPause(newVal){
         showPause.value = newVal;
     }
+
+    // Reflect study state
+    const studyNote = computed(() => {
+        if(!sessionTimer.value.isPaused())
+            return "Pause session";
+        return "Resume session";
+    });
+    const studyIcon = computed(() => {
+        if(!sessionTimer.value.isPaused())
+            return Pause;
+        return Play;
+    });
 
     /*===========================
        DROPDOWN MENU AND MODALS
@@ -93,9 +105,10 @@
                 @click="Mgmt.manageTimer(userId,studyClass)"
                 @mouseover="switchPause(true)"
                 @mouseleave="switchPause(false)"
+                v-motion-pop
             >
                 <div v-if="showPause">
-                    <img :src=Pause alt="Pause study session" />
+                    <img :src="studyIcon" :alt="studyNote" />
                 </div>
                 <div v-else>
                     {{ toTimeString(studyTime) }}

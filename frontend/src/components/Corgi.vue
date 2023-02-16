@@ -16,8 +16,6 @@
 
     const upperBody = [
         tongue,
-        leftEye,
-        rightEye,
         upperHead,
         lowerHead,
         body,
@@ -51,11 +49,14 @@
         ease: "easeIn",
         repeatType: "mirror"
       }
-      if (i==0){
-        initYVal = 20;
+      if (i==0 || i==3){
+        if (i==0)
+          initYVal = 0;
+        else
+          initYVal = 10;
         yVal = 4;
         transitionData = {
-          duration: 600,
+          duration: 700,
           ease: "easeIn",
           repeat: Infinity,
           repeatType: "mirror"
@@ -69,6 +70,7 @@
         enter: {
           y: 0,
           transition: {
+            duration: 800,
             delay: (i%2) * 100,
             onComplete: () => { variant.value = "levitate" }
           },

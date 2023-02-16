@@ -32,7 +32,7 @@
     <router-view></router-view>
   </div>
   <Wallpaper />
-  <div v-if="isModalOpen" id="modal-ctr">
+  <div v-if="isModalOpen" id="modal-ctr" v-motion-pop>
     <Modal :title="modalTitle">
       <ModalManager :contentId="modalContent" :renderString="modalRender" />
     </Modal>

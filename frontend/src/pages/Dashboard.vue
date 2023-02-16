@@ -44,7 +44,7 @@
         <div v-else id="buddy-ctr">
             <Buddy chat="Login or Register to use Study Buddy" />
         </div>
-        <div v-if="userId">
+        <div v-if="userId" v-motion-slide-bottom>
             <Accordion title="Calendar Overview" :toggled="false">
                 <h3>Current Quests</h3>
                 <p class="delius">You have an assignment due tomorrow for COMP2080!</p>

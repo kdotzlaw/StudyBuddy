@@ -37,15 +37,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           sudo su
-          curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
-          curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list > /etc/apt/sources.list.d/mssql-release.list
+          sudo curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+          sudo curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list > /etc/apt/sources.list.d/mssql-release.list
           exit
           sudo apt-get update
           sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
           sudo ACCEPT_EULA=Y apt-get install -y mssql-tools18
           echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
           source ~/.bashrc
-          
+
       #- name: Install a SQL Server suite of tools
       #  uses: potatoqualitee/mssqlsuite@v1.7
       #  with:

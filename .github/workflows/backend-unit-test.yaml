@@ -37,7 +37,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           sudo apt install tdsodbc
-          odbcinst -i -d -f /usr/share/tdsodbc/odbcinst.ini
+          odbcinst -i -d
 
       #- name: Install a SQL Server suite of tools
       #  uses: potatoqualitee/mssqlsuite@v1.7

@@ -6,10 +6,11 @@ import pyodbc
 
 # connection information can change as we include security
 
-conn = (r'Driver=SQL Server;'
-        r'Server=(local);'
+conn = (r'Driver=ODBC Driver 17 for SQL Server;'
+        r'Server=localhost;'
         r'Database=StudyBuddy;'
-        r'Trusted_Connection=yes'
+        r'username=SA;'
+        r'password=dbtools.IO'
         )
 cnxn = pyodbc.connect(conn)
 cursor = cnxn.cursor()

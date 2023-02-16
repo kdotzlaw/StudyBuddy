@@ -35,6 +35,7 @@ def user_check(username):
 # loads user from session
 @login_manager.user_loader
 def user_loader(username):
+    print("u loader")
     selection = user_check(username)
     if app.testing:
         uname = selection['username']
@@ -51,6 +52,7 @@ def user_loader(username):
 # loads user from flask request
 @login_manager.request_loader
 def request_loader(request):
+    print("req loader")
     username = request.get_json()['username']
     # check database for username
     selection = user_check(username)
@@ -96,10 +98,12 @@ def login():
         if selection is None:
             # not in database
             response = "Bad Request: User not found in database", 400
+            print("no user")
             return response
         else:
             # selection returned
             # grab values for username and password from db
+            print("yes user")
             if app.testing:
                 uname = selection['username']
                 pword = selection['password']
@@ -111,17 +115,20 @@ def login():
                 user = User()
                 user.id = username
                 flask_login.login_user(user)
+                print("logged in: ", username)
                 # redirect to homepage
                 flask.redirect("../../frontend/index.html", 200)
                 return "logged in", 200
             else:
                 # invalid password
                 # send 401 bad request response
+                print("failed login: ", username)
                 print("Incorrect password")
                 response = "Incorrect Password", 401
                 return response
     else:
         # send 400 bad request response
+        print("login missing json")
         response = "Bad Request: Missing required JSON", 400
         return response
 
@@ -154,3 +161,9 @@ def newuser():
 @flask_login.login_required
 def testlogin():
     return "<h1>you're logged in</h1>"
+
+@app.before_request
+def log_request():
+    print(flask.request.headers)
+    print(flask.request.get_json(force=True))
+    return None

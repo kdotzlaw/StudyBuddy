@@ -10,15 +10,15 @@ on:
 
 jobs:
   run_unit_tests:
-    runs-on: windows-latest
-    #services:
-    #  mssql:
-    #    image: mcr.microsoft.com/mssql/server:2022-latest
-    #    ports:
-    #      - 1433:1433
-    #    env:
-    #      SA_PASSWORD: dbtools.IO
-    #      ACCEPT_EULA: Y
+    runs-on: ubuntu-latest
+    services:
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        ports:
+          - 1433:1433
+        env:
+          SA_PASSWORD: dbtools.IO
+          ACCEPT_EULA: Y
     #    options: --health-cmd /opt/mssql-tools/bin/sqlcmd -Q "SELECT 1" --health-interval 10s --health-timeout 5s --health-retries 5
     defaults:
       run:
@@ -53,9 +53,9 @@ jobs:
       #    version: 2019
       #    sa-password: dbtools.IO
 
-      - name: Download and start the MSSQL container
-        run:
-          docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=dbtools.IO" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2022-latest
+      #- name: Download and start the MSSQL container
+      #  run:
+      #    docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=dbtools.IO" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2022-latest
 
       #- name: Wait for SQL Server to start
       #  run:

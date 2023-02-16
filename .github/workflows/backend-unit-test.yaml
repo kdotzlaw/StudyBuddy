@@ -13,13 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mssql:
-        image: mcr.microsoft.com/mssql/server:2019-latest
+        image: mcr.microsoft.com/mssql/server:2022-latest
         ports:
           - 1433:1433
         env:
-          SA_PASSWORD: <your_sa_password>
+          SA_PASSWORD: dbtools.IO
           ACCEPT_EULA: Y
-        options: --health-cmd /opt/mssql-tools/bin/sqlcmd -Q "SELECT 1" --health-interval 10s --health-timeout 5s --health-retries 5
+        #options: --health-cmd /opt/mssql-tools/bin/sqlcmd -Q "SELECT 1" --health-interval 10s --health-timeout 5s --health-retries 5
     defaults:
       run:
         working-directory: ./backend

@@ -40,7 +40,7 @@ BEGIN
 	);
 END
 
-IF NOT EXISTS (SELECT * FROM sysobjects WHERE name = 'Classes' AND xtype = 'U')
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name = 'Tasks' AND xtype = 'U')
 BEGIN
 	CREATE TABLE Tasks(
 	tID INT NOT NULL IDENTITY(1,1) PRIMARY KEY,

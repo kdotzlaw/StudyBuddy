@@ -18,10 +18,11 @@ class dbTests(unittest.TestCase):
 
     def test_cnxn(self):
         try:
-            conn = (r'Driver=SQL Server;'
-                    r'Server=(local);'
+            conn = (r'Driver=ODBC Driver 17 for SQL Server;'
+                    r'Server=localhost;'
                     r'Database=StudyBuddy;'
-                    r'Trusted_Connection=yes'
+                    r'UID=sa;'
+                    r'PWD=dbtools.IO'
                     )
             cnxn = pyodbc.connect(conn)
         except Exception:
@@ -30,7 +31,7 @@ class dbTests(unittest.TestCase):
 
     '''
     Test passes if the correct record information is retrieved for the specified username
-    Test fails if incorrect record returned, or 
+    Test fails if incorrect record returned, or
     '''
 
     def test_getUser(self):

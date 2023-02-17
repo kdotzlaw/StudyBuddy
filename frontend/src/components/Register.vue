@@ -124,7 +124,7 @@
         mode: 'no-cors',
         body: JSON.stringify(data)
       })
-        .then(response => response.json())
+        .then(response => response.text())
         .then(data => {
           loginUser(username);
           setModal("Success", "success", data);

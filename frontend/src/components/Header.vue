@@ -11,8 +11,8 @@
     
     // Temporary env vars
     let displayName = "My Buddy";
-    const { loginUser, logoutUser, setStudyClass, setStudyTime, setTimer } = store;
-    const { sessionTimer, userId, studyClass, studyTime, pageName } = storeToRefs(store);
+    const { loginUser, logoutUser, setStudyClass, setStudyTime, setTimer, toggleModal } = store;
+    const { sessionTimer, userId, studyClass, studyTime, pageName} = storeToRefs(store);
 
     /*===========================
        TIMER MANAGEMENT
@@ -80,7 +80,7 @@
 
         // Purge userId
         const host = 'http://localhost:5000'; 
-        const apiUrl = '/api/login';
+        const apiUrl = '/api/logout';
         fetch(host + apiUrl, {
             method: 'POST',
             mode: 'no-cors',

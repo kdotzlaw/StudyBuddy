@@ -47,6 +47,7 @@ export const useStore = defineStore('store', () => {
     const isModalOpen = ref(false);
     function toggleModal(){
         isModalOpen.value = !isModalOpen.value;
+        return isModalOpen.value;
     }
 
     // Set modal contents

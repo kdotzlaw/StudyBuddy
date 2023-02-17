@@ -119,17 +119,22 @@ def completeClass(username, className):
     return record
 
 '''
-PRECONDITION:
-POSTCONDITION:
+PRECONDITION: class data remains unchanged
+POSTCONDITION: class data for specified class and user updated using specified information
 '''
-#check if getting a single string containing all meta or individual
-def addClassMeta(username, className, meta):
+def addClassMeta(username, className, sectionnum, classroom, prof,
+                 prof_email, prof_phone, prof_office, prof_hours):
     userID = getUser(username).uID
     classID = getClassID(username, className)
-    #update doesnt return a record
-    prep_stmt = "UPDATE Classes SET section = ? WHERE uID = ? AND cID = ?"
+    # update doesnt return a record
+    cursor.execute("UPDATE Classes SET section = ? WHERE FK_uID = ? AND cID = ?",sectionnum, userID, classID)
+    cursor.execute("UPDATE Classes SET classroom = ? WHERE FK_uID = ? AND cID = ?", classroom, userID, classID)
+    cursor.execute("UPDATE Classes SET prof_Name = ? WHERE FK_uID = ? AND cID = ?", prof, userID, classID)
+    cursor.execute("UPDATE Classes SET prof_Email = ? WHERE FK_uID = ? AND cID = ?", prof_email, userID, classID)
+    cursor.execute("UPDATE Classes SET prof_Phone = ? WHERE FK_uID = ? AND cID = ?", prof_phone, userID, classID)
+    cursor.execute("UPDATE Classes SET prof_Office = ? WHERE FK_uID = ? AND cID = ?", prof_office, userID, classID)
+    cursor.execute("UPDATE Classes SET prof_Hours = ? WHERE FK_uID = ? AND cID = ?", prof_hours, userID, classID)
     return
-
 
 '''
 PRECONDITION: the total study time for the class is unchanged

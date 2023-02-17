@@ -186,12 +186,16 @@ def getClass(classname):
 def parse_rows(rows, cols):
     res = []
     for row in rows:
-        res.append(dict(zip(cols, row.__str__())))
+        # QUICK FIX, IMPROVE LATER
+        row.timeslot = str(row.timeslot)
+        res.append(dict(zip(cols, row)))
     return res
 
 
 def parse_row(row: Row, cols):
-    res = [dict(zip(cols, row.__str__()))]
+    # QUICK FIX, IMPROVE LATER
+    row.timeslot = str(row.timeslot)
+    res = [dict(zip(cols, row))]
     return res
 
 '''

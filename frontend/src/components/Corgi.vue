@@ -1,3 +1,8 @@
+<!-- 
+  Corgi.vue 
+    Renders SVG refs, paths and custom animation for the Corgi Buddy.
+-->
+
 <script setup>
     import { ref } from "vue";
     import { useMotion } from "@vueuse/motion";

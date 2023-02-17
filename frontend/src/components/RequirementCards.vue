@@ -1,3 +1,9 @@
+<!-- 
+  RequirementCards.vue 
+    Renders a set of cards from a user's requirements from classes. 
+    Cards contain a req-specific color tag, due date, requirement name, grade goal, and Open Settings control.
+-->
+
 <script setup>
     import Gear from "/artifacts/gear.svg";
 
@@ -5,7 +11,7 @@
         reqs: {type: Array, required: false, default: []},
     })
 
-    // Data references
+    // Color tag and Month legend maps
     let today = Date.now();
     const typeClassMapping = {
         "quiz": "blue",
@@ -19,6 +25,7 @@
         "September", "October", "November", "December"
     ];
 
+    // Return color tag by requirement type
     function typeClass(type){
         let mapping = typeClassMapping[type];
         if(!mapping)
@@ -26,6 +33,10 @@
         return mapping;
     }
 
+    /* getUrgent
+     *   Adds an urgent note on cards with impending deadlines (0-3 days before due date) 
+     *   @params - due: Date
+     */
     function getUrgent(due){
         let diffTime = due - today;
         let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
@@ -42,9 +53,17 @@
 
 <template>
     <div id="reqCards">
+
+        <!-- Add new card -->
         <div v-if="reqs.length==0" :class="`reqCard addNew`"> + </div>
+        
+        <!-- Requirement card set -->
         <div v-for="req in reqs" :class="`reqCard fullCard`">
+
+            <!-- Color tag -->
             <div :class="`tag ${typeClass(req.type)}`"></div>
+
+            <!-- Due date -->
             <div class="dues">
                 <h1 class="dueDate">
                     {{ req.due.getDate() }}
@@ -54,11 +73,19 @@
                 </div>
             </div>
             <div>
+
+                <!-- Requirement name -->
                 <h3> {{ req.name }} </h3>
+
                 <p class="urgent"> {{ getUrgent(req.due) }} </p>
             </div>
+
+            <!-- Grade goal -->
             <h2 class="goal"> {{ req.goal }} </h2>
+
+            <!-- Open Settings control -->
             <img class="reqManage" :src="Gear" alt="Manage requirement" />
+
         </div>
     </div>
 </template>

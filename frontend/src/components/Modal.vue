@@ -1,3 +1,8 @@
+<!-- 
+  Modal.vue 
+    Popup modal to be overlayed on the application body layout. Displays a title prop and includes a scrollable body slot.
+-->
+
 <script setup>
     import Happy from "/artifacts/happydog.svg";
     import Sad from "/artifacts/saddog.svg";
@@ -13,6 +18,7 @@
         title: {type: String, required: false, default: "Modal Title"}
     })
 
+    // Change happy dog to sad dog decoration when system errors ensue
     const DogIcon = computed(() => {
         if(modalContent.value == "error")
             return Sad;
@@ -24,7 +30,10 @@
     <div id="dog" :style="`background:url(${DogIcon});`" />
     <div id="modal">
         <div id="modal-title">
+
+            <!-- Modal Title -->
             <h1>{{ title }}</h1>
+
         </div>
         <span class="filler" />
         <span class="filler" />
@@ -35,9 +44,12 @@
         </span>
         <div class="modal-content">
             <div id="modal-inner">
+
+                <!-- Modal Body -->
                 <div id="modal-inner-content">
                     <slot />
                 </div>
+
             </div>
         </div>
     </div>

@@ -1,3 +1,8 @@
+/*
+ * validate.ts
+ *    Form input validation functions to identify empty fields and enforce security checks.
+ */
+
 
 function isInputEmpty(input: String): boolean{
   return input.length == 0;

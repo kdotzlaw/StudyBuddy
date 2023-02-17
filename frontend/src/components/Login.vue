@@ -1,3 +1,8 @@
+<!-- 
+  Login.vue 
+    Renders form fields and controls, and runs validation checks for logging in an existing account.
+-->
+
 <template>
   <div class="container">
     <form class="form" id="login">
@@ -16,7 +21,10 @@
             <div class="form-input-feedback-message" v-if="emailSent" >{{ emailSent }}</div>
           </p>
           <p class="form-text">
+
+              <!-- Switch to Register form -->
               <a class="form-link" id="linkCreateAccount">Don't have an account? Create account</a>
+
           </p>
         </div>
     </form>
@@ -57,7 +65,10 @@
 
   checkLinks();
 
-
+  /* validateForm
+   *   Runs all validation checks on form submit, and sends data to login authentication endpoint when validations pass.
+   *   Display notes for validation failure, or show authentication success/error modal after form submit.
+   */
   function validateForm() {
     let username = document.getElementById("signinUsername").value;
     let password = document.getElementById("signinPassword").value;
@@ -65,6 +76,7 @@
     var userNameCheck = false;
     var passwordErrorCheck = true;
 
+    // Validate check username
     if (validate.isInputEmpty(username)) {
       usernameErrorMsg.value = 'Username is required';
       userNameCheck = true;
@@ -73,6 +85,7 @@
       userNameCheck = false;
     }
 
+    // Validate check password
     if (validate.isInputEmpty(password)) {
       passwordErrorMsg.value = 'Password is required';
       passwordErrorCheck = true;
@@ -81,6 +94,7 @@
       passwordErrorCheck = false;
     }
 
+    // Validation checks pass; Send data to server endpoint
     if (!userNameCheck && !passwordErrorCheck) {
       const host = 'http://localhost:5000'; 
       const apiUrl = '/api/login';
@@ -103,7 +117,7 @@
           toggleModal();
         })
       .catch(error => {
-        // Superuser admission
+        // Temporary superuser admission for offline debugging. Removed before final release
         if(username == "admin" && "admitpls"){
           loginUser(username);
           setModal("So be it.", "success", "Welcome StudyBuddy Superuser!");

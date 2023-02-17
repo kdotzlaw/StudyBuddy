@@ -1,3 +1,8 @@
+<!-- 
+  Wallpaper.vue 
+    Renders appearance of page backgrounds based on selected UI skin.
+-->
+
 <script setup>
     import { storeToRefs } from "pinia";
     import { useStore } from "../stores";

@@ -1,3 +1,8 @@
+<!-- 
+  Register.vue 
+    Renders form fields and controls, and runs validation checks for creating an account.
+-->
+
 <template>
   <div>
     <form class="form " id="createAccount">
@@ -20,7 +25,10 @@
         </div>
         <button class="register-button" type="button" @click="validateForm">Register</button>
         <p class="form-text">
+
+            <!-- Switch to Login form -->
             <a class="form-link" id="linkLogin">Already have an account? Sign in</a>
+
         </p>
       </div>
     </form>
@@ -54,6 +62,10 @@
 
   checkLinks();
 
+  /* validateForm
+   *   Runs all validation checks on form submit, and sends data to newuser authentication endpoint when validations pass.
+   *   Display notes for validation failure, or show account creation and authentication success/error modal after form submit.
+   */
   function validateForm() {
     username = document.getElementById("signupUsername").value;
     email = document.getElementById("signupEmail").value;
@@ -66,6 +78,7 @@
     var passwordConfirmErrorValid = true;
     var passwordLengthValid = true;
 
+    // Validate check username
     if (validate.isInputEmpty(username)) {
       usernameErrorMsg.value = 'Username is required';
       userNameValid = false;
@@ -74,6 +87,7 @@
       userNameValid = true;
     }
 
+    // Validate check email
     if (validate.isInputEmpty(email)) {
       emailErrorMsg.value = 'Email is required';
       emailValid = false;
@@ -82,6 +96,7 @@
       emailValid = true;
     }
 
+    // Validate check password fields
     if (validate.isInputEmpty(password)) {
       passwordErrorMsg.value = 'Password is required';
     } else if(validate.isValidPassword(password)){
@@ -108,6 +123,7 @@
       passwordLengthValid = true;
     }
 
+    // Validation checks pass; Send data to server endpoint
     if (userNameValid && emailValid && passwordErrorValid && passwordConfirmErrorValid && passwordLengthValid) {
       const host = 'http://localhost:5000';
       const apiUrl = '/api/newuser'; 

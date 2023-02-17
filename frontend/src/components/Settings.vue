@@ -1,3 +1,8 @@
+<!-- 
+  Settings.vue 
+    Manage application appearance and settings.
+-->
+
 <script setup>
     import { onMounted } from "vue";
     import { storeToRefs } from "pinia";
@@ -7,11 +12,13 @@
     const { uiSkin } = storeToRefs(store);
     const { updateSkin } = store;
 
+    // Add a box glow on current UI skin
     onMounted(() => {
         let selected = document.querySelector(`.skins .${uiSkin.value}`);
         selected.classList.add("skin-active");
     });
 
+    // Swap UI skin and transfer box glow when applicable
     function updateTheSkin(skinId){
         updateSkin(skinId);
 

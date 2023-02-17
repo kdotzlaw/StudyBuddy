@@ -1,3 +1,8 @@
+<!-- 
+  Accordion.vue 
+    Accordion component that displays a title and collapsible body slot.
+-->
+
 <script setup>
     import ArrowToggle from "/artifacts/arrowtoggle.svg";
     import { ref } from "vue";
@@ -7,6 +12,7 @@
         toggled: {type: Boolean, required: false, default: true}
     })
 
+    // Toggle or collapse Accordion
     const toggled = ref(props.toggled);
     function toggle(){
         toggled.value = !toggled.value;
@@ -14,6 +20,8 @@
 </script>
 
 <template>
+
+    <!-- Accordion head -->
     <div v-if="toggled" class="accordion-head" @click="toggle" :style="`border-bottom-left-radius:0;border-bottom-right-radius:0;border-bottom-style:none;`">
         <h2> {{ title }} </h2>
         <button class="turnup" :style="`background:url(${ArrowToggle});`" />
@@ -22,12 +30,15 @@
         <h2> {{ title }} </h2>
         <button :style="`background:url(${ArrowToggle});`" />
     </div>
+
+    <!-- Accordion body -->
     <div v-if="toggled" class="accordion-body">
         <div class="hr" />
         <slot>
             No content provided under this slot.
         </slot>
     </div>
+    
 </template>
 
 <style scoped>

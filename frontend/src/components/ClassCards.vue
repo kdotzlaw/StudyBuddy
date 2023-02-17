@@ -1,3 +1,8 @@
+<!-- 
+  ClassCards.vue 
+    Renders a set of cards from a user's classes. Cards contain the class name, time studied, and Play control.
+-->
+
 <script setup>
     import { ref } from "vue";
     import { storeToRefs } from "pinia";
@@ -13,7 +18,7 @@
         reqs: {type: Array, required: false, default: []}
     })
 
-    // Start or pause study for this class
+    // Start or pause study for selected class
     function manageStudy(className){
         setStudyClass(className);
         Mgmt.manageTimer(userId,className);
@@ -22,16 +27,27 @@
 
 <template>
     <div id="classCards">
+        
+        <!-- Add New card -->
         <div v-if="reqs.length==0" :class="`classCard addNew`"> + </div>
+        
+        <!-- Class card set -->
         <div v-for="req in reqs" :class="`classCard studyClass`">
             <router-link to="/class">
+                
+                <!-- Class name -->
                 <h3> {{ req.name }} </h3>
+
             </router-link>
             <div class="bottom-row">
+
+                <!-- Time studied -->
                 <div>
                     <span class="material-symbols-outlined">timer</span>
                     &nbsp; {{ req.timeStudied }} hrs 
                 </div>
+
+                <!-- Play control -->
                 <img
                     v-if="req.name != studyClass" 
                     class="play-btn" 
@@ -39,6 +55,7 @@
                     alt="Study for this class"
                     @click="manageStudy(req.name)"
                 />
+
             </div>
         </div>
     </div>

@@ -1,3 +1,8 @@
+<!-- 
+  Buddy.vue 
+    Displays a choice of Buddy, and level card and conversations when enabled.
+-->
+
 <script setup>
     import TitleSq from "/artifacts/buddytemp.svg";
     import Corgi from "./Corgi.vue";
@@ -13,6 +18,7 @@
     const chatBalloon = ref();
     const chatBalloonCurve = ref();
 
+    // Custom animation specs
     const chatAnimation = (initOpacity) => {
         return {
             initial: {
@@ -38,16 +44,23 @@
 </script>
 
 <template>
+
+    <!-- Buddy container -->
     <div id="buddy">
         <Corgi />
     </div>
+
+    <!-- Chat balloon -->
     <div v-if="props.chat" id="chat-balloon" class="delius" ref="chatBalloon">
         <p>{{ chat }}</p>
     </div>
     <div v-if="props.chat" id="chat-balloon-curve" ref="chatBalloonCurve"/>
+
+    <!-- Level card -->
     <div v-if="showLevel" id="level-card" class="delius">
         Level 0
     </div>
+    
 </template>
 
 <style scoped>

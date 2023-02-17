@@ -1,3 +1,9 @@
+<!-- 
+  Header.vue 
+    Header component attached to the top of application layout. Includes current page name, 
+    timer express display, and dropdown menu for showing user and setting options.
+-->
+
 <script setup>
     import { storeToRefs } from "pinia";
     import { ref, computed } from "vue";
@@ -9,16 +15,19 @@
     import { useStore } from "../stores";
     const store = useStore();
     
-    // Temporary env vars
-    let displayName = "My Buddy";
-    const { loginUser, logoutUser, setStudyClass, setStudyTime, setTimer, toggleModal } = store;
+    const { loginUser, logoutUser, setStudyClass, setStudyTime, setTimer, setModal, toggleModal } = store;
     const { sessionTimer, userId, studyClass, studyTime, pageName} = storeToRefs(store);
+    let displayName = userId.value;
+
 
     /*===========================
-       TIMER MANAGEMENT
+       TIMER EXPRESS DISPLAY
      *===========================*/
 
-    // Parse seconds into hh:mm:ss time string
+    /* toTimeString
+     *   Parse number of study session seconds into hh:mm:ss time string for convenient display
+     *   @params - s: Number
+     */
     function toTimeString(s){
         let timeString = ""
         let hours = Math.floor(s / 3600);
@@ -34,14 +43,18 @@
         );
     }
 
-    // Pause button ref. Switch between pause and time view on hover
-    const showPause = ref(false);
 
+    /*===========================
+       STUDY SESSION PAUSE/PLAY
+     *===========================*/
+
+    // Pause or resume current study session. Timer bar display switches between icon and time string on hover
+    const showPause = ref(false);
     function switchPause(newVal){
         showPause.value = newVal;
     }
 
-    // Reflect study state
+    // Reflect study session's paused/running state with icons and notes
     const studyNote = computed(() => {
         if(!sessionTimer.value.isPaused())
             return "Pause session";
@@ -53,32 +66,26 @@
         return Play;
     });
 
+
     /*===========================
        DROPDOWN MENU AND MODALS
      *===========================*/
-    const { setModal } = store;
 
-    // Toggle dropdown options on click and mouse events
+    // Toggle dropdown options on click and mouseover events
     const showOptions = ref(false);
     function switchOptions(newVal){
         showOptions.value = newVal;
     }
 
-    // Execute option
+    // Manage Settings option
     function settings(){
         setModal("Settings", "settings", "Made with ❤️ The Procrastinators © 2023");
     }
 
+    // Logout option
     function logOut(){
-        // Commit timer totals to database
-        // Mgmt.commitTimer(userId, studyClass, studyTime);
-        
-        // Destroy timer and purge relevant stores
-        setStudyClass(null);
-        setStudyTime(0);
-        setTimer(null);
 
-        // Purge userId
+        // Send logout request to endpoint; Clear userId on success
         const host = 'http://localhost:5000'; 
         const apiUrl = '/api/logout';
         fetch(host + apiUrl, {
@@ -87,29 +94,40 @@
         })
             .then(response => response.text())
             .then(data => {
+                // Commit timer totals to database
+                Mgmt.commitTimer(userId, studyClass, studyTime);
+                
+                // Destroy timer and purge sessional stores
+                setStudyClass(null);
+                setStudyTime(0);
+                setTimer(null);
+                logoutUser();
+
+                // Display success modal
                 setModal("Success", "success", data);
                 toggleModal();
-                logoutUser();
             })
         .catch(error => {
             setModal("Error", "error", "Error connecting to server.");
             toggleModal();
         });
-        
     }
 
+    // Login option
     function login(){
         setModal("Login", "login");
     }
-
 </script>
 
 <template>
     <div id="header">
-        <h1 class="pageNameSection">
-            {{ pageName }}
-        </h1>
+
+        <!-- Current page name -->
+        <h1 class="pageNameSection"> {{ pageName }} </h1>
+        
         <div v-if="studyClass" class="timerSection">
+
+            <!-- Timer express display -->
             <div>Currently studying for <b>{{ studyClass }}</b></div>
             <button 
                 id="timerExpress"
@@ -125,8 +143,11 @@
                     {{ toTimeString(studyTime) }}
                 </div>
             </button>
+
         </div>
     </div>
+
+    <!-- Dropdown menu -->
     <div 
         id="header-dropdown"
         class="dropdown-tab"
@@ -151,6 +172,7 @@
             </button>
         </div>
     </div>
+    
 </template>
 
 <style scoped>

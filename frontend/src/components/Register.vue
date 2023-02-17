@@ -20,7 +20,7 @@
         </div>
         <button class="register-button" type="button" @click="validateForm">Register</button>
         <p class="form-text">
-            <!-- <a class="form-link" href="./" id="linkLogin">Already have an account? Sign in</a> -->
+            <a class="form-link" id="linkLogin">Already have an account? Sign in</a>
         </p>
       </div>
     </form>
@@ -30,12 +30,29 @@
 <script setup>
   import{ ref } from "vue"
   import validate from "../logic/validate"
+  import { useStore } from "../stores"
+  import { storeToRefs } from "pinia";
 
   let username, email, password, confirmPassword;
   const usernameErrorMsg = ref('');
   const emailErrorMsg = ref('');
   const passwordErrorMsg = ref('');
   const confirmpasswordErrorMsg = ref('');
+
+  const store = useStore();
+  const { setModal, toggleModal } = store;
+
+  function checkLinks(){
+    setTimeout(() => {
+      const linkCreateAccount = document.getElementById("linkLogin");
+      linkCreateAccount.addEventListener("click", () => {
+        setModal("Login", "login");
+        toggleModal();
+      });
+    }, 500);
+  }
+
+  checkLinks();
 
   function validateForm() {
     username = document.getElementById("signupUsername").value;

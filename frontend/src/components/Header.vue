@@ -88,9 +88,6 @@
         setModal("Login", "login");
     }
 
-    function register(){
-        setModal("Create Account", "register");
-    }
 </script>
 
 <template>
@@ -134,9 +131,6 @@
             </button>
             <button v-if="!userId" class="dropdown-tab" @click="login">
                 Login
-            </button>
-            <button v-if="!userId" class="dropdown-tab" @click="register">
-                Register
             </button>
             <button v-else-if="userId" class="dropdown-tab" @click="logOut">
                 Log Out

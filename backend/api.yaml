@@ -1,7 +1,7 @@
 openapi: "3.0.0"
 
 info:
-  version: "0.1"
+  version: "0.2"
   title: StudyBuddy API
   description: "Provides access to the StudyBuddy backend."
 
@@ -18,12 +18,12 @@ paths:
       operationId: login
       parameters:
       - name: username
-        in: header
+        in: body
         required: true
         content:
           'application/json': {}
       - name: password
-        in: header
+        in: body
         required: true
         content:
           'application/json': {}
@@ -53,12 +53,12 @@ paths:
       operationId: newuser
       parameters:
       - name: username
-        in: header
+        in: body
         required: true
         content:
           'application/json': {}
       - name: password
-        in: header
+        in: body
         required: true
         content:
           'application/json': {}
@@ -69,6 +69,107 @@ paths:
           description: "The user has made a bad request; either the username is already taken, or parameters are missing."
         500:
           description: "Server error, problem with backend."
+  /class/{classname}:
+    get:
+      tags: ["Tracking Related"]
+      summary: "Get the class {classname}"
+      description: "Returns the class {classname} associated with the user"
+      operationId: getclass
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+        - name: classname
+          in: url
+          required: true
+      responses:
+        200:
+          description: "The user has received the class: {classname}"
+          content:
+            application/json:
+              schemas:
+                $ref: #/components/schemas/class
+        400:
+          description: "The user requested a class that doesn't exist"
+        401:
+          description: "The request maker wasn't logged in, or forgot to send the session cookie"
+        500:
+          description: "Internal server error, problem with backend logic or database"
+  /class:
+    get:
+      tags: ["Tracking Related"]
+      summary: "Gets all classes for the user"
+      description: "Returns all the classes for the logged in user in JSON format"
+      operationId: allclasses
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+      responses:
+        200:
+          description: "The user has received all their classes"
+          content:
+            application/json:
+              schemas:
+                $ref: #/components/schemas/ArrayOfClasses
+        401:
+          description: "The request maker wasn't logged in, or forgot to send the session cookie"
+        500:
+          description: "Internal server error, problem with backend logic or database"
+  /class/{classname}/update_time:
+    post:
+      tags: ["Tracking Related"]
+      summary: "Increase time studied for class"
+      description: "Send the server a integer (number of seconds) spent studying for the given class."
+      operationId: update_time_studied
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+        - name: classname
+          in: url
+          required: true
+        - name: added
+          in: body
+          required: true
+      responses:
+        200:
+          description: "The time in the associated class was increased successfully"
+        401:
+          description: "The request maker wasn't logged in, or forgot to send the session cookie"
+        500:
+          description: "Internal server error, problem with backend logic or database"
+  /class/{classname}/task:
+    get:
+      tags: ["Tracking Related"]
+      summary: "Get all the tasks for {classname}"
+      description: "Get all the tasks for {classname} associated with the current user"
+      operationId: alltasks
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+        - name: classname
+          in: url
+          required: true
+          description: "The name of the class to get the associated tasks for"
+      responses:
+        200:
+          description: "The user has received all their classes"
+          content:
+            application/json:
+              schemas:
+                $ref: #/components/schemas/ArrayOfTasks
+        400:
+          description: "The user requested tasks for a class that doesn't exist"
+        401:
+          description: "The request maker wasn't logged in, or forgot to send the session cookie"
+        500:
+          description: "Internal server error, problem with backend logic or database"
 
 tags:
   - name: Account Related
@@ -77,3 +178,76 @@ tags:
     description: "Operations that pertain to tracking progress, classes, study time, etc."
   - name: Leveling Related
     description: "Operations that pertain to the leveling system."
+
+components:
+  schemas:
+    task:
+      type: object
+      properties:
+        tID:
+          type: integer
+          example: "7"
+        taskname:
+          type: string
+          example: "Assignment 4"
+        deadline:
+          type: date
+          example: "2023-04-04"
+        taskweight:
+          type: float
+          example: "30.5"
+        taskgrade:
+          type: float
+          example: "90"
+        taskxp:
+          type: float
+          example: "999.99"
+    ArrayOfTasks:
+      type: array
+      properties:
+        task:
+          $ref: '#/components/schemas/task'
+    class:
+      type: object
+      properties:
+        cID:
+          type: integer
+          example: "15"
+        class_Name:
+          type: string
+          example: "Comp 1000"
+        timeslot:
+          type: time
+          example: "11:11"
+        is_complete:
+          type: integer
+          example: "0"
+        studyTime:
+          type: float
+          example: "1234.56"
+        section:
+          type: string
+          example: "A02"
+        classroom:
+          type: string
+          example: "EITC 405"
+        prof_Name:
+          type: string
+          example: "Prof. Professor"
+        prof_Email:
+          type: string
+          example: "profprof@uni.edu"
+        prof_Phone:
+          type: string
+          example: "123-456-7890"
+        prof_Office:
+          type: string
+          example: "EITC 406"
+        prof_Hours:
+          type: time
+          example: "10:00"
+    ArrayOfClasses:
+      type: array
+      properties:
+        class:
+          $ref: '#/components/schemas/class'

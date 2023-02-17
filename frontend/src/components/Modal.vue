@@ -1,23 +1,39 @@
+<!-- 
+  Modal.vue 
+    Popup modal to be overlayed on the application body layout. Displays a title prop and includes a scrollable body slot.
+-->
+
 <script setup>
     import Happy from "/artifacts/happydog.svg";
     import Sad from "/artifacts/saddog.svg";
-    import SuccessIcon from "/artifacts/success.svg";
-    import FailureIcon from "/artifacts/error.svg";
+    import { computed } from "vue";
+    import { storeToRefs } from "pinia";
     import { useStore } from "../stores";
 
     const store = useStore();
     const { toggleModal } = store;
+    const { modalContent } = storeToRefs(store);
 
     const props = defineProps({ 
         title: {type: String, required: false, default: "Modal Title"}
     })
+
+    // Change happy dog to sad dog decoration when system errors ensue
+    const DogIcon = computed(() => {
+        if(modalContent.value == "error")
+            return Sad;
+        return Happy;
+    });
 </script>
 
 <template>
-    <div id="dog" :style="`background:url(${Happy});`" />
+    <div id="dog" :style="`background:url(${DogIcon});`" />
     <div id="modal">
         <div id="modal-title">
+
+            <!-- Modal Title -->
             <h1>{{ title }}</h1>
+
         </div>
         <span class="filler" />
         <span class="filler" />
@@ -28,9 +44,12 @@
         </span>
         <div class="modal-content">
             <div id="modal-inner">
+
+                <!-- Modal Body -->
                 <div id="modal-inner-content">
                     <slot />
                 </div>
+
             </div>
         </div>
     </div>
@@ -101,12 +120,14 @@
     }
     .filler:nth-child(3){
         border-color: var(--box);
-        border-top-left-radius: 4px;
-        border-top-right-radius: 4px;
+        border-right-style: none;
         z-index: 4;
     }
     .filler:nth-child(4){
         border-top-right-radius: 2em;
+        background: var(--richgold);
+        box-shadow: inset 0.2em -0.1em 0.8em rgba(0,0,0,0.4);
+        font-size: 130%
     }
 
 
@@ -130,6 +151,7 @@
         border: 1px solid var(--richgold);
         border-radius: 2em;
         background: var(--darkerteal);
+        overflow-x: scroll;
     }
 
     #modal-inner-content{

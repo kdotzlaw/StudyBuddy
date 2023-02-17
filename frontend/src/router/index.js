@@ -1,8 +1,12 @@
-import { createRouter, createWebHistory } from 'vue-router'
+/*
+ * router/index.js
+ *    Declare application routes and page components to render
+ */
 
-import Dashboard from '../pages/Dashboard.vue'
-import Test from '../pages/Test.vue'
-import Login from '../components/Login.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+
+import Dashboard from '../pages/Dashboard.vue';
+import Class from '../pages/Class.vue';
 
 const routes = [
   {
@@ -11,9 +15,9 @@ const routes = [
     component: Dashboard
   },
   {
-    path: '/test', 
-    name: 'Test',
-    component: Test
+    path: '/class', 
+    name: 'Class',
+    component: Class
   }
 ]
 
@@ -22,4 +26,4 @@ const router = createRouter({
   routes
 })
 
-export default router
+export default router;

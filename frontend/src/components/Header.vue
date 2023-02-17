@@ -1,64 +1,33 @@
+<!-- 
+  Header.vue 
+    Header component attached to the top of application layout. Includes current page name, 
+    timer express display, and dropdown menu for showing user and setting options.
+-->
+
 <script setup>
     import { storeToRefs } from "pinia";
-    import { ref } from "vue";
+    import { ref, computed } from "vue";
     import Logo from "/assets/logo.png";
-    import PauseIcon from "/artifacts/pausegold.png";
+    import Play from "/artifacts/play.svg";
+    import Pause from "/artifacts/pausegold.png";
     import Timer from "../logic/timer";
+    import Mgmt from "../logic/managetimer";
     import { useStore } from "../stores";
     const store = useStore();
     
-    // Temporary env vars
-    let displayName = "My Buddy";
-    const { loginUser, logoutUser } = store;
-    const { userId, studyClass } = storeToRefs(store);
+    const { loginUser, logoutUser, setStudyClass, setStudyTime, setTimer, setModal, toggleModal } = store;
+    const { sessionTimer, userId, studyClass, studyTime, pageName} = storeToRefs(store);
+    let displayName = userId.value;
+
 
     /*===========================
-       TIMER MANAGEMENT
+       TIMER EXPRESS DISPLAY
      *===========================*/
 
-    let { setStudyTime } = store;
-    
-    /* manageTimer
-     *   Starts new Timer instance if no Timer running
-     *   Pauses current Timer if provided class or user params are current
-     *   Create new Timer instance if provided class or user params are new
-     *   @params - userId: string , course: string
+    /* toTimeString
+     *   Parse number of study session seconds into hh:mm:ss time string for convenient display
+     *   @params - s: Number
      */
-    function manageTimer(userId, course){
-        if(!globalThis.sessionTimer){
-            initTimer(userId, course);
-        }
-        else{
-            // Destroy Timer when user not authenticated or logged out
-            if(!userId){
-                globalThis.sessionTimer = null;
-                setStudyTime(0);
-                studyTime.value = 0;
-            }
-            // Start new Timer instance for new class
-            else if(globalThis.sessionTimer.getSessionUser() != userId || globalThis.sessionTimer.getCurrentClass() != course){
-                initTimer(userId, course);
-            }
-            // Pause Timer for current class
-            else{
-                let timer = globalThis.sessionTimer;
-                if(timer.isPaused())
-                    timer.resume();
-                else
-                    timer.pause();
-            }
-        }
-    }
-
-    // Initiate Timer class
-    function initTimer(userId, course){
-        globalThis.sessionTimer = new Timer(userId, course);
-    }
-
-    // Current study time in milliseconds
-    const { studyTime } = storeToRefs(store);
-
-    // Parse seconds into hh:mm:ss time string
     function toTimeString(s){
         let timeString = ""
         let hours = Math.floor(s / 3600);
@@ -74,66 +43,111 @@
         );
     }
 
-    // Pause button ref. Switch between pause and time view on hover
-    const showPause = ref(false);
 
+    /*===========================
+       STUDY SESSION PAUSE/PLAY
+     *===========================*/
+
+    // Pause or resume current study session. Timer bar display switches between icon and time string on hover
+    const showPause = ref(false);
     function switchPause(newVal){
         showPause.value = newVal;
     }
 
+    // Reflect study session's paused/running state with icons and notes
+    const studyNote = computed(() => {
+        if(!sessionTimer.value.isPaused())
+            return "Pause session";
+        return "Resume session";
+    });
+    const studyIcon = computed(() => {
+        if(!sessionTimer.value.isPaused())
+            return Pause;
+        return Play;
+    });
+
+
     /*===========================
        DROPDOWN MENU AND MODALS
      *===========================*/
-    const { setModal } = store;
 
-    // Toggle dropdown options on click and mouse events
+    // Toggle dropdown options on click and mouseover events
     const showOptions = ref(false);
     function switchOptions(newVal){
         showOptions.value = newVal;
     }
 
-    // Execute option
-    function openSettings(){
-        setModal("Settings");
+    // Manage Settings option
+    function settings(){
+        setModal("Settings", "settings", "Made with ❤️ The Procrastinators © 2023");
     }
 
+    // Logout option
     function logOut(){
-        logoutUser();
-        setModal("Log out", "You successfully logged out. See you soon!");
+
+        // Send logout request to endpoint; Clear userId on success
+        const host = 'http://localhost:5000'; 
+        const apiUrl = '/api/logout';
+        fetch(host + apiUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+        })
+            .then(response => response.text())
+            .then(data => {
+                // Commit timer totals to database
+                Mgmt.commitTimer(userId, studyClass, studyTime);
+                
+                // Destroy timer and purge sessional stores
+                setStudyClass(null);
+                setStudyTime(0);
+                setTimer(null);
+                logoutUser();
+
+                // Display success modal
+                setModal("Success", "success", data);
+                toggleModal();
+            })
+        .catch(error => {
+            setModal("Error", "error", "Error connecting to server.");
+            toggleModal();
+        });
     }
 
+    // Login option
     function login(){
-        loginUser("user123");
-        setModal("", "<Login></Login>");
-    }
-
-    function register(){
-        setModal("", "<Register></Register>");
+        setModal("Login", "login");
     }
 </script>
 
 <template>
     <div id="header">
-        <h1 class="pageNameSection">
-            Page Name
-        </h1>
+
+        <!-- Current page name -->
+        <h1 class="pageNameSection"> {{ pageName }} </h1>
+        
         <div v-if="studyClass" class="timerSection">
+
+            <!-- Timer express display -->
             <div>Currently studying for <b>{{ studyClass }}</b></div>
             <button 
                 id="timerExpress"
-                @click="manageTimer(userId,studyClass)"
+                @click="Mgmt.manageTimer(userId,studyClass)"
                 @mouseover="switchPause(true)"
                 @mouseleave="switchPause(false)"
+                v-motion-pop
             >
                 <div v-if="showPause">
-                    <img :src=PauseIcon alt="Pause study session" />
+                    <img :src="studyIcon" :alt="studyNote" />
                 </div>
                 <div v-else>
                     {{ toTimeString(studyTime) }}
                 </div>
             </button>
+
         </div>
     </div>
+
+    <!-- Dropdown menu -->
     <div 
         id="header-dropdown"
         class="dropdown-tab"
@@ -147,20 +161,18 @@
         </div>
         
         <div v-if="showOptions">
-            <button class="dropdown-tab" @click="openSettings">
+            <button class="dropdown-tab" @click="settings">
                 Manage Settings
             </button>
-            <button class="dropdown-tab" @click="logOut">
+            <button v-if="!userId" class="dropdown-tab" @click="login">
+                Login
+            </button>
+            <button v-else-if="userId" class="dropdown-tab" @click="logOut">
                 Log Out
             </button>
-            <button class="dropdown-tab" @click="login">
-                Login
-          </button>
-          <button class="dropdown-tab" @click="register">
-                Register
-      </button>
         </div>
     </div>
+    
 </template>
 
 <style scoped>
@@ -172,7 +184,7 @@
         color: var(--fadegold);
         background: var(--darkteal);
         display: grid;
-        grid-template-columns: 20% 1fr 20%;
+        grid-template-columns: 25% 1fr 20%;
         grid-gap: 5%;
         text-align: center;
         align-items: center;
@@ -215,7 +227,7 @@
 
     #timerExpress div{
         font-size: 1.2em;
-        width: 100%;
+        min-width: 3em;
         box-shadow: inset 2px 2px 4px rgba(0,0,0,0.3);
         padding: 0 0.5em 0 0.5em;
     }
@@ -246,6 +258,11 @@
         height: 12vh;
         width: 100%;
         cursor: pointer;
+        font-family: 'Gabriela', serif;
+    }
+
+    #header-dropdown .dropdown-tab{
+        font-size: 15px;
     }
 
     .dropdown-tab:not(:nth-child(1)){

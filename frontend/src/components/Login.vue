@@ -1,7 +1,11 @@
+<!-- 
+  Login.vue 
+    Renders form fields and controls, and runs validation checks for logging in an existing account.
+-->
+
 <template>
   <div class="container">
     <form class="form" id="login">
-        <h1 class="form-title">Login</h1>
         <div class="login-container">
           <div class="form-input-group">
             <input type="text" id="signinUsername" class="form-input" autofocus placeholder="Username" v-model="username">
@@ -13,10 +17,14 @@
           </div>
           <button class="login-button" type="button" @click="validateForm">Log In</button>
           <p class="form-text">
-              <a href="#" class="form-link">Forgot your password?</a>
+            <a href="#" class="form-link" id="forgotPasswordLink">Forgot your password?</a>
+            <div class="form-input-feedback-message" v-if="emailSent" >{{ emailSent }}</div>
           </p>
           <p class="form-text">
-              <a class="form-link" href="./" id="linkCreateAccount">Don't have an account? Create account</a>
+
+              <!-- Switch to Register form -->
+              <a class="form-link" id="linkCreateAccount">Don't have an account? Create account</a>
+
           </p>
         </div>
     </form>
@@ -25,10 +33,42 @@
 
 <script setup>
   import{ ref } from "vue"
+  import validate from "../logic/validate"
+  import { useStore } from "../stores"
+  import { storeToRefs } from "pinia";
 
+  let username, password;
   const usernameErrorMsg = ref('');
   const passwordErrorMsg = ref('');
+  const emailSent = ref('');
 
+  const store = useStore();
+  const { setModal, toggleModal, loginUser } = store;
+
+
+  function checkLinks(){
+    setTimeout(() => {
+    const forgotPasswordLink = document.getElementById("forgotPasswordLink");
+    forgotPasswordLink.addEventListener("click", () => {
+      emailSent.value = 'Instructions to reset your password has been sent to your email!';
+    });
+   }, 500);
+
+    setTimeout(() => {
+      const linkCreateAccount = document.getElementById("linkCreateAccount");
+      linkCreateAccount.addEventListener("click", () => {
+        setModal("Create Account", "register");
+        toggleModal();
+      });
+    }, 500);
+  }
+
+  checkLinks();
+
+  /* validateForm
+   *   Runs all validation checks on form submit, and sends data to login authentication endpoint when validations pass.
+   *   Display notes for validation failure, or show authentication success/error modal after form submit.
+   */
   function validateForm() {
     let username = document.getElementById("signinUsername").value;
     let password = document.getElementById("signinPassword").value;
@@ -36,9 +76,8 @@
     var userNameCheck = false;
     var passwordErrorCheck = true;
 
-    console.log(username.length)
-
-    if (username.length == 0) {
+    // Validate check username
+    if (validate.isInputEmpty(username)) {
       usernameErrorMsg.value = 'Username is required';
       userNameCheck = true;
     } else {
@@ -46,7 +85,8 @@
       userNameCheck = false;
     }
 
-    if (password.length == 0) {
+    // Validate check password
+    if (validate.isInputEmpty(password)) {
       passwordErrorMsg.value = 'Password is required';
       passwordErrorCheck = true;
     } else {
@@ -54,6 +94,7 @@
       passwordErrorCheck = false;
     }
 
+    // Validation checks pass; Send data to server endpoint
     if (!userNameCheck && !passwordErrorCheck) {
       const host = 'http://localhost:5000'; 
       const apiUrl = '/api/login';
@@ -69,14 +110,22 @@
         mode: 'no-cors',
         body: JSON.stringify(data)
       })
-      .then(response => console.log(response))
-      .then(data => {
-        console.log('Success:', data);
-        // Handle the response from the API here, e.g., show a success message or redirect the user to a different page
-      })
+        .then(response => response.text())
+        .then(data => {
+          loginUser(username);
+          setModal("Success", "success", data);
+          toggleModal();
+        })
       .catch(error => {
-        console.error('Error:', error);
-        // Handle the error here, e.g., show an error message
+        // Temporary superuser admission for offline debugging. Removed before final release
+        if(username == "admin" && "admitpls"){
+          loginUser(username);
+          setModal("So be it.", "success", "Welcome StudyBuddy Superuser!");
+        }
+        else
+          setModal("Error", "error", "Error connecting to server.");
+        toggleModal();
+        console.log(error);
       });
     }
   }
@@ -166,15 +215,16 @@ body {
   background: #ffffff;
 }
 
-.form-input--error {
-  color: var(--color-error);
-  border-color: var(--color-error);
-}
-
 .form-input-error-message {
   margin-top: 0.5rem;
   font-size: 0.85rem;
   color: var(--color-error);
+}
+
+.form-input-feedback-message {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--color-success);
 }
 
 .login-button {

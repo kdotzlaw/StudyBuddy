@@ -1,3 +1,4 @@
+import datetime
 import unittest
 
 import flask.app
@@ -18,11 +19,19 @@ class dbTests(unittest.TestCase):
 
     def test_cnxn(self):
         try:
-            conn = (r'Driver=SQL Server;'
+            # PROD CONNECTION STRING
+            conn = (r'Driver=ODBC Driver 17 for SQL Server;'
+                    r'Server=localhost;'
+                    r'Database=StudyBuddy;'
+                    r'UID=sa;'
+                    r'PWD=dbtools.IO'
+                    )
+            # DEV CONNECTION STRING D.N.T
+            '''conn = (r'Driver=SQL Server;'
                     r'Server=(local);'
                     r'Database=StudyBuddy;'
                     r'Trusted_Connection=yes'
-                    )
+                    )'''
             cnxn = pyodbc.connect(conn)
         except Exception:
             self.fail("Connection failed")
@@ -30,7 +39,7 @@ class dbTests(unittest.TestCase):
 
     '''
     Test passes if the correct record information is retrieved for the specified username
-    Test fails if incorrect record returned, or 
+    Test fails if incorrect record returned, or
     '''
 
     def test_getUser(self):
@@ -40,19 +49,23 @@ class dbTests(unittest.TestCase):
         self.assertIn(username, result.username)
 
     '''
-    Test passes if user is sucessfully inserted into the db (asserting that user appears in retrieved record)
-    Mock user is removed at the end of the test
+    Test passes if mock user successfully removed from db
     '''
 
     def test_removeUser(self):
         username = "test"
-        db.removeUser(username)
+        # db.removeUser(username)
         password = "testing"
         db.createAccount(username, password)
         # remove user
         db.removeUser(username)
         result = db.getAllUsers()
         self.assertNotIn(username, result)
+
+    '''
+    Test passes if user is sucessfully inserted into the db (asserting that user appears in retrieved record)
+    Mock user is removed at the end of the test
+    '''
 
     def test_createAccount(self):
         username = "test"
@@ -64,6 +77,115 @@ class dbTests(unittest.TestCase):
         # remove user
         db.removeUser(username)
 
+    # Class Tests
+    '''
+    Test passes if given strings are present in the record retrieved
+    '''
+
+    def test_getClasses(self):
+        username = "katDot"
+        c1 = "COMP 4350"
+        c2 = "COMP 3820"
+        classes = db.getClasses(username)
+        self.assertIn(c1, classes[0])
+        self.assertIn(c2, classes[1])
+
+    '''
+    Test passes if the class ID from the record with username & className matches hardcoded value (3)
+    '''
+    def test_ClassId(self):
+        username = 'katDot'
+        className = 'Comp 4350'
+        record = db.getClassID(username, className)
+        self.assertEqual(3, record)
+
+    '''
+    Test passes if the hardcoded username and className appear in the requested record
+    '''
+    def test_getSingleClass(self):
+        username = 'katDot'
+        className = "COMP 4350"
+        record = db.getSingleClass(username, className)
+        self.assertIn(className, record)
+
+    '''
+    Test passes if the added class can be successfully retrieved from the db
+    '''
+    def test_addClass(self):
+        username = 'katDot'
+        className = "COMP 2080"
+        timeslot = "16:00:00.0000000"
+        db.addClass(username, className, timeslot)
+        result = db.getSingleClass(username, className)
+        self.assertIn(className, result)
+        # remove class once done
+        db.removeClass(username, className)
+
+    '''
+    Test passes if the added class is successfully removed from the db (no longer appears in class list)
+    '''
+    def test_removeClass(self):
+        username = 'katDot'
+        className = "COMP 2150"
+        timeslot = "9:00:00.0000000"
+        db.addClass(username, className, timeslot)
+        # remove it
+        db.removeClass(username, className)
+        record = db.getClasses(username)
+        for i in range(len(record)):
+            self.assertNotIn(className, record[i])
+
+    '''
+    Test passes if is_complete value for specified class is 1
+    '''
+    def test_completeClass(self):
+        username = 'katDot'
+        className = "COMP 2150"
+        timeslot = "9:00:00.0000000"
+        # add new class to complete
+        db.addClass(username, className, timeslot)
+        db.completeClass(username, className)
+        record = db.getSingleClass(username, "COMP 2150")
+        self.assertEqual(1, record.is_complete)
+        # remove
+        db.removeClass(username, className)
+
+    '''
+    Test passes if new study time matches hardcoded value
+    '''
+    def test_addStudyTime_base(self):
+        username = "katDot"
+        className = "COMP 2150"
+        timeslot = "9:00:00.0000000"
+        db.addClass(username, className, timeslot)
+        db.addStudyTime(username, className, 1.30)
+        record = db.getSingleClass(username, className)
+        self.assertEqual(record.studyTime, 1.30)
+        '''reset studytime
+        db.addStudyTime(username, className, -1.30)
+        record = db.getSingleClass(username, className)
+        #self.assertEqual(record.studyTime, 0.0)
+        '''
+    '''
+    Test passes if each column in specified class was successfully updated with new metadata
+    '''
+    def test_editClassMeta(self):
+        username = "katDot"
+        className = "COMP 2150"
+        timeslot = "9:00:00.0000000"
+        db.addClass(username, className, timeslot)
+        db.editClassMeta(username, className, "", "", "", "", "",
+                        "", "")
+        db.editClassMeta(username, className, "A01", "320 Machray", "Steve Stevenson","Steve@steve.com","999-9999","150 EITC","10:00:00")
+        record = db.getSingleClass(username, className)
+        self.assertEqual("A01", record.section)
+        self.assertEqual("320 Machray", record.classroom)
+        self.assertEqual("Steve Stevenson", record.prof_Name)
+        self.assertEqual("Steve@steve.com", record.prof_Email)
+        self.assertEqual("999-9999", record.prof_Phone)
+        self.assertEqual("150 EITC", record.prof_Office)
+        d = datetime.datetime.strptime("10:00:00", '%H:%M:%S').time()
+        self.assertEqual(d, record.prof_Hours)
 
 class apiTest(flask_unittest.ClientTestCase):
     # assign flask app
@@ -102,6 +224,37 @@ class apiTest(flask_unittest.ClientTestCase):
         self.assertStatus(resp, 200)
         # log in as user
         resp = client.post('/api/login', json={'username': 'newuser', 'password': 'pass'})
+        self.assertStatus(resp, 200)
+
+    def test_allclasses(self, client):
+        # log in
+        resp = client.post('/api/login', json={'username': 'ryan2023', 'password': 'password'})
+        # check valid login
+        self.assertStatus(resp, 200)
+        # send request for all classes
+        resp = client.get('/api/class')
+        # check valid status
+        self.assertStatus(resp, 200)
+
+    def test_class(self, client):
+        # log in
+        resp = client.post('/api/login', json={'username': 'ryan2023', 'password': 'password'})
+        # check valid login
+        self.assertStatus(resp, 200)
+        # send request for one class
+        resp = client.get('/api/class/COMP 4350')
+        print(resp.get_data())
+        self.assertStatus(resp, 200)
+
+
+    def test_update_time(self, client):
+        # log in
+        resp = client.post('/api/login', json={'username': 'ryan2023', 'password': 'password'})
+        # check valid login
+        self.assertStatus(resp, 200)
+        # send update request
+        resp = client.post('/api/class/COMP 4350/update_time', json={'added': 1024})
+        # check success
         self.assertStatus(resp, 200)
 
 

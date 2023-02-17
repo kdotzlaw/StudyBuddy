@@ -1,45 +1,63 @@
+<!-- 
+  Dashboard.vue
+    route: /
+    Primary homepage and application entrypoint. Conditionally mount dashboard components based on user authentication state. 
+-->
+
 <script setup>
     import Accordion from "../components/Accordion.vue";
     import ClassCards from "../components/ClassCards.vue";
     import Buddy from "../components/Buddy.vue";
+    import { ref, computed } from "vue";
+    import { onMounted } from "vue";
     import { storeToRefs } from "pinia";
     import { useStore } from "../stores";
     
     const store = useStore();
     const { userId } = storeToRefs(store);
-    const { updateSkin } = store;
+    const { updateSkin, setPageName } = store;
 
-    // Stubbed requirements for now
+    onMounted(() => {
+        setPageName("Dashboard");
+    });
+
+    // Stub data compensates for unintegrated(future sprint) features
     let reqs = [
         { name: "COMP2080", timeStudied: 2.5 },
         { name: "COMP4350", timeStudied: 6.2 },
         { name: "COMP4620", timeStudied: 0.0 },
         { name: "COMP4380", timeStudied: 10.0 },
     ]
+    let chats = [
+        "Press on the Play ▶ button on a class to start studying!",
+        "You have no upcoming deadlines.",
+        "Good hooman!"
+    ]
+    let chatIndex = 0;
+    const chat = ref(chats[0]);
+
+    // Cycle through Buddy chat balloon conversations
+    setInterval(()=>{
+        chatIndex = (chatIndex + 1) % chats.length;
+        chat.value = chats[chatIndex];
+    },2000)
 </script>
 
 <template>
     <div id="dashboard">
         <div v-if="userId" id="buddy-ctr">
-            <Buddy :showLevel=true chat="Buddy's body is being produced" />
+            <Buddy :showLevel=true :chat="chat" />
         </div>
         <div v-else id="buddy-ctr">
-            <Buddy chat="Ples log in" />
+            <Buddy chat="Login or Register to use Study Buddy" />
         </div>
-        <div v-if="userId">
+        <div v-if="userId" v-motion-slide-bottom>
             <Accordion title="Calendar Overview" :toggled="false">
                 <h3>Current Quests</h3>
                 <p class="delius">You have an assignment due tomorrow for COMP2080!</p>
             </Accordion>
             <Accordion title="Choose a Class to Study for">
                 <ClassCards :reqs="reqs" />
-            </Accordion>
-            <Accordion title="Choose a UI Skin">
-                <div class="skins">
-                    <div :class="`skin-preview skin-default`" @click="updateSkin('skin-default')" />
-                    <div :class="`skin-preview skin-forest`" @click="updateSkin('skin-forest')" />
-                    <div :class="`skin-preview skin-sunset`" @click="updateSkin('skin-sunset')" />
-                </div>
             </Accordion>
         </div>
     </div>
@@ -51,28 +69,6 @@
         display: flex;
         justify-content: space-between;
         margin: 5vh 0 10vh 0;
-    }
-
-    .skins{
-        display: flex;
-        margin: 1em 0 1em 0;
-    }
-
-    .skin-preview{
-        height: 4em;
-        width: 6em;
-        margin: 0 0.5em 0 0.5em;
-        border: 2px solid var(--gold);
-        border-radius: 0.5em;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: cover;
-        cursor: pointer;
-    }
-
-    .skin-preview:hover{
-        transition: 0.3s;
-        filter: brightness(110%) opacity(80%);
     }
 
     #buddy-ctr{

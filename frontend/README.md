@@ -1,10 +1,13 @@
-## Frontend README
+# Frontend Readme
   
-### Install npm dependencies
-		`npm i`
-  
-### Run Vue app in development
-		`npm run dev`
+## Install npm dependencies
 
-### Run tests
-		`npm test`
+        npm i
+  
+## Run Vue app in development
+
+        npm run dev
+
+## Run tests
+
+        npm test

@@ -45,12 +45,16 @@
 
 <template>
     <div id="dashboard">
+
+        <!-- Buddy container -->
         <div v-if="userId" id="buddy-ctr">
             <Buddy :showLevel=true :chat="chat" />
         </div>
         <div v-else id="buddy-ctr">
             <Buddy chat="Login or Register to use Study Buddy" />
         </div>
+
+        <!-- Dashboard accordions -->
         <div v-if="userId" v-motion-slide-bottom>
             <Accordion title="Calendar Overview" :toggled="false">
                 <h3>Current Quests</h3>
@@ -60,6 +64,7 @@
                 <ClassCards :reqs="reqs" />
             </Accordion>
         </div>
+        
     </div>
 </template>
 

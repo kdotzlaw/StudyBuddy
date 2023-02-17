@@ -119,7 +119,7 @@
         return "View current requirements";
     });
 
-    // Toggle between two filter states
+    // Toggle between current/expired filter states
     function changeView(){
         current.value = !current.value;
     }
@@ -128,6 +128,8 @@
 <template>
     <div id="classpage">
         <section v-if="userId && reqs" id="hero">
+
+            <!-- Back arrow to Dashboard -->
             <div id="back-items" v-motion-slide-right>
                 <router-link to="/">
                     <button id="back">
@@ -135,22 +137,33 @@
                         <span> Back </span>
                     </button>
                 </router-link>
+
+                <!-- Manage Class information -->
                 <img id="class-settings" :src="Gear" alt="Manage class information" />
+
             </div>
             <div id="hero-items">
                 <div>
+
+                    <!-- Class name and time studied -->
                     <h1 v-motion-pop> {{ classInfo.name }} </h1>
                     <h2 v-motion-pop> Studied {{ classInfo.timeStudied }} hours this week </h2>
+
                 </div>
                 <div v-motion-pop>
+
+                    <!-- Study pause/play control -->
                     <button class="button round" @click="manageStudy">
                         <img id="study-ctrl" :src="studyIcon" :alt="studyNote" />
                     </button>
                     <span id="study-note"> {{ studyNote }} </span>
+
                 </div>
             </div>
         </section>
         <section v-if="userId && reqs" id="class-items">
+
+            <!-- Class requirements list -->
             <div id="req-ctr" v-motion-slide-left>
                 <div id="req-head">
                     <button id="add-req" class="button bar">
@@ -162,7 +175,10 @@
                 </div>
                 <RequirementCards :reqs="reqSet" />
             </div>
+
             <div>
+
+                <!-- Class grade projection -->
                 <div id="grade-ctr" v-motion-slide-right>
                     <h1 id="grade"> {{ classInfo.grade }} </h1>
                     <div id="grade-note" class="delius">
@@ -173,6 +189,8 @@
                         Grade breakdown
                     </button>
                 </div>
+
+                <!-- Class meta details -->
                 <div id="details-ctr" v-motion-slide-bottom>
                     <h3> Class Details </h3>
                     <table>
@@ -214,6 +232,7 @@
                         </tr>
                     </table>
                 </div>
+
             </div>
         </section>
     </div>

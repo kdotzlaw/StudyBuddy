@@ -224,6 +224,37 @@ class apiTest(flask_unittest.ClientTestCase):
         resp = client.post('/api/login', json={'username': 'newuser', 'password': 'pass'})
         self.assertStatus(resp, 200)
 
+    def test_allclasses(self, client):
+        # log in
+        resp = client.post('/api/login', json={'username': 'ryan2023', 'password': 'password'})
+        # check valid login
+        self.assertStatus(resp, 200)
+        # send request for all classes
+        resp = client.get('/api/class')
+        # check valid status
+        self.assertStatus(resp, 200)
+
+    def test_class(self, client):
+        # log in
+        resp = client.post('/api/login', json={'username': 'ryan2023', 'password': 'password'})
+        # check valid login
+        self.assertStatus(resp, 200)
+        # send request for one class
+        resp = client.get('/api/class/COMP 4350')
+        print(resp.get_data())
+        self.assertStatus(resp, 200)
+
+
+    def test_update_time(self, client):
+        # log in
+        resp = client.post('/api/login', json={'username': 'ryan2023', 'password': 'password'})
+        # check valid login
+        self.assertStatus(resp, 200)
+        # send update request
+        resp = client.post('/api/class/COMP 4350/update_time', json={'added': 1024})
+        # check success
+        self.assertStatus(resp, 200)
+
 
 if __name__ == '__main__':
     unittest.main()

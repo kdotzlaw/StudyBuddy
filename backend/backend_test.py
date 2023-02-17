@@ -113,7 +113,6 @@ class dbTests(unittest.TestCase):
         db.addClass(username, className, timeslot)
         result = db.getSingleClass(username, className)
         self.assertIn(className, result)
-        #self.assertIn(timeslot, result)
         # remove class once done
         db.removeClass(username, className)
 
@@ -136,27 +135,30 @@ class dbTests(unittest.TestCase):
         db.addClass(username, className, timeslot)
         db.completeClass(username, className)
         record = db.getSingleClass(username, "COMP 2150")
+        print(record)
         self.assertEqual(1, record.is_complete)
         # remove
         db.removeClass(username, className)
 
-    '''def test_addStudyTime_base(self):
-        # studytime is 0 by default
-        # t = datetime.time(hour=1,minute=0, second=0)
+    def test_addStudyTime_base(self):
         username = "katDot"
         className = "COMP 2150"
         timeslot = "9:00:00.0000000"
         db.addClass(username, className, timeslot)
-        print(db.getSingleClass(username, className))
-        # base = db.addClass(username, className, timeslot)
-        totalTime = db.addStudyTime(username, className, 1.30)
-        self.assertEqual(totalTime.studyTime, 1.30)
+        db.addStudyTime(username, className, 1.30)
+        record = db.getSingleClass(username, className)
+        self.assertEqual(record.studyTime, 1.30)
+        #reset studytime
+        db.addStudyTime(username, className, -1.30)
+        record = db.getSingleClass(username, className)
+        self.assertEqual(record.studyTime, 0.0)
 
 
-    def test_addStudyTime_existing(self):
+    #def test_addStudyTime_existing(self):
     
-    def test_editClass(self):
-    '''
+    #def test_editClass(self):
+
+
 
 
 class apiTest(flask_unittest.ClientTestCase):

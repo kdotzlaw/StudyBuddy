@@ -146,7 +146,6 @@ class dbTests(unittest.TestCase):
         db.addClass(username, className, timeslot)
         db.completeClass(username, className)
         record = db.getSingleClass(username, "COMP 2150")
-        print(record)
         self.assertEqual(1, record.is_complete)
         # remove
         db.removeClass(username, className)

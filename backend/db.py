@@ -49,8 +49,6 @@ PRECONDITION: no users have been retrieved
 POSTCONDITION: formatted records of all users returned
 '''
 def getAllUsers():
-    #for [uID, username, password, user_email, xp] in temp:
-        #result = str(uID) + " " + str(username) + " " + str(password) + " " + str(user_email) + " " + str(xp)
     return cursor.execute("SELECT * FROM Users;").fetchall()
 
 # Class Methods

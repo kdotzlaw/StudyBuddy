@@ -2,9 +2,10 @@ import flask
 import flask_login
 import db
 from werkzeug.security import check_password_hash, generate_password_hash
+import uuid
 
 app = flask.Flask(__name__)
-app.secret_key = "secret string"  # TEMP, CHANGE THIS LATER (SERIOUSLY)
+app.secret_key = uuid.uuid4().hex  # reset secret key each time the server starts
 
 # instantiate flask login manager
 login_manager = flask_login.LoginManager()
@@ -155,6 +156,50 @@ def newuser():
         return "Account created", 200
     else:
         return "Account already exists with username", 400
+
+
+@app.route("/api/class/<classname>/update_time", methods=["POST"])
+@flask_login.login_required
+def update_time(classname):
+    # updates the time studied for a class
+    username = flask_login.current_user.get_id()
+    t = flask.request.get_json()['added']
+    res = db.addStudyTime(username, classname, t)
+    print(username, " increased ", classname, "'s study time by: ", t, " seconds")
+    return "Time for class updated successfully", 200
+
+
+@app.route("/api/class/<classname>", method=["GET"])
+@flask_login.login_required
+def getClass(classname):
+    username = flask_login.current_user.get_id()
+    res = db.getSingleClass(username, classname)
+    if res is None:
+        # no class found
+        return "Bad Request: No class found", 400
+    else:
+        return res
+
+
+@app.route("/api/class/<classname>/task")
+@flask_login.login_required
+def all_tasks(classname):
+    username = flask_login.current_user.get_id()
+    res = db.getSingleClass(username, classname)
+    if res is None:
+        # no class found
+        return "Bad Request: No class found"
+    res = db.getTaskList(username, classname)
+    return res
+
+
+@app.route("/api/class", methods=["GET"])
+@flask_login.login_required
+def all_classes():
+    username = flask_login.current_user.get_id()
+    res = db.getClasses(username)
+    # auto calls jsonify and parses iterable of dictionaries
+    return res
 
 
 @app.route("/testlogin")

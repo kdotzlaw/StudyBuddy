@@ -49,10 +49,9 @@ PRECONDITION: no users have been retrieved
 POSTCONDITION: formatted records of all users returned
 '''
 def getAllUsers():
-    temp = cursor.execute("SELECT * FROM Users;")
-    for [uID, username, password, user_email, xp] in temp:
-        result = str(uID) + " " + str(username) + " " + str(password) + " " + str(user_email) + " " + str(xp)
-    return result
+    #for [uID, username, password, user_email, xp] in temp:
+        #result = str(uID) + " " + str(username) + " " + str(password) + " " + str(user_email) + " " + str(xp)
+    return cursor.execute("SELECT * FROM Users;").fetchall()
 
 # Class Methods
 '''
@@ -62,8 +61,6 @@ POSTCONDITION: all classes for user 'username' have been retrieved (if the class
 def getClasses(username):
     # get user id
     userID = getUser(username).uID
-    # count all records
-    # count = cursor.execute("SELECT COUNT(*) FROM Classes WHERE FK_uID = ? ")
     record = cursor.execute("SELECT * FROM Classes WHERE FK_uID = ? AND is_complete = 0;", userID).fetchall()
     return record
 
@@ -76,8 +73,6 @@ def getClassID(username, className):
     userID = getUser(username).uID
     record = cursor.execute("SELECT cID FROM Classes WHERE FK_uID = ? AND class_Name =?;", userID, className).fetchone()
     return record.cID
-
-
 '''
 PRECONDITION: no classes retrieved
 POSTCONDITION: a single class is returned when given username and class id
@@ -113,7 +108,6 @@ POSTCONDITION: specified class marked complete, but not removed from db
 def completeClass(username, className):
     classID = getClassID(username, className)
     userID = getUser(username).uID
-    #record = cursor.execute("UPDATE Classes SET [is_complete] = ? WHERE [cID] = ? AND [FK_uID] = ?", 1, classID, userID).fetchone()
     prep_stmt = "UPDATE Classes SET is_complete = ? WHERE cID = ? AND FK_uID = ?;"
     record = cursor.execute(prep_stmt, 1, classID, userID)
     return record
@@ -148,9 +142,6 @@ def addStudyTime(username, className, t):
     uTime =  study + t
     prep_stmt = "UPDATE Classes SET studyTime = ? WHERE FK_uID = ? AND cID = ?;"
     return cursor.execute(prep_stmt, uTime, userID, classID)
-
-
-# Tasks
 ''''
 PRECONDITION: no tasks have been retrieved
 POSTCONDITION: list of tasks per class retrieved
@@ -161,8 +152,10 @@ def getTaskList(username, className):
     userID = getUser(username).uID
     classID = getClassID(className)
     return cursor.execute("SELECT * FROM Tasks WHERE FK_uID = ? AND FK_cID = ?", userID, classID).fetchall()
-
-
+''''
+PRECONDITION: no taskID has been retrieved
+POSTCONDITION: taskID for specified user, class and task retrieved
+'''
 def getTaskID(username, className, taskName):
     userID = getUser(username).uID
     classID = getClassID(className)
@@ -170,7 +163,10 @@ def getTaskID(username, className, taskName):
                             taskName)
     return record.tID
 
-
+''''
+PRECONDITION: no tasks have been completed
+POSTCONDITION: specifed task has been marked as complete
+'''
 def completeTask(username, className, taskName, grade):
     taskID = getTaskID(username, className, taskName)
     userID = getUser(username).uID

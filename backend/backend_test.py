@@ -93,19 +93,24 @@ class dbTests(unittest.TestCase):
     '''
     Test passes if the class ID from the record with username & className matches hardcoded value (3)
     '''
-
     def test_ClassId(self):
         username = 'katDot'
         className = 'Comp 4350'
         record = db.getClassID(username, className)
         self.assertEqual(3, record)
 
+    '''
+    Test passes if the hardcoded username and className appear in the requested record
+    '''
     def test_getSingleClass(self):
         username = 'katDot'
         className = "COMP 4350"
         record = db.getSingleClass(username, className)
         self.assertIn(className, record)
 
+    '''
+    Test passes if the added class can be successfully retrieved from the db
+    '''
     def test_addClass(self):
         username = 'katDot'
         className = "COMP 2080"
@@ -116,6 +121,9 @@ class dbTests(unittest.TestCase):
         # remove class once done
         db.removeClass(username, className)
 
+    '''
+    Test passes if the added class is successfully removed from the db (no longer appears in class list)
+    '''
     def test_removeClass(self):
         username = 'katDot'
         className = "COMP 2150"
@@ -127,6 +135,9 @@ class dbTests(unittest.TestCase):
         for i in range(len(record)):
             self.assertNotIn(className, record[i])
 
+    '''
+    Test passes if is_complete value for specified class is 1
+    '''
     def test_completeClass(self):
         username = 'katDot'
         className = "COMP 2150"
@@ -140,6 +151,9 @@ class dbTests(unittest.TestCase):
         # remove
         db.removeClass(username, className)
 
+    '''
+    Test passes if new study time matches hardcoded value
+    '''
     def test_addStudyTime_base(self):
         username = "katDot"
         className = "COMP 2150"
@@ -153,9 +167,9 @@ class dbTests(unittest.TestCase):
         record = db.getSingleClass(username, className)
         self.assertEqual(record.studyTime, 0.0)
 
-
-    #def test_addStudyTime_existing(self):
-    
+    '''
+    Test passes if each column in specified class was successfully updated with new metadata
+    '''
     def test_editClassMeta(self):
         username = "katDot"
         className = "COMP 2150"
@@ -170,11 +184,6 @@ class dbTests(unittest.TestCase):
         self.assertEqual("999-9999", record.prof_Phone)
         self.assertEqual("150 EITC", record.prof_Office)
         self.assertIn("10:00:00", record.prof_Hours)
-
-
-
-
-
 
 class apiTest(flask_unittest.ClientTestCase):
     # assign flask app

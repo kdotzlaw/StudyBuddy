@@ -122,7 +122,7 @@ def completeClass(username, className):
 PRECONDITION: class data remains unchanged
 POSTCONDITION: class data for specified class and user updated using specified information
 '''
-def addClassMeta(username, className, sectionnum, classroom, prof,
+def editClassMeta(username, className, sectionnum, classroom, prof,
                  prof_email, prof_phone, prof_office, prof_hours):
     userID = getUser(username).uID
     classID = getClassID(username, className)

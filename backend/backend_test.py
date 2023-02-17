@@ -156,12 +156,12 @@ class dbTests(unittest.TestCase):
 
     #def test_addStudyTime_existing(self):
     
-    def test_addClassMeta(self):
+    def test_editClassMeta(self):
         username = "katDot"
         className = "COMP 2150"
         timeslot = "9:00:00.0000000"
         db.addClass(username, className, timeslot)
-        db.addClassMeta(username, className, "A01", "320 Machray", "Steve Stevenson","Steve@steve.com","999-9999","150 EITC","10:00:00")
+        db.editClassMeta(username, className, "A01", "320 Machray", "Steve Stevenson","Steve@steve.com","999-9999","150 EITC","10:00:00")
         record = db.getSingleClass(username, className)
         self.assertEqual("A01", record.section)
         self.assertEqual("320 Machray", record.classroom)

@@ -58,12 +58,3 @@ describe('Test current page name', () => {
   })
 
 })
-
-describe('Test timers functions from store.js', () => {
-  
-  test('Set a page name (page1)', () => {
-    expect(store.setPageName(page1)).toEqual(page1);
-  })
-
-})
-

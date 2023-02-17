@@ -175,7 +175,7 @@ class dbTests(unittest.TestCase):
         className = "COMP 2150"
         timeslot = "9:00:00.0000000"
         db.addClass(username, className, timeslot)
-        db.editClassMeta(username, className, "A01", "320 Machray", "Steve Stevenson","Steve@steve.com","999-9999","150 EITC","10:00:00")
+        db.editClassMeta(username, className, "A01", "320 Machray", "Steve Stevenson","Steve@steve.com","999-9999","150 EITC","10:00:00.0000000")
         record = db.getSingleClass(username, className)
         self.assertEqual("A01", record.section)
         self.assertEqual("320 Machray", record.classroom)
@@ -183,7 +183,7 @@ class dbTests(unittest.TestCase):
         self.assertEqual("Steve@steve.com", record.prof_Email)
         self.assertEqual("999-9999", record.prof_Phone)
         self.assertEqual("150 EITC", record.prof_Office)
-        self.assertIn("10:00:00", record.prof_Hours)
+        self.assertEqual("10:00:00.0000000", record.prof_Hours)
 
 class apiTest(flask_unittest.ClientTestCase):
     # assign flask app

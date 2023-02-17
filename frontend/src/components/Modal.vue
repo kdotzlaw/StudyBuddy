@@ -1,6 +1,7 @@
 <script setup>
     import Happy from "/artifacts/happydog.svg";
     import Sad from "/artifacts/saddog.svg";
+    import { computed } from "vue";
     import { storeToRefs } from "pinia";
     import { useStore } from "../stores";
 
@@ -12,9 +13,11 @@
         title: {type: String, required: false, default: "Modal Title"}
     })
 
-    let DogIcon = Happy;
-    if(modalContent.value == "error")
-        DogIcon = Sad;
+    const DogIcon = computed(() => {
+        if(modalContent.value == "error")
+            return Sad;
+        return Happy;
+    });
 </script>
 
 <template>

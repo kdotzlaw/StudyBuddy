@@ -27,12 +27,16 @@
     <div v-else-if="contentId=='settings'" class="form-ctr">
         <Settings/>
     </div>
-    <div v-html="renderString"/>
+    <div id="renderString" v-html="renderString"/>
 </template>
 
 <style scoped>
     .form-ctr{
         height: inherit;
         width: inherit;
+    }
+
+    #renderString{
+        font-size: 120%;
     }
 </style>

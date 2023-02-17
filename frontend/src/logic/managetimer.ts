@@ -53,28 +53,21 @@ function initTimer(userId: String, course: String){
 function commitTimer(userId: String, classId: String, total: number){
     // Using hypothetical endpoint for now
     const host = 'http://localhost:5000';
-    const apiUrl = '/api/update_time_studied';
-    const data = {
-        username: userId,
-        classname: classId,
-        added: total
-    };
+    const apiUrl = '/api/' + classId + '/update_time_studied';
     fetch(host + apiUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         mode: 'no-cors',
-        body: JSON.stringify(data)
+        body: total.toString()
     })
         .then(response => console.log(response))
         .then(data => {
             console.log('Success:', data);
-            // Handle the response from the API here, e.g., show a success message or redirect the user to a different page
         })
     .catch(error => {
         console.error('Error:', error);
-        // Handle the error here, e.g., show an error message
     });
 }
 

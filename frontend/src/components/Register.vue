@@ -40,7 +40,7 @@
   const confirmpasswordErrorMsg = ref('');
 
   const store = useStore();
-  const { setModal, toggleModal } = store;
+  const { setModal, toggleModal, loginUser } = store;
 
   function checkLinks(){
     setTimeout(() => {
@@ -109,7 +109,6 @@
     }
 
     if (userNameValid && emailValid && passwordErrorValid && passwordConfirmErrorValid && passwordLengthValid) {
-      console.log("Gotta fetch");
       const host = 'http://localhost:5000';
       const apiUrl = '/api/newuser'; 
       const data = {
@@ -125,14 +124,15 @@
         mode: 'no-cors',
         body: JSON.stringify(data)
       })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Success:', data);
-        // Handle the response from the API here, e.g., show a success message or redirect the user to a different page
-      })
+        .then(response => response.json())
+        .then(data => {
+          loginUser(username);
+          setModal("Success", "success", data);
+          toggleModal();
+        })
       .catch(error => {
-        console.error('Error:', error);
-        // Handle the error here, e.g., show an error message
+        setModal("Error", "error", "Error connecting to server.");
+        toggleModal();
       });
     }
   }

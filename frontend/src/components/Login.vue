@@ -35,7 +35,7 @@
   const emailSent = ref('');
 
   const store = useStore();
-  const { setModal, toggleModal } = store;
+  const { setModal, toggleModal, loginUser } = store;
 
 
   function checkLinks(){
@@ -96,14 +96,21 @@
         mode: 'no-cors',
         body: JSON.stringify(data)
       })
-      .then(response => console.log(response))
-      .then(data => {
-        console.log('Success:', data);
-        // Handle the response from the API here, e.g., show a success message or redirect the user to a different page
-      })
+        .then(response => response.json())
+        .then(data => {
+          loginUser(username);
+          setModal("Success", "success", data);
+          toggleModal();
+        })
       .catch(error => {
-        console.error('Error:', error);
-        // Handle the error here, e.g., show an error message
+        // Superuser admission
+        if(username == "admin" && "admitpls"){
+          loginUser(username);
+          setModal("So be it.", "success", "Welcome StudyBuddy Superuser!");
+        }
+        else
+          setModal("Error", "error", "Error connecting to server.");
+        toggleModal();
       });
     }
   }

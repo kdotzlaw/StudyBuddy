@@ -79,12 +79,26 @@
         setTimer(null);
 
         // Purge userId
-        logoutUser();
-        setModal("Log out", "success", "You successfully logged out. See you soon!");
+        const host = 'http://localhost:5000'; 
+        const apiUrl = '/api/login';
+        fetch(host + apiUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+        })
+            .then(response => response.text())
+            .then(data => {
+                setModal("Success", "success", data);
+                toggleModal();
+                logoutUser();
+            })
+        .catch(error => {
+            setModal("Error", "error", "Error connecting to server.");
+            toggleModal();
+        });
+        
     }
 
     function login(){
-        loginUser("user123");
         setModal("Login", "login");
     }
 

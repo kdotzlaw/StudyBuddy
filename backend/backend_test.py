@@ -183,7 +183,7 @@ class dbTests(unittest.TestCase):
         self.assertEqual("Steve@steve.com", record.prof_Email)
         self.assertEqual("999-9999", record.prof_Phone)
         self.assertEqual("150 EITC", record.prof_Office)
-        self.assertIn("10:00:00.0000000", record.prof_Hours)
+        self.assertEqual("10:00:00.0000000", record.prof_Hours)
 
 class apiTest(flask_unittest.ClientTestCase):
     # assign flask app

@@ -48,7 +48,6 @@ jobs:
       - name: Build and Deploy Docker Image
         uses: docker/build-push-action@v4.0.0
         with:
-          path: frontend
-          dockerfile: frontend/Dockerfile
+          context: ./frontend
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}

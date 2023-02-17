@@ -3,7 +3,7 @@ name: Frontend Docker Deployment
 on:
   workflow_dispatch:    # Allows this workflow to be ran manually from the Actions tab
   push:
-    branches: [ main, develop]
+    branches: [ main, develop, CICD]
 
 env:
   IMAGE_NAME: capillae/studybuddy
@@ -48,5 +48,7 @@ jobs:
       - name: Build and Deploy Docker Image
         uses: docker/build-push-action@v4.0.0
         with:
+          path: frontend
+          dockerfile: frontend/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}

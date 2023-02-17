@@ -23,7 +23,7 @@ export default class Timer{
 
     public getTime(): Number{
         if(this.paused)
-            return this.pauseStart - this.startTime;
+            return this.pauseStart - this.pauseTotal - this.startTime;
         else
             return Date.now() - this.pauseTotal - this.startTime;
     }

@@ -7,6 +7,19 @@ let stubContent = `
 `;
 
 export const useStore = defineStore('store', () => {
+    // Current page name
+    const sessionTimer = ref(null);
+    function setTimer(newTimer){
+        sessionTimer.value = newTimer;
+    }
+
+    // Current page name
+    const pageName = ref("Dashboard");
+    function setPageName(newName){
+        pageName.value = newName;
+        return pageName.value
+    }
+
     // User ID
     const userId = ref(null);
     function loginUser(newId){
@@ -21,7 +34,7 @@ export const useStore = defineStore('store', () => {
     const studyTime = ref(0);
     function setStudyTime(time){
         if(time)
-            studyTime.value = time;
+          studyTime.value = time;
     }
 
     // Class being studied
@@ -34,14 +47,17 @@ export const useStore = defineStore('store', () => {
     const isModalOpen = ref(false);
     function toggleModal(){
         isModalOpen.value = !isModalOpen.value;
+        return isModalOpen.value;
     }
 
     // Set modal contents
-    const modalTitle = ref("Hey!");
-    const modalContent = ref(stubContent);
-    function setModal(title="Hey!", content=stubContent){
+    const modalTitle = ref("Modal Title");
+    const modalContent = ref(null);
+    const modalRender = ref("");
+    function setModal(title="Modal Title", content=null, renderString=""){
         modalTitle.value = title;
         modalContent.value = content;
+        modalRender.value = renderString;
         toggleModal();
     }
 
@@ -51,11 +67,13 @@ export const useStore = defineStore('store', () => {
         uiSkin.value = skin;
     }
 
-    return { 
+    return {
+        sessionTimer, setTimer,
+        pageName, setPageName,
         userId, loginUser, logoutUser,
         studyTime, studyClass, setStudyTime, setStudyClass,
         isModalOpen, toggleModal,
-        modalTitle, modalContent, setModal,
+        modalTitle, modalContent, modalRender, setModal,
         uiSkin, updateSkin,
     }
 })

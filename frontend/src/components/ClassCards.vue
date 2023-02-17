@@ -1,32 +1,46 @@
 <script setup>
     import { ref } from "vue";
+    import { storeToRefs } from "pinia";
+    import Play from "/artifacts/play.svg";
+    import Mgmt from "../logic/managetimer";
     import { useStore } from "../stores";
     
     const store = useStore();
     const { setStudyClass } = store;
+    const { userId, studyClass } = storeToRefs(store);
 
     const props = defineProps({ 
         reqs: {type: Array, required: false, default: []}
     })
 
-    const reqs = ref(props.reqs);
-
+    // Start or pause study for this class
+    function manageStudy(className){
+        setStudyClass(className);
+        Mgmt.manageTimer(userId,className);
+    }
 </script>
 
 <template>
     <div id="classCards">
-     
         <div v-if="reqs.length==0" :class="`classCard addNew`"> + </div>
-        <div v-for="req in reqs" :class="`classCard studyClass`" @click="setStudyClass(req.name)">
-            <router-link to="/test">
-            <h3> {{ req.name }} </h3>
-             </router-link>
-            <div>
-                <span class="material-symbols-outlined">timer</span>
-                &nbsp; {{ req.timeStudied }} hrs 
+        <div v-for="req in reqs" :class="`classCard studyClass`">
+            <router-link to="/class">
+                <h3> {{ req.name }} </h3>
+            </router-link>
+            <div class="bottom-row">
+                <div>
+                    <span class="material-symbols-outlined">timer</span>
+                    &nbsp; {{ req.timeStudied }} hrs 
+                </div>
+                <img
+                    v-if="req.name != studyClass" 
+                    class="play-btn" 
+                    :src="Play" 
+                    alt="Study for this class"
+                    @click="manageStudy(req.name)"
+                />
             </div>
         </div>
-   
     </div>
 </template>
 
@@ -41,8 +55,7 @@
     }
 
     .classCard{
-        height: max-content;
-        min-height: 3.2em;
+        min-height: 6em;
         width: 9.5em;
         border-radius: 0.8em;
         cursor: pointer;
@@ -99,13 +112,27 @@
         align-items: center;
     }
     .studyClass:hover{
-        transition: 0.5s ease-out;
-        filter: brightness(120%);
-        opacity: 0.9;
         border-color: var(--richgold);
     }
     .studyClass:active{
         background: var(--black);
+    }
+
+    .bottom-row{
+        display: flex;
+        justify-content: space-between;
+        margin-right: 1em;
+    }
+
+    .play-btn{
+        height: 1.2em;
+        width: 1.5em;
+        cursor: pointer;
+    }
+
+    .play-btn:hover{
+        transition: 0.5s ease-out;
+        filter: brightness(120%);
     }
 
     

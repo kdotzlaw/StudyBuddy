@@ -5,7 +5,7 @@
   import Dashboard from "./pages/Dashboard.vue";
   import Wallpaper from "./components/Wallpaper.vue";
   import Modal from "./components/Modal.vue";
-  import YayButton from "./components/Button.vue";
+  import ModalManager from "./components/ModalManager.vue";
   import { useStore } from "./stores";
 
   import Login from "./components/Login.vue"
@@ -13,13 +13,13 @@
 
   const store = useStore();
   const { setStudyTime } = store;
-  const { isModalOpen, modalTitle, modalContent } = storeToRefs(store);
+  const { sessionTimer, isModalOpen, modalTitle, modalContent, modalRender } = storeToRefs(store);
   
-  // Update timer every 0.5 second
+  // Refresh timer every 0.5 second
   setInterval(updateTimer, 500)
   function updateTimer(){
-    if(globalThis.sessionTimer){
-      let elapsed = globalThis.sessionTimer.getTime();
+    if(sessionTimer.value){
+      let elapsed = sessionTimer.value.getTime();
       setStudyTime(parseInt(elapsed/1000));
     }
   }
@@ -29,18 +29,12 @@
   <Header />
   
   <div id="workspace">
-    <!-- <Dashboard>
-      <YayButton text="Click here to print 'Yay'" />
-    </Dashboard> -->
-
     <router-view></router-view>
   </div>
   <Wallpaper />
-  <div v-if="isModalOpen" id="modal-ctr">
+  <div v-if="isModalOpen" id="modal-ctr" v-motion-pop>
     <Modal :title="modalTitle">
-      <!-- <div v-html="modalContent"></div> -->
-      <Login></Login>
-      <!-- <Register></Register> -->
+      <ModalManager :contentId="modalContent" :renderString="modalRender" />
     </Modal>
   </div>
 </template>

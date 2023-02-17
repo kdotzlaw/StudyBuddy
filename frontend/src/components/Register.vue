@@ -1,8 +1,6 @@
 <template>
   <div>
     <form class="form " id="createAccount">
-      <h1 class="register-title">Create Account</h1>
-      <!-- <div class="form-message form-message--error"></div> -->
       <div class="register-container">
         <div class="form-input-group">
           <input type="text" id="signupUsername" class="form-input" autofocus placeholder="Username" v-model="username">
@@ -22,7 +20,7 @@
         </div>
         <button class="register-button" type="button" @click="validateForm">Register</button>
         <p class="form-text">
-            <!-- <a class="form-link" href="./" id="linkLogin">Already have an account? Sign in</a> -->
+            <a class="form-link" id="linkLogin">Already have an account? Sign in</a>
         </p>
       </div>
     </form>
@@ -31,17 +29,36 @@
 
 <script setup>
   import{ ref } from "vue"
+  import validate from "../logic/validate"
+  import { useStore } from "../stores"
+  import { storeToRefs } from "pinia";
 
+  let username, email, password, confirmPassword;
   const usernameErrorMsg = ref('');
   const emailErrorMsg = ref('');
   const passwordErrorMsg = ref('');
   const confirmpasswordErrorMsg = ref('');
 
+  const store = useStore();
+  const { setModal, toggleModal, loginUser } = store;
+
+  function checkLinks(){
+    setTimeout(() => {
+      const linkCreateAccount = document.getElementById("linkLogin");
+      linkCreateAccount.addEventListener("click", () => {
+        setModal("Login", "login");
+        toggleModal();
+      });
+    }, 500);
+  }
+
+  checkLinks();
+
   function validateForm() {
-    let username = document.getElementById("signupUsername").value;
-    let email = document.getElementById("signupEmail").value;
-    let password = document.getElementById("signupPassword").value;
-    let confirmPassword = document.getElementById("signupPasswordConfirm").value;
+    username = document.getElementById("signupUsername").value;
+    email = document.getElementById("signupEmail").value;
+    password = document.getElementById("signupPassword").value;
+    confirmPassword = document.getElementById("signupPasswordConfirm").value;
 
     var userNameValid = true;
     var emailValid = true;
@@ -49,7 +66,7 @@
     var passwordConfirmErrorValid = true;
     var passwordLengthValid = true;
 
-    if (username.length == 0) {
+    if (validate.isInputEmpty(username)) {
       usernameErrorMsg.value = 'Username is required';
       userNameValid = false;
     } else {
@@ -57,7 +74,7 @@
       userNameValid = true;
     }
 
-    if (email.length == 0) {
+    if (validate.isInputEmpty(email)) {
       emailErrorMsg.value = 'Email is required';
       emailValid = false;
     } else {
@@ -65,9 +82,9 @@
       emailValid = true;
     }
 
-    if (password.length == 0) {
+    if (validate.isInputEmpty(password)) {
       passwordErrorMsg.value = 'Password is required';
-    } else if(password.length < 8){
+    } else if(validate.isValidPassword(password)){
       passwordErrorMsg.value = 'Password length must be more than 8 or more characters';
       passwordErrorValid = false;
     } else {
@@ -75,7 +92,7 @@
       passwordErrorValid = true;
     }
 
-    if (confirmPassword.length == 0) {
+    if (validate.isInputEmpty(confirmPassword)) {
       confirmpasswordErrorMsg.value = 'Confirm password is required';
       passwordConfirmErrorValid = false;
     } else {
@@ -83,7 +100,7 @@
       passwordConfirmErrorValid = true;
     }
 
-    if(passwordErrorValid && !(password == confirmPassword) && confirmPassword.length > 0){
+    if(passwordErrorValid && !(password == confirmPassword) && !validate.isInputEmpty(confirmPassword)){
       passwordErrorMsg.value = 'Password does not match';
       confirmpasswordErrorMsg.value = 'Password does not match';
       passwordLengthValid = false;
@@ -92,7 +109,6 @@
     }
 
     if (userNameValid && emailValid && passwordErrorValid && passwordConfirmErrorValid && passwordLengthValid) {
-      console.log("Gotta fetch");
       const host = 'http://localhost:5000';
       const apiUrl = '/api/newuser'; 
       const data = {
@@ -108,14 +124,15 @@
         mode: 'no-cors',
         body: JSON.stringify(data)
       })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Success:', data);
-        // Handle the response from the API here, e.g., show a success message or redirect the user to a different page
-      })
+        .then(response => response.json())
+        .then(data => {
+          loginUser(username);
+          setModal("Success", "success", data);
+          toggleModal();
+        })
       .catch(error => {
-        console.error('Error:', error);
-        // Handle the error here, e.g., show an error message
+        setModal("Error", "error", "Error connecting to server.");
+        toggleModal();
       });
     }
   }

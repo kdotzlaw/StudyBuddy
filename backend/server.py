@@ -169,7 +169,7 @@ def update_time(classname):
     return "Time for class updated successfully", 200
 
 
-@app.route("/api/class/<classname>", method=["GET"])
+@app.route("/api/class/<classname>", methods=["GET"])
 @flask_login.login_required
 def getClass(classname):
     username = flask_login.current_user.get_id()

@@ -111,6 +111,7 @@
         else
           setModal("Error", "error", "Error connecting to server.");
         toggleModal();
+        console.log(error);
       });
     }
   }

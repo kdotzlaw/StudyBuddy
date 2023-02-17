@@ -1,3 +1,9 @@
+<!-- 
+  Class.vue
+    route: /class
+    Full-page class view to display meta class information, projected grade, and calendar requirements.
+-->
+
 <script setup>
     import ArrowBack from "/artifacts/arrowback.svg";
     import Gear from "/artifacts/gear.svg";
@@ -14,11 +20,16 @@
     const { sessionTimer, userId, studyClass } = storeToRefs(store);
     const { updateSkin, setPageName, setStudyClass } = store;
 
+
+    /*===========================
+       MANAGE CLASS METADATA
+     *===========================*/
+
     onMounted(() => {
         setPageName("Class View");
     });
 
-    // Stubbed requirements for now
+    // Stub data compensates for unintegrated(future sprint) features
     let reqs = [
         { name: "Quiz 5", type: "quiz", due: new Date("February 12, 2023"), goal: "C" },
         { name: "Catch up", type: "haha", due: new Date("February 17, 2023"), goal: "C" },
@@ -28,9 +39,8 @@
         { name: "Midterm Exam", type: "test", due: new Date("March 9, 2023"), goal: "B" },
         { name: "Become a Bee", type: "dne", due: new Date("October 10, 2023"), goal: "" },
     ]
-
     let classInfo = {
-        name: "COMP2080", // primary key
+        name: "COMP 2080", // Class primary key
         timeStudied: 2.3,
         grade: "C+",
         details: {
@@ -47,7 +57,18 @@
         }
     }
 
-    // Reflect study state
+
+    /*===========================
+       STUDY SESSION PAUSE/PLAY
+     *===========================*/
+
+    // Start or pause study for this class
+    function manageStudy(){
+        setStudyClass(classInfo.name);
+        Mgmt.manageTimer(userId.value,classInfo.name);
+    }
+
+    // Reflect study session's paused/running state with icons and notes
     const studyNote = computed(() => {
         if(studyClass.value == classInfo.name && !sessionTimer.value.isPaused())
             return "Pause session";
@@ -59,10 +80,16 @@
         return Play;
     });
 
-    // Filter requirements by current or expired
+
+    /*===========================
+       FILTER REQUIREMENT CARDS
+     *===========================*/
+
+    // Present Date-time reference
     const current = ref(true);
     let today = Date.now();
 
+    // Filter requirements by current(present-upcoming) or expired(past)
     const currentReqs = computed(() => {
         return reqs.filter(req => {
             let diffTime = req.due - today;
@@ -71,7 +98,6 @@
                 return req;
         })
     });
-
     const expiredReqs = computed(() => {
         return reqs.filter(req => {
             let diffTime = req.due - today;
@@ -81,27 +107,21 @@
         })
     });
 
-    function changeView(){
-        current.value = !current.value;
-    }
-
-    // Filter by current or expired requirements
+    // Change displayed requirements based on active filter
     const reqSet = computed(() => {
         if(current.value)
             return currentReqs.value;
         return expiredReqs.value;
     });
-
     const viewNote = computed(() => {
         if(current.value)
             return "View expired requirements";
         return "View current requirements";
     });
 
-    // Start or pause study for this class
-    function manageStudy(){
-        setStudyClass(classInfo.name);
-        Mgmt.manageTimer(userId.value,classInfo.name);
+    // Toggle between two filter states
+    function changeView(){
+        current.value = !current.value;
     }
 </script>
 

@@ -1,3 +1,8 @@
+/*
+ * timer.test.ts
+ *    Tests on Timer class initialization, functions, and management.
+ */
+
 import {describe, expect, test} from '@jest/globals';
 import Timer from '../src/logic/timer';
 
@@ -14,7 +19,6 @@ describe('Construct Timer and test values', () => {
     expect(timer).not.toBeNull();
   })
 
-
   test('Testing session user value', () => {
     timer = new Timer(userId1,class1); 
     expect(timer.getSessionUser()).toEqual(userId1);
@@ -24,6 +28,7 @@ describe('Construct Timer and test values', () => {
     timer = new Timer(userId1,class1); 
     expect(timer.getCurrentClass()).toEqual(class1);
   })
+
 })
 
 

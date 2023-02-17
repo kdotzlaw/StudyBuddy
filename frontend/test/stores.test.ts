@@ -1,3 +1,9 @@
+/*
+ * stores.test.ts
+ *    Tests on application-level Pinia store functions to ensure
+ *    that they execute and update global store refs as expected.
+ */
+
 import { setActivePinia, createPinia, storeToRefs } from 'pinia';
 import { useStore } from '../src/stores';
 import { describe, expect, test } from '@jest/globals';
@@ -21,10 +27,12 @@ describe('Test user login from stores.js', () => {
     loginUser(userId1);
     expect(userId.value).toBe(userId1);
   })
+
   test('Change active userId', () => {
       loginUser(userId2);
       expect(userId.value).toBe(userId2);
   })
+
   test('Set userId to null (logout)', () => {
       logoutUser();
       expect(userId.value).toBe(null);
@@ -39,6 +47,7 @@ describe('Test setting study class from stores.js', () => {
     setStudyClass(class1);
     expect(studyClass.value).toBe(class1);
   })
+
   test('Change active class', () => {
       setStudyClass(class2);
       expect(studyClass.value).toBe(class2);

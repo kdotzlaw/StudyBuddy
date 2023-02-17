@@ -1,3 +1,9 @@
+<!-- 
+  Dashboard.vue
+    route: /
+    Primary homepage and application entrypoint. Conditionally mount dashboard components based on user authentication state. 
+-->
+
 <script setup>
     import Accordion from "../components/Accordion.vue";
     import ClassCards from "../components/ClassCards.vue";
@@ -15,7 +21,7 @@
         setPageName("Dashboard");
     });
 
-    // Stubs
+    // Stub data compensates for unintegrated(future sprint) features
     let reqs = [
         { name: "COMP2080", timeStudied: 2.5 },
         { name: "COMP4350", timeStudied: 6.2 },
@@ -30,6 +36,7 @@
     let chatIndex = 0;
     const chat = ref(chats[0]);
 
+    // Cycle through Buddy chat balloon conversations
     setInterval(()=>{
         chatIndex = (chatIndex + 1) % chats.length;
         chat.value = chats[chatIndex];

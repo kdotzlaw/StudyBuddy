@@ -1,3 +1,8 @@
+/*
+ * main.js
+ *    Mount Vue application and inject essential plugins and directives
+ */
+
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import { MotionPlugin } from '@vueuse/motion';

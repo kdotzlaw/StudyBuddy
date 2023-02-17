@@ -1,5 +1,7 @@
 import flask
 import flask_login
+from pyodbc import Row
+
 import db
 from werkzeug.security import check_password_hash, generate_password_hash
 import uuid
@@ -54,7 +56,7 @@ def user_loader(username):
 @login_manager.request_loader
 def request_loader(request):
     print("req loader")
-    username = request.get_json()['username']
+    username = request.get_json(force=True)['username']
     # check database for username
     selection = user_check(username)
     if app.testing:
@@ -86,10 +88,10 @@ def login():
     # print("attempting login")
     # grab the username from the header
     # print(flask.request.get_json())
-    if flask.request.get_json() is not None:
+    if flask.request.get_json(force=True) is not None:
         # username header exists
-        username = flask.request.get_json()['username']
-        password = flask.request.get_json()['password']
+        username = flask.request.get_json(force=True)['username']
+        password = flask.request.get_json(force=True)['password']
         # print(username)
         # print(password)
         # check db for username and password
@@ -145,8 +147,8 @@ def logout():
 # create user api request
 @app.route("/api/newuser", methods=["POST"])
 def newuser():
-    username = flask.request.get_json()['username']
-    password = flask.request.get_json()['password']
+    username = flask.request.get_json(force=True)['username']
+    password = flask.request.get_json(force=True)['password']
     # check database for already existing user with the same name
     selection = db.getUser(username)
     if selection is None:
@@ -178,9 +180,21 @@ def getClass(classname):
         # no class found
         return "Bad Request: No class found", 400
     else:
-        return res
+        return parse_row(res, ['class_Name', 'timeslot', 'is_Complete', 'study_time']), 200
 
 
+def parse_rows(rows, cols):
+    res = []
+    for row in rows:
+        res.append(dict(zip(cols, row)))
+    return res
+
+
+def parse_row(row, cols):
+    res = [dict(zip(cols, row))]
+    return res
+
+'''
 @app.route("/api/class/<classname>/task")
 @flask_login.login_required
 def all_tasks(classname):
@@ -191,6 +205,7 @@ def all_tasks(classname):
         return "Bad Request: No class found"
     res = db.getTaskList(username, classname)
     return res
+    '''
 
 
 @app.route("/api/class", methods=["GET"])
@@ -199,7 +214,10 @@ def all_classes():
     username = flask_login.current_user.get_id()
     res = db.getClasses(username)
     # auto calls jsonify and parses iterable of dictionaries
-    return res
+    if type(res) is list:
+        return parse_rows(res, ['class_Name', 'timeslot', 'is_Complete', 'study_time']), 200
+    elif type(res) is Row:
+        return parse_row(res, ['class_Name', 'timeslot', 'is_Complete', 'study_time']), 200
 
 
 @app.route("/testlogin")
@@ -207,8 +225,9 @@ def all_classes():
 def testlogin():
     return "<h1>you're logged in</h1>"
 
+
 @app.before_request
 def log_request():
     print(flask.request.headers)
-    print(flask.request.get_json(force=True))
+    # print(flask.request.get_json(force=True))
     return None

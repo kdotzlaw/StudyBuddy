@@ -42,6 +42,9 @@ jobs:
           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
 
 
+      - name: Print out Directory
+        run: ls
+
       - name: Build and Deploy Docker Image
         uses: docker/build-push-action@v4.0.0
         with:

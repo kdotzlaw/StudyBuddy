@@ -135,7 +135,6 @@ paths:
         - name: added
           in: body
           required: true
-          example: "1024"
       responses:
         200:
           description: "The time in the associated class was increased successfully"

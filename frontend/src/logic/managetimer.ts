@@ -68,6 +68,7 @@ function commitTimer(userId: String, classId: String, total: number){
             'Content-Type': 'application/json'
         },
         mode: 'no-cors',
+        credentials: 'include',
         body: total.toString()
     })
         .then(response => console.log(response))

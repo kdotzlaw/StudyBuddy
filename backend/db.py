@@ -6,18 +6,18 @@ import pyodbc
 
 # connection information can change as we include security
 # PROD CONNECTION STRING
-conn = (r'Driver=ODBC Driver 17 for SQL Server;'
+'''conn = (r'Driver=ODBC Driver 17 for SQL Server;'
         r'Server=localhost;'
         r'Database=StudyBuddy;'
         r'UID=sa;'
         r'PWD=dbtools.IO'
-        )
+        )'''
 # DEV CONNECTION STRING - D.N.T
-'''conn = (r'Driver=SQL Server;'
+conn = (r'Driver=SQL Server;'
         r'Server=(local);'
         r'Database=StudyBuddy;'
         r'Trusted_Connection=yes'
-        )'''
+        )
 cnxn = pyodbc.connect(conn)
 cursor = cnxn.cursor()
 
@@ -42,7 +42,13 @@ PRECONDITION: all users are present in the db
 POSTCONDITION: user with 'username' has been removed from the db
 '''
 def removeUser(username):
-    cursor.execute("DELETE FROM Users WHERE username = ?;", username)
+    #check that user is in db
+    user = getUser(username)
+    if user is None:
+        return "User " + username + " is not in database and cannot be removed"
+    else:
+        cursor.execute("DELETE FROM Users WHERE username = ?;", username)
+
 
 '''
 PRECONDITION: no users have been retrieved
@@ -60,6 +66,8 @@ def getClasses(username):
     # get user id
     userID = getUser(username).uID
     record = cursor.execute("SELECT * FROM Classes WHERE FK_uID = ? AND is_complete = 0;", userID).fetchall()
+    if not record:
+        return None
     return record
 
 
@@ -70,6 +78,8 @@ POSTCONDITION: returns classID for specified user and specified class
 def getClassID(username, className):
     userID = getUser(username).uID
     record = cursor.execute("SELECT cID FROM Classes WHERE FK_uID = ? AND class_Name =?;", userID, className).fetchone()
+    if not record:
+        return None
     return record.cID
 '''
 PRECONDITION: no classes retrieved

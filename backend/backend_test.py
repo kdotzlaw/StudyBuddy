@@ -20,18 +20,18 @@ class dbTests(unittest.TestCase):
     def test_cnxn(self):
         try:
             # PROD CONNECTION STRING
-            conn = (r'Driver=ODBC Driver 17 for SQL Server;'
+            '''conn = (r'Driver=ODBC Driver 17 for SQL Server;'
                     r'Server=localhost;'
                     r'Database=StudyBuddy;'
                     r'UID=sa;'
                     r'PWD=dbtools.IO'
-                    )
+                    )'''
             # DEV CONNECTION STRING D.N.T
-            '''conn = (r'Driver=SQL Server;'
+            conn = (r'Driver=SQL Server;'
                     r'Server=(local);'
                     r'Database=StudyBuddy;'
                     r'Trusted_Connection=yes'
-                    )'''
+                    )
             cnxn = pyodbc.connect(conn)
         except Exception:
             self.fail("Connection failed")
@@ -41,26 +41,38 @@ class dbTests(unittest.TestCase):
     Test passes if the correct record information is retrieved for the specified username
     Test fails if incorrect record returned, or
     '''
-
     def test_getUser(self):
-        username = 'katDot'
+        username = "katDot"
         result = db.getUser(username)
-
         self.assertIn(username, result.username)
+    '''
+    Test passes if returns None type for user that doesnt exist in db
+    '''
+    def test_getUserFail(self):
+        username = "test"
+        result = db.getUser(username)
+        self.assertEqual(result, None)
 
     '''
     Test passes if mock user successfully removed from db
     '''
-
     def test_removeUser(self):
         username = "test"
         # db.removeUser(username)
         password = "testing"
         db.createAccount(username, password)
         # remove user
-        db.removeUser(username)
+        record = db.removeUser(username)
         result = db.getAllUsers()
         self.assertNotIn(username, result)
+
+    '''
+    Test passes if error msg is returned when trying to remove a user that doesnt exist
+    '''
+    def test_removeUserFail(self):
+        username = 'test'
+        record = db.removeUser(username)
+        self.assertIn("is not in database", record)
 
     '''
     Test passes if user is sucessfully inserted into the db (asserting that user appears in retrieved record)
@@ -90,18 +102,35 @@ class dbTests(unittest.TestCase):
         self.assertIn(c1, classes[0])
         self.assertIn(c2, classes[1])
 
+    def test_getClassesNone(self):
+        username = "test"
+        password = "1234"
+        db.createAccount(username, password)
+        classes = db.getClasses(username)
+        self.assertEqual(classes, None)
+        db.removeUser(username)
+        users = db.getAllUsers()
+        self.assertNotIn("test",users)
     '''
     Test passes if the class ID from the record with username & className matches hardcoded value (3)
     '''
+
     def test_ClassId(self):
         username = 'katDot'
         className = 'Comp 4350'
         record = db.getClassID(username, className)
         self.assertEqual(3, record)
 
+    def test_ClassId_AttrError(self):
+        username = 'katDot'
+        className = 'fake class'
+        record = db.getClassID(username, className)
+        self.assertEqual(record,None)
+
     '''
     Test passes if the hardcoded username and className appear in the requested record
     '''
+
     def test_getSingleClass(self):
         username = 'katDot'
         className = "COMP 4350"
@@ -111,6 +140,7 @@ class dbTests(unittest.TestCase):
     '''
     Test passes if the added class can be successfully retrieved from the db
     '''
+
     def test_addClass(self):
         username = 'katDot'
         className = "COMP 2080"
@@ -124,6 +154,7 @@ class dbTests(unittest.TestCase):
     '''
     Test passes if the added class is successfully removed from the db (no longer appears in class list)
     '''
+
     def test_removeClass(self):
         username = 'katDot'
         className = "COMP 2150"
@@ -138,6 +169,7 @@ class dbTests(unittest.TestCase):
     '''
     Test passes if is_complete value for specified class is 1
     '''
+
     def test_completeClass(self):
         username = 'katDot'
         className = "COMP 2150"
@@ -153,6 +185,7 @@ class dbTests(unittest.TestCase):
     '''
     Test passes if new study time matches hardcoded value
     '''
+
     def test_addStudyTime_base(self):
         username = "katDot"
         className = "COMP 2150"
@@ -166,8 +199,11 @@ class dbTests(unittest.TestCase):
         record = db.getSingleClass(username, className)
         #self.assertEqual(record.studyTime, 0.0)
         '''
+
     '''
     Test passes if each column in specified class was successfully updated with new metadata
+    NOTE: this fails in the local backend suite, but passes in the github test suite
+    --> has to do with asserting the datetime obj locally
     '''
     def test_editClassMeta(self):
         username = "katDot"
@@ -175,8 +211,9 @@ class dbTests(unittest.TestCase):
         timeslot = "9:00:00.0000000"
         db.addClass(username, className, timeslot)
         db.editClassMeta(username, className, "", "", "", "", "",
-                        "", "")
-        db.editClassMeta(username, className, "A01", "320 Machray", "Steve Stevenson","Steve@steve.com","999-9999","150 EITC","10:00:00")
+                         "", "")
+        db.editClassMeta(username, className, "A01", "320 Machray", "Steve Stevenson", "Steve@steve.com", "999-9999",
+                         "150 EITC", "10:00:00")
         record = db.getSingleClass(username, className)
         self.assertEqual("A01", record.section)
         self.assertEqual("320 Machray", record.classroom)
@@ -186,6 +223,7 @@ class dbTests(unittest.TestCase):
         self.assertEqual("150 EITC", record.prof_Office)
         d = datetime.datetime.strptime("10:00:00", '%H:%M:%S').time()
         self.assertEqual(d, record.prof_Hours)
+
 
 class apiTest(flask_unittest.ClientTestCase):
     # assign flask app
@@ -245,7 +283,6 @@ class apiTest(flask_unittest.ClientTestCase):
         resp = client.get('/api/class/COMP 4350')
         print(resp.get_data())
         self.assertStatus(resp, 200)
-
 
     def test_update_time(self, client):
         # log in

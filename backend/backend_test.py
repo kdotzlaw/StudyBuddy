@@ -20,18 +20,18 @@ class dbTests(unittest.TestCase):
     def test_cnxn(self):
         try:
             # PROD CONNECTION STRING
-            '''conn = (r'Driver=ODBC Driver 17 for SQL Server;'
+            conn = (r'Driver=ODBC Driver 17 for SQL Server;'
                     r'Server=localhost;'
                     r'Database=StudyBuddy;'
                     r'UID=sa;'
                     r'PWD=dbtools.IO'
-                    )'''
+                    )
             # DEV CONNECTION STRING D.N.T
-            conn = (r'Driver=SQL Server;'
+            '''conn = (r'Driver=SQL Server;'
                     r'Server=(local);'
                     r'Database=StudyBuddy;'
                     r'Trusted_Connection=yes'
-                    )
+                    )'''
             cnxn = pyodbc.connect(conn)
         except Exception:
             self.fail("Connection failed")
@@ -215,6 +215,14 @@ class dbTests(unittest.TestCase):
         db.editClassMeta(username, className, "A01", "320 Machray", "Steve Stevenson", "Steve@steve.com", "999-9999",
                          "150 EITC", "10:00:00")
         record = db.getSingleClass(username, className)
+        print(record)
+        u = db.getUser(username).uID
+        print(u)
+        c = db.getClassID(username, className)
+        print(c)
+        self.assertNotEqual(record, None)
+        self.assertNotEqual(u, None)
+        self.assertNotEqual(c, None)
         self.assertEqual("A01", record.section)
         self.assertEqual("320 Machray", record.classroom)
         self.assertEqual("Steve Stevenson", record.prof_Name)

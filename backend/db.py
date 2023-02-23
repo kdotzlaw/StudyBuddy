@@ -6,18 +6,18 @@ import pyodbc
 
 # connection information can change as we include security
 # PROD CONNECTION STRING
-'''conn = (r'Driver=ODBC Driver 17 for SQL Server;'
+conn = (r'Driver=ODBC Driver 17 for SQL Server;'
         r'Server=localhost;'
         r'Database=StudyBuddy;'
         r'UID=sa;'
         r'PWD=dbtools.IO'
-        )'''
+        )
 # DEV CONNECTION STRING - D.N.T
-conn = (r'Driver=SQL Server;'
+'''conn = (r'Driver=SQL Server;'
         r'Server=(local);'
         r'Database=StudyBuddy;'
         r'Trusted_Connection=yes'
-        )
+        )'''
 cnxn = pyodbc.connect(conn)
 cursor = cnxn.cursor()
 
@@ -27,6 +27,8 @@ POSTCONDITION: if the user with <username> exists in the database, return their 
 '''
 def getUser(name):
     result = cursor.execute("SELECT * FROM Users WHERE username = ?", name).fetchone()
+    if not result:
+        return None
     return result
 
 '''
@@ -46,21 +48,23 @@ def removeUser(username):
     user = getUser(username)
     if user is None:
         return "User " + username + " is not in database and cannot be removed"
-    else:
-        cursor.execute("DELETE FROM Users WHERE username = ?;", username)
+    cursor.execute("DELETE FROM Users WHERE username = ?;", username)
 
 
 '''
 PRECONDITION: no users have been retrieved
-POSTCONDITION: formatted records of all users returned
+POSTCONDITION: record of all users returned, or None if there are no users
 '''
 def getAllUsers():
-    return cursor.execute("SELECT * FROM Users;").fetchall()
+    record = cursor.execute("SELECT * FROM Users;").fetchall()
+    if not record:
+        return None
+    return record
 
 # Class Methods
 '''
 PRECONDITION: no classes have been retrieved from db
-POSTCONDITION: all classes for user 'username' have been retrieved (if the class is uncomplete)
+POSTCONDITION: all classes for user 'username' have been retrieved (if the class is uncomplete), or None if user has no classes
 '''
 def getClasses(username):
     # get user id
@@ -73,7 +77,7 @@ def getClasses(username):
 
 '''
 PRECONDITION: class id for individuals unknown
-POSTCONDITION: returns classID for specified user and specified class
+POSTCONDITION: returns classID for specified user and specified class, or None if no class exists
 '''
 def getClassID(username, className):
     userID = getUser(username).uID
@@ -83,12 +87,16 @@ def getClassID(username, className):
     return record.cID
 '''
 PRECONDITION: no classes retrieved
-POSTCONDITION: a single class is returned when given username and class id
+POSTCONDITION: a single class is returned when given username and class id, or None if class doesnt exist
 '''
 def getSingleClass(username, className):
     userID = getUser(username).uID
     classID = getClassID(username, className)
+    if not userID or not classID:
+        return None
     record = cursor.execute("SELECT * FROM Classes WHERE FK_uID = ? AND cID = ?;", userID, classID).fetchone()
+    if not record:
+        return None
     return record
 '''
 PRECONDITION: no classes have been added 
@@ -100,14 +108,19 @@ def addClass(username, className, timeslot):
     return cursor.execute(prep_stmt, className, timeslot, id)
 
 '''
-PRECONDITION:
-POSTCONDITION:
+PRECONDITION: all classes are present in db
+POSTCONDITION: specified class removed for specified user, or None if class doesnt exist
 '''
 def removeClass(username, className):
     id = getUser(username).uID
     classID = getClassID(username, className)
-    record = cursor.execute("DELETE FROM Classes WHERE FK_uID = ? AND cID = ?;", id, classID)
-    return record
+    if not classID:
+        return None
+    else:
+        record = cursor.execute("DELETE FROM Classes WHERE FK_uID = ? AND cID = ?;", id, classID)
+        if not record:
+            return None
+        return record
 
 '''
 PRECONDITION: all classes marked uncomplete
@@ -117,6 +130,8 @@ def completeClass(username, className):
     classID = getClassID(username, className)
     userID = getUser(username).uID
     prep_stmt = "UPDATE Classes SET is_complete = ? WHERE cID = ? AND FK_uID = ?;"
+    if not classID:
+        return None
     record = cursor.execute(prep_stmt, 1, classID, userID)
     return record
 
@@ -128,7 +143,9 @@ def editClassMeta(username, className, sectionnum, classroom, prof,
                  prof_email, prof_phone, prof_office, prof_hours):
     userID = getUser(username).uID
     classID = getClassID(username, className)
-    # update doesnt return a record
+    if not userID or not classID:
+        return None
+        # update doesnt return a record
     cursor.execute("UPDATE Classes SET section = ? WHERE FK_uID = ? AND cID = ?",sectionnum, userID, classID)
     cursor.execute("UPDATE Classes SET classroom = ? WHERE FK_uID = ? AND cID = ?", classroom, userID, classID)
     cursor.execute("UPDATE Classes SET prof_Name = ? WHERE FK_uID = ? AND cID = ?", prof, userID, classID)
@@ -136,7 +153,6 @@ def editClassMeta(username, className, sectionnum, classroom, prof,
     cursor.execute("UPDATE Classes SET prof_Phone = ? WHERE FK_uID = ? AND cID = ?", prof_phone, userID, classID)
     cursor.execute("UPDATE Classes SET prof_Office = ? WHERE FK_uID = ? AND cID = ?", prof_office, userID, classID)
     cursor.execute("UPDATE Classes SET prof_Hours = ? WHERE FK_uID = ? AND cID = ?", prof_hours, userID, classID)
-    return
 
 '''
 PRECONDITION: the total study time for the class is unchanged
@@ -146,10 +162,16 @@ def addStudyTime(username, className, t):
     userID = getUser(username).uID
     record = getSingleClass(username, className)
     classID = record.cID
-    study = record.studyTime
-    uTime =  study + t
-    prep_stmt = "UPDATE Classes SET studyTime = ? WHERE FK_uID = ? AND cID = ?;"
-    return cursor.execute(prep_stmt, uTime, userID, classID)
+    if not userID or not record:
+        return None
+    else:
+        study = record.studyTime
+        uTime =  study + t
+        prep_stmt = "UPDATE Classes SET studyTime = ? WHERE FK_uID = ? AND cID = ?;"
+        result = cursor.execute(prep_stmt, uTime, userID, classID)
+        if not result:
+            return None
+        return result
 ''''
 PRECONDITION: no tasks have been retrieved
 POSTCONDITION: list of tasks per class retrieved
@@ -159,7 +181,13 @@ POSTCONDITION: list of tasks per class retrieved
 def getTaskList(username, className):
     userID = getUser(username).uID
     classID = getClassID(className)
-    return cursor.execute("SELECT * FROM Tasks WHERE FK_uID = ? AND FK_cID = ?", userID, classID).fetchall()
+    if not userID or not classID:
+        return None
+    else:
+        record = cursor.execute("SELECT * FROM Tasks WHERE FK_uID = ? AND FK_cID = ?", userID, classID).fetchall()
+        if not record:
+            return None
+        return record
 ''''
 PRECONDITION: no taskID has been retrieved
 POSTCONDITION: taskID for specified user, class and task retrieved
@@ -167,9 +195,14 @@ POSTCONDITION: taskID for specified user, class and task retrieved
 def getTaskID(username, className, taskName):
     userID = getUser(username).uID
     classID = getClassID(className)
-    record = cursor.execute("SELECT * FROM Tasks WHERE FK_uID = ? AND FK_cID = ? AND task_Name = ?", userID, classID,
+    if not userID or not classID:
+        return None
+    else:
+        record = cursor.execute("SELECT * FROM Tasks WHERE FK_uID = ? AND FK_cID = ? AND task_Name = ?", userID, classID,
                             taskName)
-    return record.tID
+        if not record:
+            return None
+        return record.tID
 
 ''''
 PRECONDITION: no tasks have been completed

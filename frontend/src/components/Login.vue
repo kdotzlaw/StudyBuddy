@@ -108,7 +108,8 @@
           'Content-Type': 'application/json'
         },
         mode: 'no-cors',
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
+        credentials: 'include'
       })
         .then(response => response.text())
         .then(data => {

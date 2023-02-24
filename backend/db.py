@@ -6,18 +6,18 @@ import pyodbc
 
 # connection information can change as we include security
 # PROD CONNECTION STRING
-conn = (r'Driver=ODBC Driver 17 for SQL Server;'
+'''conn = (r'Driver=ODBC Driver 17 for SQL Server;'
         r'Server=localhost;'
         r'Database=StudyBuddy;'
         r'UID=sa;'
         r'PWD=dbtools.IO'
-        )
+        )'''
 # DEV CONNECTION STRING - D.N.T
-'''conn = (r'Driver=SQL Server;'
+conn = (r'Driver=SQL Server;'
         r'Server=(local);'
         r'Database=StudyBuddy;'
         r'Trusted_Connection=yes'
-        )'''
+        )
 cnxn = pyodbc.connect(conn)
 cursor = cnxn.cursor()
 
@@ -217,7 +217,11 @@ def completeTask(username, className, taskName, grade):
     cursor.execute("UPDATE Tasks SET task_grade = ? WHERE FK_uID = ? AND FK_cID = ? AND tID = ?", grade, userID,
                           classID, taskID)
 
-#for testing, basically just resets status of task
+''''
+PRECONDITION: task was previously marked complete (grade was entered)
+POSTCONDITION: specifed task has been reset (grade set to 0)
+--> currently just for testing completeTask()
+'''
 def uncompleteTask(username, className, taskName):
     taskID = getTaskID(username, className, taskName).tID
     userID = getUser(username).uID
@@ -226,13 +230,17 @@ def uncompleteTask(username, className, taskName):
         return None
     cursor.execute("UPDATE Tasks SET task_grade = ? WHERE FK_uID = ? AND FK_cID = ? AND tID = ?", 0.0, userID,
                           classID, taskID)
-
+''''
+PRECONDITION: a user has some completed tasks for class <className> in the database
+POSTCONDITION: all completed tasks for the specified user and class have been returned
+'''
 def getCompleteTasksForClass(username, className):
     userID = getUser(username).uID
     classID = getClassID(username, className)
     if not userID or not classID:
         return None
-    record =  cursor.execute("SELECT * FROM Tasks WHERE task_grade > 0.0 AND FK_uID = ? AND FK_cID = ?;", userID, classID).fetchone()
+    record = cursor.execute("SELECT * FROM Tasks WHERE task_grade > 0.0 AND FK_uID = ? AND FK_cID = ?;", userID, classID).fetchall()
     if not record:
         return None
     return record
+

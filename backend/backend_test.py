@@ -39,7 +39,7 @@ class dbTests(unittest.TestCase):
 
     '''
     Test passes if the correct record information is retrieved for the specified username
-    Test fails if incorrect record returned, or
+    Test fails if incorrect record returned
     '''
     def test_getUser(self):
         username = "katDot"
@@ -62,7 +62,7 @@ class dbTests(unittest.TestCase):
         password = "testing"
         db.createAccount(username, password)
         # remove user
-        record = db.removeUser(username)
+        db.removeUser(username)
         result = db.getAllUsers()
         self.assertNotIn(username, result)
 
@@ -194,11 +194,6 @@ class dbTests(unittest.TestCase):
         db.addStudyTime(username, className, 1.30)
         record = db.getSingleClass(username, className)
         self.assertEqual(record.studyTime, 1.30)
-        '''reset studytime
-        db.addStudyTime(username, className, -1.30)
-        record = db.getSingleClass(username, className)
-        #self.assertEqual(record.studyTime, 0.0)
-        '''
 
     '''
     Test passes if each column in specified class was successfully updated with new metadata
@@ -231,8 +226,49 @@ class dbTests(unittest.TestCase):
         self.assertEqual("150 EITC", record.prof_Office)
         d = datetime.datetime.strptime("10:00:00", '%H:%M:%S').time()
         self.assertEqual(d, record.prof_Hours)
+# Tasks tests
+    '''
+    Test passes if task list for specified user returned successfully
+    '''
+    def test_getTaskList(self):
+        username = "katDot"
+        className = "COMP 3820"
+        record = db.getTaskList(username, className)
+        self.assertNotEqual(record, None)
+    '''
+    Test passes if username, className has no tasks
+    '''
+    def test_getEmptyTasks(self):
+        username = "ryan2023"
+        className = "COMP 4350"
+        record = db.getTaskList(username,className)
+        self.assertEqual(record, None)
 
+    '''
+    Test passes if correct taskID returned when given specified username and class
+    '''
+    def test_getTaskID(self):
+        username = "katDot"
+        className = "COMP 3820"
+        taskName = "A1"
+        record = db.getTaskID(username, className, taskName)
+        self.assertEqual(record.tID,1)
 
+    def test_getTaskIDFail(self):
+        username = "katDot"
+        className = "COMP 3820"
+        taskName = "A2"
+        record = db.getTaskID(username, className, taskName)
+        self.assertEqual(record, None)
+
+    def test_completeTask(self):
+        username = "katDot"
+        className = "COMP 3820"
+        taskName = "A1"
+        db.completeTask(username,className, taskName, 98.0)
+        record = db.getCompleteTasksForClass(username, className)
+        self.assertNotEqual(record, None)
+        self.assertEqual(record.task_grade, 98.0)
 class apiTest(flask_unittest.ClientTestCase):
     # assign flask app
     app = server.app

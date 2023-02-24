@@ -180,7 +180,7 @@ POSTCONDITION: list of tasks per class retrieved
 # not sprint 2
 def getTaskList(username, className):
     userID = getUser(username).uID
-    classID = getClassID(className)
+    classID = getClassID(username,className)
     if not userID or not classID:
         return None
     else:
@@ -194,23 +194,45 @@ POSTCONDITION: taskID for specified user, class and task retrieved
 '''
 def getTaskID(username, className, taskName):
     userID = getUser(username).uID
-    classID = getClassID(className)
+    classID = getClassID(username,className)
     if not userID or not classID:
         return None
     else:
         record = cursor.execute("SELECT * FROM Tasks WHERE FK_uID = ? AND FK_cID = ? AND task_Name = ?", userID, classID,
-                            taskName)
+                            taskName).fetchone()
         if not record:
             return None
-        return record.tID
+        return record
 
 ''''
 PRECONDITION: no tasks have been completed
-POSTCONDITION: specifed task has been marked as complete
+POSTCONDITION: specifed task has been marked as complete -- update doesnt return a record
 '''
 def completeTask(username, className, taskName, grade):
-    taskID = getTaskID(username, className, taskName)
+    taskID = getTaskID(username, className, taskName).tID
     userID = getUser(username).uID
-    classID = getClassID()
-    return cursor.execute("UPDATE Tasks SET task_grade = ? WHERE FK_uID = ? AND FK_cID = ? AND tID = ?", grade, userID,
+    classID = getClassID(username, className)
+    if not taskID or not userID or not classID:
+        return None
+    cursor.execute("UPDATE Tasks SET task_grade = ? WHERE FK_uID = ? AND FK_cID = ? AND tID = ?", grade, userID,
                           classID, taskID)
+
+#for testing, basically just resets status of task
+def uncompleteTask(username, className, taskName):
+    taskID = getTaskID(username, className, taskName).tID
+    userID = getUser(username).uID
+    classID = getClassID(username, className)
+    if not taskID or not userID or not classID:
+        return None
+    cursor.execute("UPDATE Tasks SET task_grade = ? WHERE FK_uID = ? AND FK_cID = ? AND tID = ?", 0.0, userID,
+                          classID, taskID)
+
+def getCompleteTasksForClass(username, className):
+    userID = getUser(username).uID
+    classID = getClassID(username, className)
+    if not userID or not classID:
+        return None
+    record =  cursor.execute("SELECT * FROM Tasks WHERE task_grade > 0.0 AND FK_uID = ? AND FK_cID = ?;", userID, classID).fetchone()
+    if not record:
+        return None
+    return record

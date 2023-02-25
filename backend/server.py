@@ -1,6 +1,5 @@
 import flask
 import flask_login
-import werkzeug.security
 from pyodbc import Row
 
 import db

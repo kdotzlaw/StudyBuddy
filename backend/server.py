@@ -1,5 +1,6 @@
 import flask
 import flask_login
+import werkzeug.security
 from pyodbc import Row
 
 import db
@@ -18,6 +19,7 @@ login_manager.login_view = 'login'
 users = {"testuser": {"username": "testuser", "password": "123"}}
 
 
+# for debug
 def setTest(boo):
     app.config["TESTING"] = boo
 
@@ -75,11 +77,6 @@ def request_loader(request):
 @login_manager.unauthorized_handler
 def unauthorized_handler():
     return "Unauthorized", 401
-
-
-@app.route("/")
-def hello_world():
-    return "homepage", 200
 
 
 # login api request
@@ -144,7 +141,7 @@ def logout():
     return "Logged Out", 200
 
 
-# create user api request
+# create a new user
 @app.route("/api/newuser", methods=["POST"])
 def newuser():
     username = flask.request.get_json(force=True)['username']
@@ -160,17 +157,19 @@ def newuser():
         return "Account already exists with username", 400
 
 
+# increases the study_time attribute for 'classname' by 'added' seconds
 @app.route("/api/class/<classname>/update_time", methods=["POST"])
 @flask_login.login_required
 def update_time(classname):
     # updates the time studied for a class
     username = flask_login.current_user.get_id()
-    t = flask.request.get_json()['added']
+    t = flask.request.get_json(force=True)['added']
     res = db.addStudyTime(username, classname, t)
     print(username, " increased ", classname, "'s study time by: ", t, " seconds")
     return "Time for class updated successfully", 200
 
 
+# returns the data for a single class of classname: 'classname'
 @app.route("/api/class/<classname>", methods=["GET"])
 @flask_login.login_required
 def getClass(classname):
@@ -182,24 +181,25 @@ def getClass(classname):
     else:
         return parse_row(res, ['class_Name', 'timeslot', 'is_Complete', 'study_time']), 200
 
-
 def parse_rows(rows, cols):
     res = []
     for row in rows:
         # QUICK FIX, IMPROVE LATER
-        row.timeslot = str(row.timeslot)
+        # row.timeslot = str(row.timeslot)
+
         res.append(dict(zip(cols, row)))
     return res
 
 
 def parse_row(row: Row, cols):
     # QUICK FIX, IMPROVE LATER
-    row.timeslot = str(row.timeslot)
+    # row.timeslot = str(row.timeslot)
     res = [dict(zip(cols, row))]
     return res
 
-'''
-@app.route("/api/class/<classname>/task")
+
+# returns a list of tasks assocaited with 'classname'
+@app.route("/api/class/<classname>/task", methods=["GET"])
 @flask_login.login_required
 def all_tasks(classname):
     username = flask_login.current_user.get_id()
@@ -207,31 +207,160 @@ def all_tasks(classname):
     if res is None:
         # no class found
         return "Bad Request: No class found"
-    res = db.getTaskList(username, classname)
-    return res
-    '''
+    else:
+        res = db.getTaskList(username, classname)
+        # need to parse
+        return res, 200
 
 
+# sets the is_complete attribute of 'classname' to true
+@app.route("/api/class/<classname>/complete", methods=["POST"])
+@flask_login.login_required
+def completeClass(classname):
+    username = flask_login.current_user.get_id()
+    res = db.getSingleClass(username, classname)
+    if res is not None and res.is_Complete == 0:
+        res = db.completeClass(username, classname)
+        return "Class completed", 200
+    elif res is None:
+        return "Class not found", 404
+    else:
+        return "Bad Request: Class not found, or class already completed", 400
+
+
+# updates the metadata for class: 'classname', any missing metadata remains the same
+@app.route("/api/class/<classname>/update_meta", methods=["POST"])
+@flask_login.login_required
+def classMeta(classname):
+    username = flask_login.current_user.get_id()
+    req = flask.request.get_json(force=True)
+    res = db.getSingleClass(username, classname)
+
+    if 'sectionnum' not in req.keys():
+        sectionnum = res.sectionnum
+    else:
+        sectionnum = req['sectionnum']
+
+    if 'classroom' not in req.keys():
+        classroom = res.classroom
+    else:
+        classroom = req['classroom']
+
+    if 'prof' not in req.keys():
+        prof = res.prof
+    else:
+        prof = req['prof']
+
+    if 'prof_email' not in req.keys():
+        prof_email = res.prof_email
+    else:
+        prof_email = req['prof_email']
+
+    if 'prof_phone' not in req.keys():
+        prof_phone = res.prof_phone
+    else:
+        prof_phone = req['prof_phone']
+
+    if 'prof_office' not in req.keys():
+        prof_office = res.prof_office
+    else:
+        prof_office = req['prof_office']
+
+    if 'prof_hours' not in req.keys():
+        prof_hours = str(res.prof_hours)
+    else:
+        prof_hours = req['prof_hours']
+
+    res = db.editClassMeta(username, classname, sectionnum, classroom, prof, prof_email, prof_phone, prof_office,
+                           prof_hours)
+    if res is not None:
+        return 'Class Meta updated successfully', 200
+    else:
+        return 'Bad Request: Failed to find class', 400
+
+
+# creates a new task for the current user for the class: 'classname'
+@app.route("/api/class/<classname>/newtask", methods=["POST"])
+@flask_login.login_required
+def newtask(classname):
+    req = flask.request.get_json(force=True)
+    username = flask_login.current_user.get_id()
+
+    if 'weight' not in req.keys():
+        # use undef weight
+        weight = -1
+    else:
+        weight = req['weight']
+
+    res = "db.addTask(username, classname, req['taskname'], req['deadline'], weight)"
+    return "no db function, yet", 200
+
+
+@app.route('api/newclass', methods=["POST"])
+@flask_login.login_required
+def newclass():
+    req = flask.request.get_json(force=True)
+    username = flask_login.current_user.get_id()
+    if 'classname' not in req.keys() or 'timeslot' not in req.keys():
+        return "Bad Request: JSON missing required value(s)", 400
+    else:
+        res = db.addClass(username, req['classname'], req['timeslot'])
+        return "Added Class", 200
+
+
+# returns a list of classes associated with logged in user
 @app.route("/api/class", methods=["GET"])
 @flask_login.login_required
 def all_classes():
     username = flask_login.current_user.get_id()
     res = db.getClasses(username)
-    # auto calls jsonify and parses iterable of dictionaries
+    # converts Row/Rows objects into jsonify parsable dictionaries
     if type(res) is list:
         return parse_rows(res, ['class_Name', 'timeslot', 'is_Complete', 'study_time']), 200
     elif type(res) is Row:
         return parse_row(res, ['class_Name', 'timeslot', 'is_Complete', 'study_time']), 200
 
 
-@app.route("/testlogin")
+# get specific task: 'taskname'
+@app.route('/api/class/<classsname>/task/<taskname>', methods=["GET"])
 @flask_login.login_required
-def testlogin():
-    return "<h1>you're logged in</h1>"
+def get_task(classname, taskname):
+    username = flask_login.current_user.get_id()
+    res = db.getTaskID(username, classname, taskname)
+    if res is None:
+        # no class found
+        return "Bad Request: No task found", 400
+    else:
+        # parsing broken
+        return parse_row(res, ['taskname']), 200
 
 
+@app.route('/api/class/<classsname>/task/<taskname>/complete', methods=["POST"])
+@flask_login.login_required
+def complete_task(classname, taskname):
+    username = flask_login.current_user.get_id()
+    req = flask.request.get_json(force=True)
+    if 'grade' not in req.keys():
+        return "Bad Request: Missing required JSON value(s)", 400
+    else:
+        res = db.completeTask(username, classname, taskname, req['grade'])
+        if res is None:
+            return "Bad Request", 400
+        else:
+            return "Completed Task Successfully", 200
+
+
+# returns all the complete tasks for class: 'classname'
+@app.route('/api/class/<classname>/done_tasks', methods=["GET"])
+@flask_login.login_required
+def get_done_tasks(classname):
+    # parsing broken rn
+    return "", 200
+
+
+# for debugging
 @app.before_request
 def log_request():
-    print(flask.request.headers)
+    # print(flask.request.headers)
     # print(flask.request.get_json(force=True))
     return None

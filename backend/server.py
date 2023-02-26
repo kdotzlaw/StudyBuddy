@@ -295,7 +295,7 @@ def newtask(classname):
     return "no db function, yet", 200
 
 
-@app.route('api/newclass', methods=["POST"])
+@app.route('/api/newclass', methods=["POST"])
 @flask_login.login_required
 def newclass():
     req = flask.request.get_json(force=True)

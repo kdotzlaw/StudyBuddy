@@ -178,23 +178,18 @@ def getClass(classname):
         # no class found
         return "Bad Request: No class found", 400
     else:
-        return parse_row(res, ['class_Name', 'timeslot', 'is_Complete', 'study_time']), 200
+        return parse_row(res), 200
 
-def parse_rows(rows, cols):
+
+def parse_rows(rows):
     res = []
     for row in rows:
-        # QUICK FIX, IMPROVE LATER
-        # row.timeslot = str(row.timeslot)
-
-        res.append(dict(zip(cols, row)))
+        res.append(dict(zip([t[0] for t in row.cursor_description], row)))
     return res
 
 
-def parse_row(row: Row, cols):
-    # QUICK FIX, IMPROVE LATER
-    # row.timeslot = str(row.timeslot)
-    res = [dict(zip(cols, row))]
-    return res
+def parse_row(row):
+    return dict(zip([t[0] for t in row.cursor_description], row))
 
 
 # returns a list of tasks assocaited with 'classname'
@@ -291,8 +286,11 @@ def newtask(classname):
     else:
         weight = req['weight']
 
-    res = "db.addTask(username, classname, req['taskname'], req['deadline'], weight)"
-    return "no db function, yet", 200
+    res = db.addTask(username, classname, req['taskname'], weight, req['deadline'])
+    if res is None:
+        return "Bad Request: Class given doesn't exist", 400
+    else:
+        return "Successfully added task", 200
 
 
 @app.route('/api/newclass', methods=["POST"])
@@ -315,9 +313,9 @@ def all_classes():
     res = db.getClasses(username)
     # converts Row/Rows objects into jsonify parsable dictionaries
     if type(res) is list:
-        return parse_rows(res, ['class_Name', 'timeslot', 'is_Complete', 'study_time']), 200
+        return parse_rows(res), 200
     elif type(res) is Row:
-        return parse_row(res, ['class_Name', 'timeslot', 'is_Complete', 'study_time']), 200
+        return parse_row(res), 200
 
 
 # get specific task: 'taskname'
@@ -330,8 +328,7 @@ def get_task(classname, taskname):
         # no class found
         return "Bad Request: No task found", 400
     else:
-        # parsing broken
-        return parse_row(res, ['taskname']), 200
+        return parse_row(res), 200
 
 
 @app.route('/api/class/<classsname>/task/<taskname>/complete', methods=["POST"])
@@ -353,8 +350,12 @@ def complete_task(classname, taskname):
 @app.route('/api/class/<classname>/done_tasks', methods=["GET"])
 @flask_login.login_required
 def get_done_tasks(classname):
-    # parsing broken rn
-    return "", 200
+    username = flask_login.current_user.get_id()
+    res = db.getCompleteTasksForClass(username, classname)
+    if type(res) is Row:
+        return parse_row(res), 200
+    else:
+        return parse_rows(res), 200
 
 
 # for debugging

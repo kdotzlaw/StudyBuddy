@@ -106,8 +106,10 @@ POSTCONDITION: returns classID for specified user and specified class, or None i
 
 def getClassID(username, className):
     userID = getUser(username).uID
+    print("getting", userID, className)
     record = cursor.execute("SELECT cID FROM Classes WHERE FK_uID = ? AND class_Name =?;", userID, className).fetchone()
-    if userID or not record:
+    print("got: ", type(record))
+    if not userID or not record:
         return None
     return record.cID
 
@@ -123,11 +125,15 @@ POSTCONDITION:
 def getSingleClass(username, className):
     userID = getUser(username).uID
     classID = getClassID(username, className)
+    print("extra: ", userID, classID)
     if not userID or not classID:
+        print(1)
         return None
     record = cursor.execute("SELECT * FROM Classes WHERE FK_uID = ? AND cID = ?;", userID, classID).fetchone()
     if not record:
+        print(2)
         return None
+    print("good")
     return record
 
 
@@ -220,12 +226,13 @@ POSTCONDITION:
 def addStudyTime(username, className, t):
     userID = getUser(username).uID
     record = getSingleClass(username, className)
+    print(username, " ", className)
     classID = record.cID
     if not userID or not record:
         return None
     else:
         study = record.studyTime
-        uTime = study + t
+        uTime = study + float(t)
         prep_stmt = "UPDATE Classes SET studyTime = ? WHERE FK_uID = ? AND cID = ?;"
         result = cursor.execute(prep_stmt, uTime, userID, classID)
         if not result:

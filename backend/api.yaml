@@ -170,6 +170,144 @@ paths:
           description: "The request maker wasn't logged in, or forgot to send the session cookie"
         500:
           description: "Internal server error, problem with backend logic or database"
+  /class/{classname}/complete:
+    post:
+      tags: ["Tracking Related"]
+      summary: "Mark a class as completed"
+      description: "Marks a class as completed without removing it from the database"
+      operationId: complete_class
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+        - name: classname
+          in: url
+          required: true
+      responses:
+        200:
+          description: "The class was completed successfully"
+        400:
+          description: "The class was already completed"
+        401:
+          description: "The request maker wasn't logged in, or forgot to send the session cookie"
+        404:
+          description: "The class was not found"
+        500:
+          description: "Internal server error, problem with backend logic or database"
+
+  /class/{classname}/update_meta:
+    post:
+      tags: ["Tracking Related"]
+      summary: "Update the metadata for the class"
+      description: "Send new metadata values to update the ones on the backend. 
+        If a value for the metadata isn't send (ie don't send metadata for 'prof_email'), then the metadata for that attribute is unchanged"
+      operationId: update_class_meta
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+        - name: classname
+          in: url
+          required: true
+        - name: sectionnum
+          in: body
+          required: false
+          description: "Class Metadata"
+        - name: classroom
+          in: body
+          required: false
+          description: "Class Metadata"
+        - name: prof
+          in: body
+          required: false
+          description: "Class Metadata"
+        - name: prof_email
+          in: body
+          required: false
+          description: "Class Metadata"
+        - name: prof_phone
+          in: body
+          required: false
+          description: "Class Metadata"
+        - name: prof_office
+          in: body
+          required: false
+          description: "Class Metadata"
+        - name: prof_hours
+          in: body
+          required: false
+          description: "Class Metadata"
+      responses:
+        200:
+          description: "The class metadata was updated successfully"
+        400:
+          description: "The class was not found"
+        401:
+          description: "The request maker wasn't logged in, or forgot to send the session cookie"
+        500:
+          description: "Internal server error, problem with backend logic or database"
+
+  /class/{classname}/newtask:
+    post:
+      tags: ["Tracking Related"]
+      summary: "Creates a new task for the class"
+      description: "Creates a new task for the associated class. If there's no weight attribute sent, it defaults to -1"
+      operationId: newtask
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+        - name: classname
+          in: url
+          required: true
+        - name: taskname
+          in: body
+          required: true
+        - name: deadline
+          in: body
+          requred: true
+        - name: weight
+          in: body
+          required: false
+      responses:
+        200:
+          description: "The task was created successfully"
+        400:
+          description: "The class was not found"
+        401:
+          description: "The request maker wasn't logged in, or forgot to send the session cookie"
+        500:
+          description: "Internal server error, problem with backend logic or database"
+
+  /newclass:
+    post:
+      tags: ["Tracking Related"]
+      summary: "Creates a new class for the user"
+      description: "Creates a new class for the logged in user"
+      operationId: newclass
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+        - name: classname
+          in: body
+          required: true
+        - name: timeslot
+          in: body
+          required: true
+      responses:
+        200:
+          description: "The class was created successfully"
+        400:
+          description: "The request was missing required JSON values"
+        401:
+          description: "The request maker wasn't logged in, or forgot to send the session cookie"
+        500:
+          description: "Internal server error, problem with backend logic or database"
 
 tags:
   - name: Account Related

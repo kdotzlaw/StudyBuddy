@@ -91,6 +91,7 @@
         fetch(host + apiUrl, {
             method: 'POST',
             mode: 'no-cors',
+            credentials: 'include'
         })
             .then(response => response.text())
             .then(data => {

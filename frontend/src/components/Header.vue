@@ -96,7 +96,7 @@
             .then(response => response.text())
             .then(data => {
                 // Commit timer totals to database
-                Mgmt.commitTimer(userId, studyClass, studyTime);
+                Mgmt.commitTimer(userId.value, studyClass.value, studyTime.value);
                 
                 // Destroy timer and purge sessional stores
                 setStudyClass(null);

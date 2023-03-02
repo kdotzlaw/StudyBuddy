@@ -21,7 +21,10 @@ For example: **Dont do:** `if(file){console.log(file.name)}`
 - Images will go in the `frontend/public` folder for easy linking
 - Raw text files, .json files and .yml files will be in `frontend/public`
 ### Testing
-tbd
+- Frontend testing done using **jest** on application level **Pinia** store functions
+- Unit tests should only test **one** method/component
+- Tests for components should be collected in `describe("<desc>", ()=>{<tests>})`
+- Each feature should have its own seperate test suite
 ## Backend
 ### Python
 - All SQL queries in python will be done using **Prepared Statements** to avoid SQL Injection. A valid SQL query using a prepared statement is: `cursor.execute("SELECT * FROM <tableName> WHERE <colName> = ?", username)`
@@ -31,3 +34,9 @@ tbd
 - Table names, row names, column names, and variable names will be camel case. For example, `userGrades`
 - All SQL files will be pushed to `backend/`
 ### Testing
+- Database is tested using **UnitTest**, API tested using **flask_unittest**
+- Tests for database and API in seperate classes
+- Unit tests should only test **one** component/method
+- All tests should be prefaced with pass conditions and description of what test is testing
+- Tests should include Negative Testing (ie test that ensure incorrect input fails correctly)
+- Unit tests should be orderd by component (ie all User tests should be next to eachother in test suite)

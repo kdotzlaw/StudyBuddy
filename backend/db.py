@@ -260,12 +260,15 @@ def getTaskList(username, className):
             return None
         return record
 
+
 '''
 PRECONDITION: no tasks retrieved from db
 POSTCONDITION: 
 - If specified task present in db, its returned. 
 - Otherwise, task is not in db and None is returned
 '''
+
+
 def getSingleTask(username, className, taskName):
     userID = getUser(username).uID
     classID = getClassID(username, className)
@@ -282,6 +285,8 @@ POSTCONDITION:
 - If task is in db, taskID for specified [user,class, name] retrieved. 
 - Otherwise, None returned
 '''
+
+
 def getTaskID(username, className, taskName):
     userID = getUser(username).uID
     classID = getClassID(username, className)
@@ -294,12 +299,16 @@ def getTaskID(username, className, taskName):
         if not record:
             return None
         return record
+
+
 ''''
 PRECONDITION: no tasks have been completed
 POSTCONDITION: 
 - If task, user, class in db, specifed task has been marked as complete. 
 - Otherwise,  no record is present in db and None is returned
 '''
+
+
 def completeTask(username, className, taskName, grade):
     taskID = getTaskID(username, className, taskName).tID
     userID = getUser(username).uID
@@ -308,12 +317,15 @@ def completeTask(username, className, taskName, grade):
         return None
     cursor.execute("UPDATE Tasks SET task_grade = ? WHERE FK_uID = ? AND FK_cID = ? AND tID = ?", grade, userID,
                    classID, taskID)
+
+
 ''''
 PRECONDITION: task was previously marked complete (grade was entered)
 POSTCONDITION: 
 - If specifed task is present in db, task marked uncomplete (grade set to 0).
 - Otherwise, None is returned
 '''
+
 
 def uncompleteTask(username, className, taskName):
     taskID = getTaskID(username, className, taskName).tID
@@ -323,6 +335,8 @@ def uncompleteTask(username, className, taskName):
         return None
     cursor.execute("UPDATE Tasks SET task_grade = ? WHERE FK_uID = ? AND FK_cID = ? AND tID = ?", 0.0, userID,
                    classID, taskID)
+
+
 ''''
 PRECONDITION: a user has some completed tasks for class <className> in the database
 POSTCONDITION: 
@@ -350,6 +364,8 @@ POSTCONDITION:
 - If user and class both present in db, task with given information added to db for specified user and class
 - Otherwise, None is returned
 '''
+
+
 def addTask(username, className, taskName, weight, deadline):
     userID = getUser(username).uID
     classID = getClassID(username, className)
@@ -358,12 +374,15 @@ def addTask(username, className, taskName, weight, deadline):
     prep_stmt = "INSERT INTO Tasks (task_Name, deadline, task_Weight, FK_uID, FK_cID) VALUES (?,?,?,?,?);"
     return cursor.execute(prep_stmt, taskName, deadline, weight, userID, classID)
 
+
 '''
 PRECONDITION: all tasks present in the db
 POSTCONDITION: 
 - If task, user, class present in db, task with specified [user, class, name] removed from db
 - Otherwise, None is returned
 '''
+
+
 def removeTask(username, className, taskName):
     userID = getUser(username).uID
     classID = getClassID(username, className)
@@ -372,3 +391,22 @@ def removeTask(username, className, taskName):
         return None
     prep_stmt = "DELETE FROM Tasks WHERE tID = ? AND FK_uID = ? AND FK_cID = ?;"
     cursor.execute(prep_stmt, taskID, userID, classID)
+
+
+# //TODO: Edit task: edit name, edit due date, edit weight
+def editTask(username, className, taskName, eName, eDue, eWeight):
+    userID = getUser(username).uID
+    classID = getClassID(username, className)
+    taskID = getTaskID(username, className, taskName).tID
+    if not userID or not classID or not taskID:
+        return None
+    if eName != "":
+        cursor.execute("UPDATE Tasks SET task_Name = ? WHERE tID = ? AND FK_uID = ? AND FK_cID = ?;", eName, taskID,
+                       userID, classID)
+    if eDue is not None:  # CHECK THAT EMPTY DATETIME IS NONE
+        cursor.execute("UPDATE Tasks SET deadline = ? WHERE tID = ? AND FK_uID = ? AND FK_cID = ?;", eDue, taskID,
+                       userID,
+                       classID)
+    if eWeight != 0:
+        cursor.execute("UPDATE Tasks SET task_Weight = ? WHERE tID = ? AND FK_uID = ? AND FK_cID = ?;", eWeight, taskID,
+                       userID, classID)

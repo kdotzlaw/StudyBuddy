@@ -33,6 +33,21 @@
               <td><input type="number" min="0" id="qty-input" placeholder="0" v-model="username"></td>
               <td><input type="number" min="0" max="100" id="percent-input" placeholder="0" v-model="username"> %</td>
             </tr>
+            <tr>
+              <td><input type="text" id="name-input" placeholder="Quiz" v-model="username"></td>
+              <td><input type="number" min="0" id="qty-input" placeholder="0" v-model="username"></td>
+              <td><input type="number" min="0" max="100" id="percent-input" placeholder="0" v-model="username"> %</td>
+            </tr>
+            <tr>
+              <td><input type="text" id="name-input" placeholder="Quiz" v-model="username"></td>
+              <td><input type="number" min="0" id="qty-input" placeholder="0" v-model="username"></td>
+              <td><input type="number" min="0" max="100" id="percent-input" placeholder="0" v-model="username"> %</td>
+            </tr>
+            <tr>
+              <td><input type="text" id="name-input" placeholder="Quiz" v-model="username"></td>
+              <td><input type="number" min="0" id="qty-input" placeholder="0" v-model="username"></td>
+              <td><input type="number" min="0" max="100" id="percent-input" placeholder="0" v-model="username"> %</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -53,13 +68,33 @@
           <tbody>
             <tr>
               <td>A+</td>
-              <td><input type="number" min="0" max="100" id="max-input" placeholder="0" v-model="username"></td>
-              <td><input type="number" min="0" max="100" id="max-input" placeholder="0" v-model="username"> </td>
+              <td><input type="number" min="0" max="100" id="max-input" placeholder="100" v-model="username"></td>
+              <td><input type="number" min="0" max="100" id="max-input" placeholder="90" v-model="username"> </td>
             </tr>
             <tr>
               <td>A</td>
-              <td><input type="number" min="0" max="100" id="max-input" placeholder="0" v-model="username"></td>
-              <td><input type="number" min="0" max="100" id="max-input" placeholder="0" v-model="username"> </td>
+              <td><input type="number" min="0" max="100" id="max-input" placeholder="89.9" v-model="username"></td>
+              <td><input type="number" min="0" max="100" id="max-input" placeholder="80" v-model="username"> </td>
+            </tr>
+            <tr>
+              <td>B+</td>
+              <td><input type="number" min="0" max="100" id="max-input" placeholder="79.9" v-model="username"></td>
+              <td><input type="number" min="0" max="100" id="max-input" placeholder="75" v-model="username"> </td>
+            </tr>
+            <tr>
+              <td>B</td>
+              <td><input type="number" min="0" max="100" id="max-input" placeholder="74.9" v-model="username"></td>
+              <td><input type="number" min="0" max="100" id="max-input" placeholder="70" v-model="username"> </td>
+            </tr>
+            <tr>
+              <td>C+</td>
+              <td><input type="number" min="0" max="100" id="max-input" placeholder="69.9" v-model="username"></td>
+              <td><input type="number" min="0" max="100" id="max-input" placeholder="65" v-model="username"> </td>
+            </tr>
+            <tr>
+              <td>C</td>
+              <td><input type="number" min="0" max="100" id="max-input" placeholder="64.9" v-model="username"></td>
+              <td><input type="number" min="0" max="100" id="max-input" placeholder="60" v-model="username"> </td>
             </tr>
           </tbody>
         </table>
@@ -92,10 +127,6 @@
 </script>
 
 <style>
-
-  #gradeCalcPage{
-
-  }
 
   #title h1{
     font-size: 72px;
@@ -163,7 +194,7 @@
     height: 90%;
 
     background: var(--indigo);
-    border: 3px solid var(--gold);
+    border: 3px solid var(--border-gold);
     border-radius: 2em;
     box-shadow: inset 0.2em 0.2em 0.6em rgba(0,0,0,0.4);
     margin: auto;
@@ -183,15 +214,23 @@
 
   #breakdown-table{
     width: 70%;
+    height: 80%;
     margin-left: auto;
     margin-right: auto;
+    overflow-y: auto;
   }
 
   #letter-table{
     width: 70%;
+    height: 80%;
     margin-left: auto;
     margin-right: auto;
-    background-color: var(--box);
+    background-color: var(--textbox-dark);
+    overflow-y: auto;
+  }
+
+  #letter-table tbody{
+    overflow: auto;
   }
 
   table{
@@ -210,7 +249,19 @@
     justify-content: center;
   }
 
-  input{
+  #breakdown-table th{
+    top: 0;
+    position: sticky;
+    background-color: var(--indigo);
+  }
+
+  #letter-table th{
+    top: 0;
+    position: sticky;
+    background-color: var(--textbox-dark);
+  }
+
+  #letter-grade-container input{
     font: 500 1rem 'Quicksand', sans-serif;
     border-radius: 5px;
     height: 3vh;
@@ -236,7 +287,7 @@
   }
 
   #letter-table-header{
-    background-color: var(--indigo);
+    /*background-color: var(--indigo);*/
     color: var(--white);
   }
 
@@ -246,4 +297,14 @@
     text-align: center;
   }
 
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  #letter-table ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: var(--white);
+    opacity: 1; /* Firefox */
+  }
 </style>

@@ -1,4 +1,5 @@
 flask
 flask_login
+flask_cors
 pyodbc
 flask_unittest

@@ -372,3 +372,25 @@ def removeTask(username, className, taskName):
         return None
     prep_stmt = "DELETE FROM Tasks WHERE tID = ? AND FK_uID = ? AND FK_cID = ?;"
     cursor.execute(prep_stmt, taskID, userID, classID)
+
+'''
+PRECONDITION: all tasks remain unchanged
+POSTCONDITION: 
+- If task, user, class present in db, task with specified [user, class, name] edited based on specified attributes
+- Otherwise, None is returned and task remains unchanged
+- ** make sure that eDate is passed in as a datetime object or converted
+'''
+def editTask (username, className, taskName, eName, eDate, eWeight):
+    userID = getUser(username).uID
+    classID = getClassID(username, className)
+    taskID = getTaskID(username, className,taskName).tID
+    if not userID or not classID or not taskID:
+        return None
+    if eName != "":
+        cursor.execute("UPDATE Tasks SET task_Name = ? WHERE tID = ? AND FK_uID = ? AND FK_cID = ?;", eName,taskID, userID, classID )
+    if eDate != "":
+        cursor.execute("UPDATE Tasks SET deadline = ? WHERE tID = ? AND FK_uID = ? AND FK_cID = ?;", eDate, taskID,
+                       userID, classID)
+    if eWeight != 0:
+        cursor.execute("UPDATE Tasks SET task_Weight = ? WHERE tID = ? AND FK_uID = ? AND FK_cID = ?;", eWeight, taskID,
+                       userID, classID)

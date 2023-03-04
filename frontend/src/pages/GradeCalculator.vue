@@ -13,13 +13,26 @@
   <div id="grade-container">
     <div id="breakdown-container">
       <h2>Breakdown and Weights</h2>
+
+      <!-- <div id="breakdown-input">
+        <h3 id="subtitle">New Assesment:</h3>
+        <label for="name-input">Name: </label>
+        <input type="text" id="name-input" placeholder="Quiz" v-model="username">
+        <label for="qty-input">QTY: </label>
+        <input type="number" min="0" id="qty-input" placeholder="0" v-model="username">
+        <label for="percent-input">Percent: </label>
+        <input type="number" min="0" max="100" id="percent-input" placeholder="0" v-model="username">
+        <button class="button bar">Add</button>
+      </div> -->
+
       <div id="breakdown-table">
         <table> 
-          <thead>
+          <thead id="breakdown-table-header">
             <tr>
-              <th id="col_one">Type Name</th>
-              <th id="col_two">QTY</th>
-              <th id="col_three">Percentage</th>
+              <th id="col-one">Name</th>
+              <th id="col-two">QTY</th>
+              <th id="col-three">Percentage</th>
+              <th id="col-four">Delete</th>
             </tr>
           </thead>
           <tbody>
@@ -27,27 +40,7 @@
               <td><input type="text" id="name-input" placeholder="Quiz" v-model="username"></td>
               <td><input type="number" min="0" id="qty-input" placeholder="0" v-model="username"></td>
               <td><input type="number" min="0" max="100" id="percent-input" placeholder="0" v-model="username"> %</td>
-            </tr>
-            <tr>
-              <td><input type="text" id="name-input" placeholder="Quiz" v-model="username"></td>
-              <td><input type="number" min="0" id="qty-input" placeholder="0" v-model="username"></td>
-              <td><input type="number" min="0" max="100" id="percent-input" placeholder="0" v-model="username"> %</td>
-            </tr>
-            <tr>
-              <td><input type="text" id="name-input" placeholder="Quiz" v-model="username"></td>
-              <td><input type="number" min="0" id="qty-input" placeholder="0" v-model="username"></td>
-              <td><input type="number" min="0" max="100" id="percent-input" placeholder="0" v-model="username"> %</td>
-            </tr>
-            <tr>
-              <td><input type="text" id="name-input" placeholder="Quiz" v-model="username"></td>
-              <td><input type="number" min="0" id="qty-input" placeholder="0" v-model="username"></td>
-              <td><input type="number" min="0" max="100" id="percent-input" placeholder="0" v-model="username"> %</td>
-            </tr>
-            <tr>
-              <td><input type="text" id="name-input" placeholder="Quiz" v-model="username"></td>
-              <td><input type="number" min="0" id="qty-input" placeholder="0" v-model="username"></td>
-              <td><input type="number" min="0" max="100" id="percent-input" placeholder="0" v-model="username"> %</td>
-            </tr>
+            </tr> 
           </tbody>
         </table>
       </div>
@@ -60,9 +53,9 @@
         <table> 
           <thead id="letter-table-header">
             <tr>
-              <th id="col_one">Letter Grade</th>
-              <th id="col_two">Max</th>
-              <th id="col_three">Min</th>
+              <th id="col-one">Letter Grade</th>
+              <th id="col-two">Max</th>
+              <th id="col-three">Min</th>
             </tr>
           </thead>
           <tbody>
@@ -192,13 +185,11 @@
   #grade-container{
     width: 50%;
     height: 90%;
-
     background: var(--indigo);
     border: 3px solid var(--border-gold);
     border-radius: 2em;
     box-shadow: inset 0.2em 0.2em 0.6em rgba(0,0,0,0.4);
     margin: auto;
-    
   }
 
   #grade-container h2{
@@ -212,27 +203,17 @@
     margin: auto;
   }
 
-  #breakdown-table{
-    width: 70%;
-    height: 80%;
-    margin-left: auto;
-    margin-right: auto;
-    overflow-y: auto;
+  #grade-container h2,
+  #grade-container h3{
+    padding: 0;
+    margin:0;
   }
 
-  #letter-table{
-    width: 70%;
-    height: 80%;
-    margin-left: auto;
-    margin-right: auto;
-    background-color: var(--textbox-dark);
-    overflow-y: auto;
+  #grade-container h2{
+    margin-top: 2vh;
   }
 
-  #letter-table tbody{
-    overflow: auto;
-  }
-
+  /* Overall Table Style*/
   table{
     width: 100%;
     border-collapse: collapse;
@@ -249,10 +230,67 @@
     justify-content: center;
   }
 
+  #col-two, #col-three{
+    width: 25%;
+  }
+
+  #name-input{
+    width: 80%
+  }
+
+  #qty-input, #percent-input{
+    width: 20%;
+  }
+
+  #min-input, #max-input{
+    background-color: var(--box);
+    color: var(--white);
+    text-align: center;
+  }
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Breakdown Table Style*/
+
+  #breakdown-table{
+    width: 70%;
+    height: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    overflow-y: auto;
+  }
+
+  #breakdown-input input{
+    margin-right: 1.5vw;
+  }
+
   #breakdown-table th{
     top: 0;
     position: sticky;
     background-color: var(--indigo);
+  }
+
+  #breakdown-table-header #col-one{
+    width: 35%;
+  }
+
+  /* Letter Grade Table Style*/
+
+  #letter-table{
+    width: 70%;
+    height: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: var(--textbox-dark);
+    overflow-y: auto;
+  }
+
+  #letter-table tbody{
+    overflow: auto;
   }
 
   #letter-table th{
@@ -268,18 +306,6 @@
     border-style: none;
   }
 
-  #col_two, #col_three{
-    width: 25%;
-  }
-
-  #name-input{
-    width: 40%
-  }
-
-  #qty-input, #percent-input{
-    width: 30%;
-  }
-
   #letter-grade-container{
     width: 70%;
     height: 45%;
@@ -289,18 +315,6 @@
   #letter-table-header{
     /*background-color: var(--indigo);*/
     color: var(--white);
-  }
-
-  #min-input, #max-input{
-    background-color: var(--box);
-    color: var(--white);
-    text-align: center;
-  }
-
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
   }
 
   #letter-table ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */

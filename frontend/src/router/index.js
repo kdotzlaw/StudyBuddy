@@ -8,6 +8,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Dashboard from '../pages/Dashboard.vue';
 import Class from '../pages/Class.vue';
 import GradeCalculator from '../pages/GradeCalculator.vue';
+import CreateClass from '../pages/CreateClass.vue';
 
 const routes = [
   {
@@ -24,6 +25,11 @@ const routes = [
     path: '/gradeCalculator',
     name: 'GradeCalculator',
     component: GradeCalculator
+  },
+  {
+    path: '/createClass',
+    name: 'CreateClass',
+    component: CreateClass
   }
 
 ]

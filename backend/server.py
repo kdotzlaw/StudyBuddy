@@ -5,6 +5,7 @@ from pyodbc import Row
 import db
 from werkzeug.security import check_password_hash, generate_password_hash
 import uuid
+import flask_cors
 
 app = flask.Flask(__name__)
 app.secret_key = uuid.uuid4().hex  # reset secret key each time the server starts
@@ -13,6 +14,8 @@ app.secret_key = uuid.uuid4().hex  # reset secret key each time the server start
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+
+flask_cors.CORS(app)
 
 # mock persistence layer
 users = {"testuser": {"username": "testuser", "password": "123"}}
@@ -40,7 +43,7 @@ def user_check(username):
 @login_manager.user_loader
 def user_loader(username):
     print("u loader")
-    selection = user_check(username)
+    selection = db.getUser(username)
     if app.testing:
         uname = selection['username']
     else:
@@ -59,7 +62,7 @@ def request_loader(request):
     print("req loader")
     username = request.get_json(force=True)['username']
     # check database for username
-    selection = user_check(username)
+    selection = db.getUser(username)
     if app.testing:
         uname = selection['username']
     else:
@@ -92,7 +95,7 @@ def login():
         # print(password)
         # check db for username and password
         # selection is a list of rows (SHOULD BE LENGTH 1)
-        selection = user_check(username)
+        selection = db.getUser(username)
 
         if selection is None:
             # not in database
@@ -116,8 +119,8 @@ def login():
                 flask_login.login_user(user)
                 print("logged in: ", username)
                 # redirect to homepage
-                flask.redirect("../../frontend/index.html", 200)
-                return "logged in", 200
+                # flask.redirect("../../frontend/index.html", 200)
+                return "Logged In", 200
             else:
                 # invalid password
                 # send 401 bad request response
@@ -176,25 +179,20 @@ def getClass(classname):
     res = db.getSingleClass(username, classname)
     if res is None:
         # no class found
-        return "Bad Request: No class found", 400
+        return {"result": "Bad Request: No class found"}, 400
     else:
-        return parse_row(res, ['class_Name', 'timeslot', 'is_Complete', 'study_time']), 200
+        return {"result": parse_row(res)}, 200
 
-def parse_rows(rows, cols):
+
+def parse_rows(rows):
     res = []
     for row in rows:
-        # QUICK FIX, IMPROVE LATER
-        # row.timeslot = str(row.timeslot)
-
-        res.append(dict(zip(cols, row)))
+        res.append(dict(zip([t[0] for t in row.cursor_description], row)))
     return res
 
 
-def parse_row(row: Row, cols):
-    # QUICK FIX, IMPROVE LATER
-    # row.timeslot = str(row.timeslot)
-    res = [dict(zip(cols, row))]
-    return res
+def parse_row(row):
+    return dict(zip([t[0] for t in row.cursor_description], row))
 
 
 # returns a list of tasks assocaited with 'classname'
@@ -205,11 +203,11 @@ def all_tasks(classname):
     res = db.getSingleClass(username, classname)
     if res is None:
         # no class found
-        return "Bad Request: No class found"
+        return {"result": "Bad Request: No class found"}, 400
     else:
         res = db.getTaskList(username, classname)
         # need to parse
-        return res, 200
+        return {"result": parse_rows(res)}, 200
 
 
 # sets the is_complete attribute of 'classname' to true
@@ -291,8 +289,11 @@ def newtask(classname):
     else:
         weight = req['weight']
 
-    res = "db.addTask(username, classname, req['taskname'], req['deadline'], weight)"
-    return "no db function, yet", 200
+    res = db.addTask(username, classname, req['taskname'], weight, req['deadline'])
+    if res is None:
+        return "Bad Request: Class given doesn't exist", 400
+    else:
+        return "Successfully added task", 200
 
 
 @app.route('/api/newclass', methods=["POST"])
@@ -315,9 +316,9 @@ def all_classes():
     res = db.getClasses(username)
     # converts Row/Rows objects into jsonify parsable dictionaries
     if type(res) is list:
-        return parse_rows(res, ['class_Name', 'timeslot', 'is_Complete', 'study_time']), 200
+        return {"result": parse_rows(res)}, 200
     elif type(res) is Row:
-        return parse_row(res, ['class_Name', 'timeslot', 'is_Complete', 'study_time']), 200
+        return {"result": parse_row(res)}, 200
 
 
 # get specific task: 'taskname'
@@ -328,10 +329,9 @@ def get_task(classname, taskname):
     res = db.getTaskID(username, classname, taskname)
     if res is None:
         # no class found
-        return "Bad Request: No task found", 400
+        return {"result": "Bad Request: No task found"}, 400
     else:
-        # parsing broken
-        return parse_row(res, ['taskname']), 200
+        return {"result": parse_row(res)}, 200
 
 
 @app.route('/api/class/<classsname>/task/<taskname>/complete', methods=["POST"])
@@ -353,8 +353,12 @@ def complete_task(classname, taskname):
 @app.route('/api/class/<classname>/done_tasks', methods=["GET"])
 @flask_login.login_required
 def get_done_tasks(classname):
-    # parsing broken rn
-    return "", 200
+    username = flask_login.current_user.get_id()
+    res = db.getCompleteTasksForClass(username, classname)
+    if type(res) is Row:
+        return {"result": parse_row(res)}, 200
+    else:
+        return {"result": parse_rows(res)}, 200
 
 
 # for debugging

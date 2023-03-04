@@ -5,7 +5,7 @@
  */
 
 import { setActivePinia, createPinia, storeToRefs } from 'pinia';
-import { useStore } from '../src/stores';
+import { useStore } from '../../src/stores';
 import { describe, expect, test } from '@jest/globals';
 
 setActivePinia(createPinia());

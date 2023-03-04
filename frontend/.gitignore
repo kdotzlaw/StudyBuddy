@@ -31,5 +31,4 @@ pids
 *.pid
 *.seed
 lib-cov
-cypress/videos
-cypress/screenshots
+test/snapshots

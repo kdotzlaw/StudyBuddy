@@ -8,6 +8,10 @@
 
         npm run dev
 
-## Run tests
+## Run unit tests
 
-        npm test
+        npm run test
+
+## Run user acceptance tests
+
+        npm run usertest

@@ -20,18 +20,18 @@ class dbTests(unittest.TestCase):
     def test_cnxn(self):
         try:
             # PROD CONNECTION STRING
-            conn = (r'Driver=ODBC Driver 17 for SQL Server;'
+            '''conn = (r'Driver=ODBC Driver 17 for SQL Server;'
                     r'Server=localhost;'
                     r'Database=StudyBuddy;'
                     r'UID=sa;'
                     r'PWD=dbtools.IO'
-                    )
+                    )'''
             # DEV CONNECTION STRING D.N.T
-            '''conn = (r'Driver=SQL Server;'
+            conn = (r'Driver=SQL Server;'
                     r'Server=(local);'
                     r'Database=StudyBuddy;'
                     r'Trusted_Connection=yes'
-                    )'''
+                    )
             cnxn = pyodbc.connect(conn)
         except Exception:
             self.fail("Connection failed")
@@ -377,7 +377,21 @@ class dbTests(unittest.TestCase):
         self.assertIn("Final Exam", task)
         db.removeTask(username, className, "Final Exam")
 
-
+    '''
+    Test passes if task was successfully edited
+    '''
+    def test_editTask(self):
+        username = "katDot"
+        className = "COMP 3820"
+        record = db.getSingleTask(username, className, "A1")
+        self.assertNotEqual(record, None)
+        db.editTask(username, className, "A1", "", "2023-04-20 23:59:00", 0)
+        #get edited record
+        nRecord = db.getSingleTask(username, className,"A1")
+        self.assertNotEqual(record, nRecord)
+        self.assertEqual(nRecord.deadline, "2023-04-20 23:59:00")
+        # return record to default state
+        db.editTask(username, className, "A1",'2023-02-09 14:00:00',0)
 class apiTest(flask_unittest.ClientTestCase):
     # assign flask app
     app = server.app

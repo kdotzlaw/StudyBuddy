@@ -154,6 +154,9 @@ def newuser():
         # if there are no existing users with that username in the db...
         # create a new account with the username and password
         db.createAccount(username, password)
+        user = User()
+        user.id = username
+        flask_login.login_user(user)
         return "Account created", 200
     else:
         return "Account already exists with username", 400

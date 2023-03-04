@@ -237,6 +237,7 @@ paths:
           description: "Internal server error, problem with backend logic or database"
   /class/{classname}/task/{taskname}/complete:
     post:
+      tags: ["Tracking Related"]
       summary: "Mark a task as complete"
       description: "Marks the task {taskname} as complete, without removing it from the database"
       operationId: complete_task
@@ -261,6 +262,7 @@ paths:
 
   /class/{classname}/done_tasks:
     get:
+      tags: ["Tracking Related"]
       summary: "Gets the done tasks for the {classname} class"
       description: "Gets all the tasks marked as complete associated with the {classname} class"
       operationId: donetasks

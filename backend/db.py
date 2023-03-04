@@ -394,3 +394,22 @@ def editTask (username, className, taskName, eName, eDate, eWeight):
     if eWeight != 0:
         cursor.execute("UPDATE Tasks SET task_Weight = ? WHERE tID = ? AND FK_uID = ? AND FK_cID = ?;", eWeight, taskID,
                        userID, classID)
+
+'''
+get top 3 most current deadlines for dashboard display
+'''
+def getDeadlines(username):
+    userID = getUser(username).uID
+    if not userID:
+        return None
+    prep_stmt = "SELECT Tasks.task_Name, Tasks.deadline " \
+                "FROM Tasks " \
+                "INNER JOIN Classes ON Tasks.FK_cID = Classes.cID " \
+                "WHERE  Tasks.deadline < @CURRENT_DATE AND Tasks.FK_uID = ?" \
+                "ORDER BY Tasks.deadline DESC" \
+                "LIMIT 3"
+    record = cursor.execute(prep_stmt, userID).fetchall()
+    return record
+
+def calculateGrade():
+    return

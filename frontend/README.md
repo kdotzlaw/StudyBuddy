@@ -10,7 +10,7 @@
 
 ## Run unit tests
 
-        npm run test
+        npm test
 
 ## Run integration and user acceptance tests
 

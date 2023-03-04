@@ -225,11 +225,11 @@ class dbTests(unittest.TestCase):
         db.editClassMeta(username, className, "A01", "320 Machray", "Steve Stevenson", "Steve@steve.com", "999-9999",
                          "150 EITC", "10:00:00")
         record = db.getSingleClass(username, className)
-        print(record)
+        # print(record)
         u = db.getUser(username).uID
-        print(u)
+        # print(u)
         c = db.getClassID(username, className)
-        print(c)
+        # print(c)
         self.assertNotEqual(record, None)
         self.assertNotEqual(u, None)
         self.assertNotEqual(c, None)
@@ -326,6 +326,7 @@ class dbTests(unittest.TestCase):
     '''
     Test passes if all complete tasks appear in the list
     '''
+
     def test_getCompleteTasksForClassMulti(self):
         username = "andrea22"
         className = "COMP 2080"
@@ -356,6 +357,7 @@ class dbTests(unittest.TestCase):
     '''
     Test passes if specified task is correctly removed from the db
     '''
+
     def test_removeTask(self):
         username = "katDot"
         className = "COMP 3820"
@@ -368,30 +370,38 @@ class dbTests(unittest.TestCase):
     '''
     Test passes if task specified appears in the db for the specified user and class
     '''
+
     def test_addTask(self):
         username = "katDot"
         className = "COMP 3820"
         record = db.addTask(username, className, "Final Exam", 0.50, "2023-04-20 23:59:00")
         self.assertNotEqual(record, None)
-        task = db.getSingleTask(username, className,"Final Exam")
+        task = db.getSingleTask(username, className, "Final Exam")
         self.assertIn("Final Exam", task)
         db.removeTask(username, className, "Final Exam")
 
     '''
     Test passes if task was successfully edited
     '''
+
     def test_editTask(self):
         username = "katDot"
         className = "COMP 3820"
         record = db.getSingleTask(username, className, "A1")
         self.assertNotEqual(record, None)
         db.editTask(username, className, "A1", "", "2023-04-20 23:59:00", 0)
-        #get edited record
-        nRecord = db.getSingleTask(username, className,"A1")
+        # get edited record
+        nRecord = db.getSingleTask(username, className, "A1")
         self.assertNotEqual(record, nRecord)
-        self.assertEqual(nRecord.deadline, "2023-04-20 23:59:00")
+        d1 = datetime.datetime(year=2023, month=2, day=9, hour=14, minute=0, second=0)
+        d2 = datetime.datetime(year=2023, month=4, day=20, hour=23, minute=59, second=0)
+        self.assertEqual(nRecord.deadline, d2)
         # return record to default state
-        db.editTask(username, className, "A1",'2023-02-09 14:00:00',0)
+        db.editTask(username, className, "A1",'', '2023-02-09 14:00:00', 0)
+        record = db.getSingleTask(username, className, "A1")
+        self.assertEqual(record.deadline, d1)
+
+
 class apiTest(flask_unittest.ClientTestCase):
     # assign flask app
     app = server.app

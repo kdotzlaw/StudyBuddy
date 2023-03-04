@@ -12,6 +12,6 @@
 
         npm run test
 
-## Run user acceptance tests
+## Run integration and user acceptance tests
 
         npm run usertest

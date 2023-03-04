@@ -7,4 +7,12 @@ export default defineConfig({
       // implement node event listeners here
     },
   },
+
+  component: {
+    video: false,
+    devServer: {
+      framework: "vue",
+      bundler: "vite",
+    },
+  },
 });

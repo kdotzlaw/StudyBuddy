@@ -10,9 +10,9 @@
 |5|sneakerbot101|Shoes!|
 
 ## Classes
-|PK cID| class_Name|timeslot|is_Complete (1 true, 0 false)| study_time| FK: uID|
-|-|-|-|-|-|-|
-|1| COMP 2080 | 10:00 | 0|0| 3|
+|PK cID| class_Name|timeslot|is_Complete (1 true, 0 false)| study_time| breakdown| FK: uID|
+|-|-|-|-|-|-|-|
+|1| COMP 2080 | 10:00 | 0|0|'{A+:(90,100), A:(80,89), B+:(75,79), B:(70,74), C+:(65,69), C:(56,64), D:(50,55), F(0, 49)}'| 3|
 |2| COMP 4350| 11:30 |0|0|1|
 |3| COMP 4350| 11:30 |0| 0|2|
 |4| COMP 4350| 11:30 |0| 0|3|

@@ -1,3 +1,11 @@
+BEGIN
+	DROP TABLE Tasks;
+	DROP TABLE Classes;
+	DROP TABLE Users;
+	DROP DATABASE StudyBuddy;
+END;
+GO
+
 IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'StudyBuddy')
 BEGIN
 	CREATE DATABASE StudyBuddy;

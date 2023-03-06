@@ -89,7 +89,10 @@ paths:
           content:
             application/json:
               schemas:
-                $ref: #/components/schemas/class
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/class'
         400:
           description: "The user requested a class that doesn't exist"
         401:
@@ -113,7 +116,10 @@ paths:
           content:
             application/json:
               schemas:
-                $ref: #/components/schemas/ArrayOfClasses
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/ArrayOfClasses'
         401:
           description: "The request maker wasn't logged in, or forgot to send the session cookie"
         500:
@@ -163,7 +169,10 @@ paths:
           content:
             application/json:
               schemas:
-                $ref: #/components/schemas/ArrayOfTasks
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/ArrayOfTasks'
         400:
           description: "The user requested tasks for a class that doesn't exist"
         401:
@@ -193,6 +202,90 @@ paths:
           description: "The request maker wasn't logged in, or forgot to send the session cookie"
         404:
           description: "The class was not found"
+        500:
+          description: "Internal server error, problem with backend logic or database"
+  /class/{classname}/task/{taskname}:
+    get:
+      tags: ["Tracking Related"]
+      summary: "Get a single task"
+      description: "Gets a single task named {taskname} for the class {classname}"
+      operationId: gettask
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+        - name: classname
+          in: url
+          required: true
+        - name: taskname
+          in: url
+          required: true
+      responses:
+        200:
+          description: "The time in the associated class was increased successfully"
+          content:
+            application/json:
+              schemas:
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/task'
+        401:
+          description: "The request maker wasn't logged in, or forgot to send the session cookie"
+        500:
+          description: "Internal server error, problem with backend logic or database"
+  /class/{classname}/task/{taskname}/complete:
+    post:
+      tags: ["Tracking Related"]
+      summary: "Mark a task as complete"
+      description: "Marks the task {taskname} as complete, without removing it from the database"
+      operationId: complete_task
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+        - name: classname
+          in: url
+          required: true
+        - name: taskname
+          in: url
+          required: true
+      responses:
+        200:
+          description: "The associated task was marked as complete"
+        401:
+          description: "The request maker wasn't logged in, or forgot to send the session cookie"
+        500:
+          description: "Internal server error, problem with backend logic or database"
+
+  /class/{classname}/done_tasks:
+    get:
+      tags: ["Tracking Related"]
+      summary: "Gets the done tasks for the {classname} class"
+      description: "Gets all the tasks marked as complete associated with the {classname} class"
+      operationId: donetasks
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+        - name: classname
+          in: url
+          required: true
+      responses:
+        200:
+          description: "Received a list of completed tasks"
+          content:
+            application/json:
+              schemas:
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/ArrayOfTasks'
+        401:
+          description: "The request maker wasn't logged in, or forgot to send the session cookie"
         500:
           description: "Internal server error, problem with backend logic or database"
 

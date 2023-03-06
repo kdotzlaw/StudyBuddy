@@ -20,18 +20,18 @@ class dbTests(unittest.TestCase):
     def test_cnxn(self):
         try:
             # PROD CONNECTION STRING
-            conn = (r'Driver=ODBC Driver 17 for SQL Server;'
+            '''conn = (r'Driver=ODBC Driver 17 for SQL Server;'
                     r'Server=localhost;'
                     r'Database=StudyBuddy;'
                     r'UID=sa;'
                     r'PWD=dbtools.IO'
-                    )
+                    )'''
             # DEV CONNECTION STRING D.N.T
-            '''conn = (r'Driver=SQL Server;'
+            conn = (r'Driver=ODBC Driver 17 for SQL Server;'
                     r'Server=(local);'
                     r'Database=StudyBuddy;'
                     r'Trusted_Connection=yes'
-                    )'''
+                    )
             cnxn = pyodbc.connect(conn)
         except Exception:
             self.fail("Connection failed")
@@ -401,6 +401,12 @@ class dbTests(unittest.TestCase):
         record = db.getSingleTask(username, className, "A1")
         self.assertEqual(record.deadline, d1)
 
+    def test_getDeadlines(self):
+        username = 'katDot'
+        d1 = datetime.datetime(year=2023, month=2, day=9, hour=14, minute=0, second=0)
+        record = db.getDeadlines(username)
+        self.assertNotEqual(record, None)
+        self.assertIn(d1,record)
 
 class apiTest(flask_unittest.ClientTestCase):
     # assign flask app

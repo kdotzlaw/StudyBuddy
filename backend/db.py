@@ -2,22 +2,24 @@
 Defines helper functions used in API calls using pyodbc (for database connections)
 and SQL prepared statements
 '''
+import datetime
+
 import pyodbc
 
 # connection information can change as we include security
 # PROD CONNECTION STRING
-conn = (r'Driver=ODBC Driver 17 for SQL Server;'
+'''conn = (r'Driver=ODBC Driver 17 for SQL Server;'
         r'Server=localhost;'
         r'Database=StudyBuddy;'
         r'UID=sa;'
         r'PWD=dbtools.IO'
-        )
+        )'''
 # DEV CONNECTION STRING - D.N.T
-'''conn = (r'Driver=SQL Server;'
+conn = (r'Driver=ODBC Driver 17 for SQL Server;'
         r'Server=(local);'
         r'Database=StudyBuddy;'
         r'Trusted_Connection=yes'
-        )'''
+        )
 cnxn = pyodbc.connect(conn)
 cursor = cnxn.cursor()
 
@@ -145,12 +147,12 @@ POSTCONDITION:
 '''
 
 
-def addClass(username, className, timeslot):
-    prep_stmt = "INSERT INTO Classes (class_Name, timeslot, FK_uID) VALUES (?,?,?);"
+def addClass(username, className, timeslot, breakdown):
+    prep_stmt = "INSERT INTO Classes (class_Name, timeslot, breakdown, FK_uID) VALUES (?,?,?);"
     id = getUser(username).uID
     if not id:
         return None
-    return cursor.execute(prep_stmt, className, timeslot, id)
+    return cursor.execute(prep_stmt, className, timeslot,breakdown, id)
 
 
 '''
@@ -190,6 +192,12 @@ def completeClass(username, className):
     record = cursor.execute(prep_stmt, 1, classID, userID)
     return record
 
+def addClassBreakdown(username, className, breakdown):
+    userID = getUser(username).uID
+    classID = getClassID(username,className)
+    if not userID or not classID:
+        return None
+    cursor.execute("UPDATE Classes SET breakdown = ? WHERE cID = ? AND FK_uID = ?;")
 
 '''
 PRECONDITION: class data remains unchanged
@@ -395,6 +403,7 @@ def editTask (username, className, taskName, eName, eDate, eWeight):
         cursor.execute("UPDATE Tasks SET task_Weight = ? WHERE tID = ? AND FK_uID = ? AND FK_cID = ?;", eWeight, taskID,
                        userID, classID)
 
+
 '''
 get top 3 most current deadlines for dashboard display
 '''
@@ -402,10 +411,14 @@ def getDeadlines(username):
     userID = getUser(username).uID
     if not userID:
         return None
+    today = datetime.datetime.today()
+    #today = today.strftime()
+    print(today)
+    #get current datetime
     prep_stmt = "SELECT Tasks.task_Name, Tasks.deadline " \
                 "FROM Tasks " \
                 "INNER JOIN Classes ON Tasks.FK_cID = Classes.cID " \
-                "WHERE  Tasks.deadline < @CURRENT_DATE AND Tasks.FK_uID = ?" \
+                "WHERE  Tasks.deadline < '{today}' AND Tasks.FK_uID = ?" \
                 "ORDER BY Tasks.deadline DESC" \
                 "LIMIT 3"
     record = cursor.execute(prep_stmt, userID).fetchall()

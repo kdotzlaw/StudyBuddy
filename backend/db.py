@@ -147,12 +147,12 @@ POSTCONDITION:
 '''
 
 
-def addClass(username, className, timeslot, breakdown):
-    prep_stmt = "INSERT INTO Classes (class_Name, timeslot, breakdown, FK_uID) VALUES (?,?,?);"
+def addClass(username, className, timeslot):
+    prep_stmt = "INSERT INTO Classes (class_Name, timeslot, FK_uID) VALUES (?,?,?);"
     id = getUser(username).uID
     if not id:
         return None
-    return cursor.execute(prep_stmt, className, timeslot,breakdown, id)
+    return cursor.execute(prep_stmt, className, timeslot, id)
 
 
 '''
@@ -197,7 +197,7 @@ def addClassBreakdown(username, className, breakdown):
     classID = getClassID(username,className)
     if not userID or not classID:
         return None
-    cursor.execute("UPDATE Classes SET breakdown = ? WHERE cID = ? AND FK_uID = ?;")
+    cursor.execute("UPDATE Classes SET breakdown = ? WHERE cID = ? AND FK_uID = ?;", breakdown, classID, userID)
 
 '''
 PRECONDITION: class data remains unchanged

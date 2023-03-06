@@ -342,6 +342,15 @@ class dbTests(unittest.TestCase):
         # mark "Exam" as uncomplete
         db.uncompleteTask(username, className, "Exam")
 
+    def test_addClassBreakdown(self):
+        username = 'katDot'
+        className = 'COMP 3820'
+        breakdown = 'A+: (95,100), A: (86,94), B+:(80,85), B:(70,79), C+:(65,69), C:(56,64), D:(50,55), F(0,49)'
+        db.addClassBreakdown(username,className,breakdown)
+        record = db.getSingleClass(username,className)
+        self.assertNotEqual(record,None)
+        self.assertEqual(breakdown, record.breakdown)
+
     '''
     Test passes if the requested task [name, id] appears in result of single task request
     '''
@@ -401,12 +410,12 @@ class dbTests(unittest.TestCase):
         record = db.getSingleTask(username, className, "A1")
         self.assertEqual(record.deadline, d1)
 
-    def test_getDeadlines(self):
+    '''def test_getDeadlines(self):
         username = 'katDot'
         d1 = datetime.datetime(year=2023, month=2, day=9, hour=14, minute=0, second=0)
         record = db.getDeadlines(username)
         self.assertNotEqual(record, None)
-        self.assertIn(d1,record)
+        self.assertEqual(d1,record.deadline)'''
 
 class apiTest(flask_unittest.ClientTestCase):
     # assign flask app

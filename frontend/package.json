@@ -8,8 +8,10 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "jest --collectCoverage",
-    "usertest": "cypress run --component && cypress run",
-    "testall": "npm test && npm run usertest"
+    "integtest": "cypress run --component",
+    "e2e": "cypress run",
+    "usertest": "start-server-and-test dev http://localhost:5173 e2e",
+    "testall": "npm test && npm run integtest && npm run usertest"
   },
   "dependencies": {
     "@babel/preset-env": "^7.20.2",

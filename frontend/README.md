@@ -3,7 +3,7 @@
 ## Install npm dependencies
 
         npm i
-  
+
 ## Run Vue app in development
 
         npm run dev
@@ -12,6 +12,14 @@
 
         npm test
 
-## Run integration and user acceptance tests
+## Run integration tests
+
+        npm run integtest
+
+## Run user acceptance tests
 
         npm run usertest
+
+## Run all tests
+
+        npm run testall

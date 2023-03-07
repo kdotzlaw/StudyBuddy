@@ -86,7 +86,7 @@
     function logOut(){
 
         // Send logout request to endpoint; Clear userId on success
-        const host = 'http://localhost:5000'; 
+        const host = 'http://127.0.0.1:5000'; 
         const apiUrl = '/api/logout';
         fetch(host + apiUrl, {
             method: 'POST',

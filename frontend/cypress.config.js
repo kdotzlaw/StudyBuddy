@@ -5,6 +5,10 @@ export default defineConfig({
   videosFolder: "test/snapshots",
   screenshotsFolder: "test/snapshots",
   e2e: {
+    "baseUrl": "http://localhost:5173",
+    "env": {
+      "serverUrl": "http://127.0.0.1:5000"
+    },
     supportFile: false,
     specPattern: "test/acceptance/**/*.cy.{js,jsx,ts,tsx}",
   },

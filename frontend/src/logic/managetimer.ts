@@ -60,7 +60,7 @@ function initTimer(userId: String, classId: String){
  *   @params - userId: string , classId: string, total: number 
  *=====================================*/
 function commitTimer(userId: String, classId: String, total: number){
-    const host = 'http://localhost:5000';
+    const host = 'http://127.0.0.1:5000';
     const apiUrl = '/api/' + classId + '/update_time';
     fetch(host + apiUrl, {
         method: 'POST',

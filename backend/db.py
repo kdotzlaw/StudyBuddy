@@ -15,7 +15,7 @@ conn = (r'Driver=ODBC Driver 17 for SQL Server;'
         r'PWD=dbtools.IO'
         )
 # DEV CONNECTION STRING - D.N.T
-'''conn = (r'Driver=ODBC Driver 17 for SQL Server;'
+'''conn = (r'Driver=SQL Server;'
         r'Server=(local);'
         r'Database=StudyBuddy;'
         r'Trusted_Connection=yes'
@@ -414,20 +414,26 @@ def getDeadlines(username):
     userID = getUser(username).uID
     if not userID:
         return None
+    # Need to get the built-in SQL method for getting dates
     today = cursor.execute("SELECT isnull(SOP30200.SOPNUMBE,''), isnull(SOP30200.docdate,'') "
                            "FROM SOP30200 WHERE SOP30200.docdate = current_date")
-
-    #today = today.strftime()
-    print(today)
-    #get current datetime
     prep_stmt = "SELECT Tasks.task_Name, Tasks.deadline " \
                 "FROM Tasks " \
                 "INNER JOIN Classes ON Tasks.FK_cID = Classes.cID " \
                 "WHERE  Tasks.deadline < ? AND Tasks.FK_uID = ?" \
                 "ORDER BY Tasks.deadline DESC" \
-                "LIMIT 3"
+                "LIMIT 5"
     record = cursor.execute(prep_stmt, today, userID).fetchall()
     return record
 
-def calculateGrade():
+def calculateGrade(username, className):
+    userID = getUser(username).uID
+    classID = getClassID(username, className)
+    if not userID or not classID:
+        return None
+    #get the grade breakdown for that class
+    breakdown = getSingleClass(username,className).breakdown
+
+
+def getLetterGrade():
     return

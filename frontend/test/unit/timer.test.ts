@@ -4,7 +4,7 @@
  */
 
 import {describe, expect, test} from '@jest/globals';
-import Timer from '../src/logic/timer';
+import Timer from '../../src/logic/timer';
 
 let timer: Timer;
 let userId1: String = "user1";

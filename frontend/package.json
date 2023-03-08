@@ -7,7 +7,11 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "jest --collectCoverage"
+    "test": "jest --collectCoverage",
+    "integtest": "cypress run --component",
+    "e2e": "cypress run",
+    "usertest": "start-server-and-test dev http://localhost:5173 e2e",
+    "testall": "npm test && npm run integtest && npm run usertest"
   },
   "dependencies": {
     "@babel/preset-env": "^7.20.2",
@@ -19,6 +23,7 @@
   "devDependencies": {
     "@jest/globals": "^29.4.2",
     "@vitejs/plugin-vue": "^4.0.0",
+    "cypress": "^12.7.0",
     "ts-jest": "^29.0.5",
     "vite": "^4.0.0"
   }

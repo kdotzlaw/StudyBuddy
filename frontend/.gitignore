@@ -25,3 +25,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Cypress
+pids
+*.pid
+*.seed
+lib-cov
+test/snapshots

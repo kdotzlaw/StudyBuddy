@@ -96,7 +96,7 @@
 
     // Validation checks pass; Send data to server endpoint
     if (!userNameCheck && !passwordErrorCheck) {
-      const host = 'http://localhost:5000'; 
+      const host = 'http://127.0.0.1:5000'; 
       const apiUrl = '/api/login';
       const data = {
         username: username,

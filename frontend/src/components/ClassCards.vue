@@ -21,7 +21,7 @@
     // Start or pause study for selected class
     function manageStudy(className){
         setStudyClass(className);
-        Mgmt.manageTimer(userId,className);
+        Mgmt.manageTimer(userId.value,className);
     }
 </script>
 

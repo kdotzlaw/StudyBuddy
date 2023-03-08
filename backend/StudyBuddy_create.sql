@@ -78,17 +78,17 @@ INSERT INTO Users(username,password)
 INSERT INTO Classes(class_Name, timeslot, is_Complete, studyTime,FK_uID )
 	VALUES ('COMP 2080', '10:00:00',0,0,'{A+:(90,100), A:(80,89), B+:(75,79), B:(70,74), C+:(65,69), C:(56,64), D:(50,55), F(0, 49)}',3);
 INSERT INTO Classes(class_Name, timeslot, is_Complete, studyTime,FK_uID )
-	VALUES ('COMP 4350', '11:30:00',0,0,1);
+	VALUES ('COMP 4350', '11:30:00',0,0,'',1);
 INSERT INTO Classes(class_Name, timeslot, is_Complete, studyTime,FK_uID )
-	VALUES ('COMP 4350', '11:30:00',0,0,2);
+	VALUES ('COMP 4350', '11:30:00',0,0,'',2);
 INSERT INTO Classes(class_Name, timeslot, is_Complete, studyTime,FK_uID )
-	VALUES ('COMP 4350', '11:30:00',0,0,3);
+	VALUES ('COMP 4350', '11:30:00',0,0,'',3);
 INSERT INTO Classes(class_Name, timeslot, is_Complete, studyTime,FK_uID )
-	VALUES ('COMP 4350', '11:30:00',0,0,4);
+	VALUES ('COMP 4350', '11:30:00',0,0,'',4);
 INSERT INTO Classes(class_Name, timeslot, is_Complete, studyTime,FK_uID )
-	VALUES ('COMP 4350', '11:30:00',0,0,5);
+	VALUES ('COMP 4350', '11:30:00',0,0,'',5);
 INSERT INTO Classes(class_Name, timeslot, is_Complete, studyTime,FK_uID )
-	VALUES ('COMP 3820', '14:30:00',0,0,2);
+	VALUES ('COMP 3820', '14:30:00',0,0,'',2);
 
 INSERT INTO Tasks (task_Name, deadline,task_Weight,task_grade,task_xp, FK_uID,FK_cID)
 	VALUES('A1','2023-02-09 14:00:00',0.10,0,0,2,7)

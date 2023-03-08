@@ -5,7 +5,7 @@
  */
 
 import {describe, expect, test} from '@jest/globals';
-import validate from '../src/logic/validate';
+import validate from '../../src/logic/validate';
 
 let userId1: String = "";
 let userId2: String = "user2";

@@ -7,9 +7,6 @@ END;
 GO
 
 USE StudyBuddy;
-DROP TABLE Tasks;
-DROP TABLE Classes;
-DROP TABLE Users;
 GO
 
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name = 'Users' AND xtype = 'U')

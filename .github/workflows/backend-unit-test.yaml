@@ -22,7 +22,7 @@ jobs:
           
     defaults:
       run:
-        working-directory: ./backend
+        working-directory: ./develop
     steps:
       - name: Push Code onto VM
         uses: actions/checkout@v3.3.0

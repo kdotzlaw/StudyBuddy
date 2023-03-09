@@ -16,7 +16,7 @@ conn = (r'Driver=ODBC Driver 17 for SQL Server;'
          )
 # DEV CONNECTION STRING - D.N.T
 '''conn = (r'Driver=SQL Server;'
-        r'Server=(local);'
+        r'Server=localhost\MSSQLSERVER01;'
         r'Database=StudyBuddy;'
         r'Trusted_Connection=yes'
         )'''
@@ -238,10 +238,10 @@ def addStudyTime(username, className, t):
     userID = getUser(username).uID
     record = getSingleClass(username, className)
     # print(username, " ", className)
-    classID = record.cID
     if not userID or not record:
         return None
     else:
+        classID = record.cID
         study = record.studyTime
         uTime = study + float(t)
         prep_stmt = "UPDATE Classes SET studyTime = ? WHERE FK_uID = ? AND cID = ?;"
@@ -319,6 +319,7 @@ def completeTask(username, className, taskName, grade):
         return None
     cursor.execute("UPDATE Tasks SET task_grade = ? WHERE FK_uID = ? AND FK_cID = ? AND tID = ?", grade, userID,
                    classID, taskID)
+    return True
 ''''
 PRECONDITION: task was previously marked complete (grade was entered)
 POSTCONDITION: 

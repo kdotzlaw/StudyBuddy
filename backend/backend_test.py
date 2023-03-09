@@ -345,13 +345,14 @@ class dbTests(unittest.TestCase):
     '''
     Test passes if the given breakdown matches the breakdown returned in the record
     '''
+
     def test_addClassBreakdown(self):
         username = 'katDot'
         className = 'COMP 3820'
         breakdown = 'A+: (95,100), A: (86,94), B+:(80,85), B:(70,79), C+:(65,69), C:(56,64), D:(50,55), F(0,49)'
-        db.addClassBreakdown(username,className,breakdown)
-        record = db.getSingleClass(username,className)
-        self.assertNotEqual(record,None)
+        db.addClassBreakdown(username, className, breakdown)
+        record = db.getSingleClass(username, className)
+        self.assertNotEqual(record, None)
         self.assertEqual(breakdown, record.breakdown)
 
     '''
@@ -409,7 +410,7 @@ class dbTests(unittest.TestCase):
         d2 = datetime.datetime(year=2023, month=4, day=20, hour=23, minute=59, second=0)
         self.assertEqual(nRecord.deadline, d2)
         # return record to default state
-        db.editTask(username, className, "A1",'', '2023-02-09 14:00:00', 0)
+        db.editTask(username, className, "A1", '', '2023-02-09 14:00:00', 0)
         record = db.getSingleTask(username, className, "A1")
         self.assertEqual(record.deadline, d1)
 
@@ -419,6 +420,11 @@ class dbTests(unittest.TestCase):
             record = db.getDeadlines(username)
             self.assertNotEqual(record, None)
             self.assertEqual(d1,record.deadline)'''
+
+
+creds = {'username': 'ryan2023', 'password': 'password'}
+creds2 = {'username': 'newuser', 'password': 'pass'}
+
 
 class apiTest(flask_unittest.ClientTestCase):
     # assign flask app
@@ -430,17 +436,33 @@ class apiTest(flask_unittest.ClientTestCase):
         pass
 
     def tearDown(self, client: FlaskClient):
-        pass
+        client.delete_cookie('127.0.0.1:5000', 'SessionID')
 
     def test_login(self, client: FlaskClient):
         # send post request to login api
-        resp = client.post("/api/login", json={'username': 'ryan2023', 'password': 'password'})
+        resp = client.post("/api/login", json=creds)
         # check the status
         self.assertStatus(resp, 200)
 
+    def test_login_nouser(self, client: FlaskClient):
+        # send post request to login api
+        resp = client.post("/api/login", json={'username': 'notauser', 'password': 'password'})
+        # check the status
+        self.assertStatus(resp, 400)
+
+    def test_login_wrongpass(self, client: FlaskClient):
+        # send post request to login api
+        resp = client.post("/api/login", json={'username': 'ryan2023', 'password': 'notthepassword'})
+        # check the status
+        self.assertStatus(resp, 401)
+
+    def test_logout_fail(self, client):
+        resp = client.post('/api/logout')
+        self.assertStatus(resp, 400)
+
     def test_logout(self, client):
         # log in
-        resp = client.post('/api/login', json={'username': 'ryan2023', 'password': 'password'})
+        resp = client.post('/api/login', json=creds)
         # check valid login
         self.assertStatus(resp, 200)
         # send post request to log out
@@ -450,18 +472,18 @@ class apiTest(flask_unittest.ClientTestCase):
 
     def test_newuser(self, client):
         # send invalid login to ensure user doesn't exist
-        resp = client.post('/api/login', json={'username': 'newuser', 'password': 'pass'})
+        resp = client.post('/api/login', json=creds2)
         self.assertStatus(resp, 400)
         # create user
-        resp = client.post('/api/newuser', json={'username': 'newuser', 'password': 'pass'})
+        resp = client.post('/api/newuser', json=creds2)
         self.assertStatus(resp, 200)
         # log in as user
-        resp = client.post('/api/login', json={'username': 'newuser', 'password': 'pass'})
+        resp = client.post('/api/login', json=creds2)
         self.assertStatus(resp, 200)
 
     def test_allclasses(self, client):
         # log in
-        resp = client.post('/api/login', json={'username': 'ryan2023', 'password': 'password'})
+        resp = client.post('/api/login', json=creds)
         # check valid login
         self.assertStatus(resp, 200)
         # send request for all classes
@@ -471,23 +493,109 @@ class apiTest(flask_unittest.ClientTestCase):
 
     def test_class(self, client):
         # log in
-        resp = client.post('/api/login', json={'username': 'ryan2023', 'password': 'password'})
+        resp = client.post('/api/login', json=creds)
         # check valid login
         self.assertStatus(resp, 200)
         # send request for one class
         resp = client.get('/api/class/COMP 4350')
-        print(resp.get_data())
+        # print(resp.get_data())
         self.assertStatus(resp, 200)
+
+    def test_class_fail(self, client):
+        # log in
+        resp = client.post('/api/login', json=creds)
+        # check valid login
+        self.assertStatus(resp, 200)
+        # send request for one class
+        resp = client.get('/api/class/notaclass')
+        # print(resp.get_data())
+        self.assertStatus(resp, 400)
 
     def test_update_time(self, client):
         # log in
-        resp = client.post('/api/login', json={'username': 'ryan2023', 'password': 'password'})
+        resp = client.post('/api/login', json=creds)
         # check valid login
         self.assertStatus(resp, 200)
         # send update request
         resp = client.post('/api/class/COMP 4350/update_time', json={'added': 1024})
         # check success
         self.assertStatus(resp, 200)
+
+    def test_update_time_fail(self, client):
+        # log in
+        resp = client.post('/api/login', json=creds)
+        # check valid login
+        self.assertStatus(resp, 200)
+        # send update request
+        resp = client.post('/api/class/NOTACLASS/update_time', json={'added': 1024})
+        # check fail
+        self.assertStatus(resp, 400)
+
+    def test_task(self, client):
+        # log in
+        resp = client.post('/api/login', json={'username': 'andrea22', 'password': '2222'})
+        # check valid login
+        self.assertStatus(resp, 200)
+        resp = client.get('/api/class/COMP 2080/task/Exam')
+        print(resp.get_json())
+        self.assertStatus(resp, 200)
+
+    def test_task_fail1(self, client):
+        # log in
+        resp = client.post('/api/login', json=creds)
+        # check valid login
+        self.assertStatus(resp, 200)
+        resp = client.get('/api/class/NotACLass/task/NotATask')
+        self.assertStatus(resp, 400)
+
+    def test_task_fail2(self, client):
+        # log in
+        resp = client.post('/api/login', json=creds)
+        # check valid login
+        self.assertStatus(resp, 200)
+        resp = client.get('/api/class/COMP 4350/task/NotATask')
+        self.assertStatus(resp, 400)
+
+    def test_alltasks(self, client):
+        # log in
+        resp = client.post('/api/login', json={'username': 'andrea22', 'password': '2222'})
+        # check valid login
+        self.assertStatus(resp, 200)
+        resp = client.get('/api/class/COMP 2080/task')
+        print(resp.get_json())
+        self.assertStatus(resp, 200)
+
+    def test_newtask(self, client):
+        # log in
+        resp = client.post('/api/login', json={'username': 'andrea22', 'password': '2222'})
+        # check valid login
+        self.assertStatus(resp, 200)
+        resp = client.post('/api/class/COMP 4350/newtask', json={'taskname': 'Study some stuff'})
+        self.assertStatus(resp, 200)
+
+    def test_complete_task(self, client):
+        # log in
+        resp = client.post('/api/login', json={'username': 'andrea22', 'password': '2222'})
+        # check valid login
+        self.assertStatus(resp, 200)
+        resp = client.post('/api/class/COMP 4350/task/Exam/complete')
+        print(resp.get_data())
+        self.assertStatus(resp, 200)
+
+    def test_complete_task_fail(self, client):
+        # log in
+        resp = client.post('/api/login', json={'username': 'andrea22', 'password': '2222'})
+        # check valid login
+        self.assertStatus(resp, 200)
+        resp = client.post('/api/class/COMP 4350/task/task1/complete')
+        print(resp.get_data())
+        self.assertStatus(resp, 400)
+
+    def test_newclass(self, client):
+        # log in
+        resp = client.post('/api/login', json=creds)
+        # check valid login
+        self.assertStatus(resp, -1)
 
 
 if __name__ == '__main__':

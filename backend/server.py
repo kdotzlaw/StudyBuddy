@@ -1,3 +1,5 @@
+import datetime
+
 import flask
 import flask_login
 from pyodbc import Row
@@ -140,7 +142,11 @@ def login():
 @flask_login.login_required
 def logout():
     flask_login.logout_user()
-    return "Logged Out", 200
+    resp = flask.make_response()
+    resp.delete_cookie('SessionID')
+    resp.data = "Logged Out"
+    resp.status_code = 200
+    return resp
 
 
 # create a new user
@@ -170,8 +176,11 @@ def update_time(classname):
     username = flask_login.current_user.get_id()
     t = flask.request.get_json(force=True)['added']
     res = db.addStudyTime(username, classname, t)
-    print(username, " increased ", classname, "'s study time by: ", t, " seconds")
-    return "Time for class updated successfully", 200
+    if res is not None:
+        print(username, " increased ", classname, "'s study time by: ", t, " seconds")
+        return "Time for class updated successfully", 200
+    else:
+        return "No class called " + classname + " found", 400
 
 
 # returns the data for a single class of classname: 'classname'
@@ -180,6 +189,7 @@ def update_time(classname):
 def getClass(classname):
     username = flask_login.current_user.get_id()
     res = db.getSingleClass(username, classname)
+    # print("the class is: ", res, ' and logic says: ', res is None)
     if res is None:
         # no class found
         return {"result": "Bad Request: No class found"}, 400
@@ -236,6 +246,11 @@ def classMeta(classname):
     req = flask.request.get_json(force=True)
     res = db.getSingleClass(username, classname)
 
+    if 'breakdown' not in req.keys():
+        breakdown = res.breakdown
+    else:
+        breakdown = req['breakdown']
+
     if 'sectionnum' not in req.keys():
         sectionnum = res.sectionnum
     else:
@@ -274,6 +289,7 @@ def classMeta(classname):
     res = db.editClassMeta(username, classname, sectionnum, classroom, prof, prof_email, prof_phone, prof_office,
                            prof_hours)
     if res is not None:
+        res = db.addClassBreakdown(username, classname, breakdown)
         return 'Class Meta updated successfully', 200
     else:
         return 'Bad Request: Failed to find class', 400
@@ -292,7 +308,13 @@ def newtask(classname):
     else:
         weight = req['weight']
 
-    res = db.addTask(username, classname, req['taskname'], weight, req['deadline'])
+    if 'deadline' not in req.keys():
+        # use undef weight
+        deadline = None
+    else:
+        deadline = req['deadline']
+
+    res = db.addTask(username, classname, req['taskname'], weight, deadline)
     if res is None:
         return "Bad Request: Class given doesn't exist", 400
     else:
@@ -325,7 +347,7 @@ def all_classes():
 
 
 # get specific task: 'taskname'
-@app.route('/api/class/<classsname>/task/<taskname>', methods=["GET"])
+@app.route('/api/class/<classname>/task/<taskname>', methods=["GET"])
 @flask_login.login_required
 def get_task(classname, taskname):
     username = flask_login.current_user.get_id()
@@ -337,19 +359,21 @@ def get_task(classname, taskname):
         return {"result": parse_row(res)}, 200
 
 
-@app.route('/api/class/<classsname>/task/<taskname>/complete', methods=["POST"])
+@app.route('/api/class/<classname>/task/<taskname>/complete', methods=["POST"])
 @flask_login.login_required
 def complete_task(classname, taskname):
     username = flask_login.current_user.get_id()
     req = flask.request.get_json(force=True)
     if 'grade' not in req.keys():
-        return "Bad Request: Missing required JSON value(s)", 400
+        grade = 0
     else:
-        res = db.completeTask(username, classname, taskname, req['grade'])
-        if res is None:
-            return "Bad Request", 400
-        else:
-            return "Completed Task Successfully", 200
+        grade = req['grade']
+
+    res = db.completeTask(username, classname, taskname, grade)
+    if res is None:
+        return "Bad Request", 400
+    else:
+        return "Completed Task Successfully", 200
 
 
 # returns all the complete tasks for class: 'classname'

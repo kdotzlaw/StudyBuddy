@@ -185,9 +185,11 @@
                         Wow! <br/>
                         You are doing okay
                     </div>
-                    <button class="button bar">
+                    <router-link to="/gradeCalculator">
+                      <button class="button bar">
                         Grade breakdown
-                    </button>
+                      </button>
+                  </router-link>
                 </div>
 
                 <!-- Class meta details -->

@@ -2,19 +2,21 @@
 Defines helper functions used in API calls using pyodbc (for database connections)
 and SQL prepared statements
 '''
+import datetime
+
 import pyodbc
 
 # connection information can change as we include security
 # PROD CONNECTION STRING
 conn = (r'Driver=ODBC Driver 17 for SQL Server;'
-        r'Server=localhost;'
-        r'Database=StudyBuddy;'
-        r'UID=sa;'
-        r'PWD=dbtools.IO'
-        )
+         r'Server=localhost;'
+         r'Database=StudyBuddy;'
+         r'UID=sa;'
+         r'PWD=dbtools.IO'
+         )
 # DEV CONNECTION STRING - D.N.T
 '''conn = (r'Driver=SQL Server;'
-        r'Server=(local);'
+        r'Server=localhost\MSSQLSERVER01;'
         r'Database=StudyBuddy;'
         r'Trusted_Connection=yes'
         )'''
@@ -189,7 +191,16 @@ def completeClass(username, className):
         return None
     record = cursor.execute(prep_stmt, 1, classID, userID)
     return record
-
+'''
+PRECONDITION: specified class with specified user either has no breakdown or breakdown is unchanged
+POSTCONDITION: breakdown for specified class is updated using breakdown value
+'''
+def addClassBreakdown(username, className, breakdown):
+    userID = getUser(username).uID
+    classID = getClassID(username,className)
+    if not userID or not classID:
+        return None
+    cursor.execute("UPDATE Classes SET breakdown = ? WHERE cID = ? AND FK_uID = ?;", breakdown, classID, userID)
 
 '''
 PRECONDITION: class data remains unchanged
@@ -227,10 +238,10 @@ def addStudyTime(username, className, t):
     userID = getUser(username).uID
     record = getSingleClass(username, className)
     # print(username, " ", className)
-    classID = record.cID
     if not userID or not record:
         return None
     else:
+        classID = record.cID
         study = record.studyTime
         uTime = study + float(t)
         prep_stmt = "UPDATE Classes SET studyTime = ? WHERE FK_uID = ? AND cID = ?;"
@@ -308,6 +319,7 @@ def completeTask(username, className, taskName, grade):
         return None
     cursor.execute("UPDATE Tasks SET task_grade = ? WHERE FK_uID = ? AND FK_cID = ? AND tID = ?", grade, userID,
                    classID, taskID)
+    return True
 ''''
 PRECONDITION: task was previously marked complete (grade was entered)
 POSTCONDITION: 
@@ -394,3 +406,35 @@ def editTask (username, className, taskName, eName, eDate, eWeight):
     if eWeight != 0:
         cursor.execute("UPDATE Tasks SET task_Weight = ? WHERE tID = ? AND FK_uID = ? AND FK_cID = ?;", eWeight, taskID,
                        userID, classID)
+
+
+'''
+get top 3 most current deadlines for dashboard display
+'''
+def getDeadlines(username):
+    userID = getUser(username).uID
+    if not userID:
+        return None
+    # Need to get the built-in SQL method for getting dates
+    today = cursor.execute("SELECT isnull(SOP30200.SOPNUMBE,''), isnull(SOP30200.docdate,'') "
+                           "FROM SOP30200 WHERE SOP30200.docdate = current_date")
+    prep_stmt = "SELECT Tasks.task_Name, Tasks.deadline " \
+                "FROM Tasks " \
+                "INNER JOIN Classes ON Tasks.FK_cID = Classes.cID " \
+                "WHERE  Tasks.deadline < ? AND Tasks.FK_uID = ?" \
+                "ORDER BY Tasks.deadline DESC" \
+                "LIMIT 5"
+    record = cursor.execute(prep_stmt, today, userID).fetchall()
+    return record
+
+def calculateGrade(username, className):
+    userID = getUser(username).uID
+    classID = getClassID(username, className)
+    if not userID or not classID:
+        return None
+    #get the grade breakdown for that class
+    breakdown = getSingleClass(username,className).breakdown
+
+
+def getLetterGrade():
+    return

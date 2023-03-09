@@ -308,6 +308,10 @@ paths:
           in: body
           required: false
           description: "Class Metadata"
+        - name: breakdown
+          in: body
+          required: false
+          description: "The grade breakdown for the class in a JSON string, formatted: {'A+': (90,100), ... } where the tuple is (min, max) inclusive range"
         - name: classroom
           in: body
           required: false

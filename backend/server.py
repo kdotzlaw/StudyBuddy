@@ -17,7 +17,7 @@ login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-#flask_cors.CORS(app)
+flask_cors.CORS(app)
 
 # mock persistence layer
 users = {"testuser": {"username": "testuser", "password": "123"}}

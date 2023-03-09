@@ -45,6 +45,7 @@ class dbTests(unittest.TestCase):
     def test_getUser(self):
         username = "katDot"
         result = db.getUser(username)
+        print(result)
         self.assertIn(username, result.username)
 
     '''

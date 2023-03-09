@@ -8,18 +8,18 @@ import pyodbc
 
 # connection information can change as we include security
 # PROD CONNECTION STRING
-conn = (r'Driver=ODBC Driver 17 for SQL Server;'
+'''conn = (r'Driver=ODBC Driver 17 for SQL Server;'
          r'Server=localhost;'
          r'Database=StudyBuddy;'
          r'UID=sa;'
          r'PWD=dbtools.IO'
-         )
+         )'''
 # DEV CONNECTION STRING - D.N.T
-'''conn = (r'Driver=SQL Server;'
+conn = (r'Driver=SQL Server;'
         r'Server=localhost\MSSQLSERVER01;'
         r'Database=StudyBuddy;'
         r'Trusted_Connection=yes'
-        )'''
+        )
 cnxn = pyodbc.connect(conn)
 cursor = cnxn.cursor()
 
@@ -31,6 +31,10 @@ POSTCONDITION:
 '''
 
 
+def getUserData():
+    return cursor.execute("SELECT * FROM Users;").fetchall()
+def getClassesData():
+    return cursor.execute("SELECT * FROM Classes;").fetchall()
 def getUser(name):
     result = cursor.execute("SELECT * FROM Users WHERE username = ?", name).fetchone()
     if not result:

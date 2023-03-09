@@ -37,6 +37,11 @@ class dbTests(unittest.TestCase):
             self.fail("Connection failed")
         cnxn.close()
 
+    def testData(self):
+        users = db.getUserData()
+        self.assertNotEqual(users,None)
+        classes = db.getClassesData()
+        self.assertNotEqual(classes,None)
     '''
     Test passes if the correct record information is retrieved for the specified username
     Test fails if incorrect record returned

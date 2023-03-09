@@ -40,8 +40,10 @@ class dbTests(unittest.TestCase):
     def testData(self):
         users = db.getUserData()
         self.assertNotEqual(users,None)
+        print(users)
         classes = db.getClassesData()
         self.assertNotEqual(classes,None)
+        print(classes)
     '''
     Test passes if the correct record information is retrieved for the specified username
     Test fails if incorrect record returned

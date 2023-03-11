@@ -455,7 +455,7 @@
         width: 100%;
     }
 
-    @media screen and (max-width: 800px) {
+    @media screen and (max-width: 820px) {
         #hero{
             height: 80vh;
         }
@@ -471,6 +471,13 @@
 
         #hero-items div:nth-child(2){
             margin: 2em 0 0 3em;
+        }
+
+        #class-items{
+            display: flex;
+            flex-direction: column;
+            margin-left: 0;
+            width: 90%;
         }
     }
 

@@ -151,6 +151,5 @@
         transition: 0.5s ease-out;
         filter: brightness(120%);
     }
-
     
 </style>

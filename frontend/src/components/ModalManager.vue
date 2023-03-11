@@ -44,7 +44,7 @@
 <style scoped>
     .form-ctr{
         height: inherit;
-        width: inherit;
+        width: 100%;
     }
 
     #renderString{

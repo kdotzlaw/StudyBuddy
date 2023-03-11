@@ -6,9 +6,11 @@
 
 <script setup>
     import Gear from "/artifacts/gear.svg";
+    import { computed } from "vue";
 
     const props = defineProps({ 
         reqs: {type: Array, required: false, default: []},
+        borderless: {type: Boolean, required: false, default: false}
     })
 
     // Color tag and Month legend maps
@@ -35,10 +37,17 @@
         else
             return "";
     }
+
+    // Borderless style
+    let borderClass = computed(() => {
+        if(props.borderless)
+            return "borderless"
+        return ""
+    })
 </script>
 
 <template>
-    <div id="reqCards">
+    <div id="reqCards" :class="borderClass">
 
         <!-- Add new card -->
         <div v-if="reqs.length==0" :class="`reqCard addNew`"> + </div>
@@ -166,6 +175,44 @@
         cursor: pointer;
         filter: brightness(120%);
         animation: spin 2s;
+    }
+
+    .borderless .fullCard{
+        border: none;
+        background: transparent;
+        box-shadow: none;
+        overflow: visible;
+        margin-bottom: 2vh;
+        transform: scale(0.9);
+        font-size: 80%;
+    }
+
+    @media screen and (max-width: 820px) {
+        #dashboard .fullCard{
+            grid-template-columns: 2.5em 12% 1fr 3vw 3vw;
+        }
+
+        #dashboard .dueDate{
+            font-size: 36px;
+        }
+        
+        #dashboard .fullCard h3{
+            font-size: 28px;
+        }
+    }
+
+    @media screen and (max-width: 700px) {
+        #classpage .fullCard{
+            grid-template-columns: 2.5em 12% 1fr 3em 3em;
+        }
+
+        #classpage .dueDate{
+            font-size: 36px;
+        }
+
+        #classpage .fullCard h3{
+            font-size: 28px;
+        }
     }
     
 </style>

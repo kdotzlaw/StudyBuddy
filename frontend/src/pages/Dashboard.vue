@@ -59,7 +59,7 @@
     setInterval(()=>{
         chatIndex = (chatIndex + 1) % chats.length;
         chat.value = chats[chatIndex];
-    },2000)
+    },4000)
 </script>
 
 <template>
@@ -77,7 +77,7 @@
         <div v-if="userId" v-motion-slide-bottom>
             <Accordion title="Calendar Overview" :toggled="false">
                 <h3>Current Tasks</h3>
-                <RequirementCards :reqs="reqs" />
+                <RequirementCards :reqs="reqs" :borderless="true" />
             </Accordion>
             <Accordion title="Choose a Class to Study for">
                 <ClassCards :reqs="classes" />
@@ -102,5 +102,16 @@
         margin-top: 5vh;
         display: grid;
         justify-items: center;
+    }
+
+    @media screen and (max-width: 820px) {
+        #dashboard{
+            flex-direction: column;
+        }
+
+        #buddy-ctr{
+            width: 100%;
+            transform: translateX(-10%);
+        }
     }
 </style>

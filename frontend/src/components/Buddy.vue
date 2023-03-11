@@ -48,13 +48,15 @@
     <!-- Buddy container -->
     <div id="buddy">
         <Corgi />
-    </div>
 
-    <!-- Chat balloon -->
-    <div v-if="props.chat" id="chat-balloon" class="delius" ref="chatBalloon">
-        <p>{{ chat }}</p>
+        <!-- Chat balloon -->
+        <div class="chat">
+            <div v-if="props.chat" id="chat-balloon" class="delius" ref="chatBalloon">
+                <p>{{ chat }}</p>
+            </div>
+            <div v-if="props.chat" id="chat-balloon-curve" ref="chatBalloonCurve"/>
+        </div>
     </div>
-    <div v-if="props.chat" id="chat-balloon-curve" ref="chatBalloonCurve"/>
 
     <!-- Level card -->
     <div v-if="showLevel" id="level-card" class="delius">
@@ -67,20 +69,31 @@
     #buddy{
         position: absolute;
         z-index: 2;
-        top: 10%;
-        transform: translateX(-15%);
+        top: 15%;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 50% 50%;
+        margin-left: 35%;
     }
 
     #buddy svg{
         display: block;
         height: inherit;
+        min-width: 14em;
+        max-height: 17em;
         width: inherit;
+    }
+
+    .chat{
+        height: 100%;
+        width: 100%;
+        transform: scale(0.9);
     }
 
     #chat-balloon{
         position: absolute;
         z-index: 4;
-        right: 0;
+        top: -2em;
         height: 8em;
         width: 9em;
         background: var(--black);
@@ -96,8 +109,8 @@
     #chat-balloon-curve{
         position: absolute;
         z-index: 4;
-        right: 7em;
-        top: 6em;
+        left: 0;
+        top: 4em;
         height: 4em;
         width: 6em;
         background: radial-gradient(circle at top left, transparent 60%, var(--black) 61%);

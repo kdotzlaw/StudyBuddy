@@ -28,6 +28,8 @@ BEGIN
 	CONSTRAINT ck_testbool_ischk CHECK (is_complete IN (1,0)),
 	studyTime FLOAT DEFAULT 0.0,
 	/* Metadata */
+	breakdown VARCHAR(255),
+	courseCode varchar(50).
 	section VARCHAR(8),
 	classroom VARCHAR(50), /* room number, building*/
 	prof_Name VARCHAR(50),
@@ -72,9 +74,8 @@ INSERT INTO Users(username,password)
 	VALUES('sneakerbot101','Shoes!');
 
 /* ADD CLASSES STUB DATA */
-
-INSERT INTO Classes(class_Name, timeslot, is_Complete, studyTime,FK_uID )
-	VALUES ('COMP 2080', '10:00:00',0,0,3);
+INSERT INTO Classes(class_Name, timeslot, is_Complete, studyTime,breakdown,FK_uID )
+	VALUES ('COMP 2080', '10:00:00',0,0,'{A+:(90,100), A:(80,89), B+:(75,79), B:(70,74), C+:(65,69), C:(56,64), D:(50,55), F(0, 49)}',3);
 INSERT INTO Classes(class_Name, timeslot, is_Complete, studyTime,FK_uID )
 	VALUES ('COMP 4350', '11:30:00',0,0,1);
 INSERT INTO Classes(class_Name, timeslot, is_Complete, studyTime,FK_uID )

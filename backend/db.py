@@ -7,8 +7,8 @@ import datetime
 import pyodbc
 
 # connection information can change as we include security
-# PROD CONNECTION STRING
-conn = (r'Driver=ODBC Driver 17 for SQL Server;'
+# PROD CONNECTION STRING (r'Driver=ODBC Driver 17 for SQL Server;'
+conn = (r'Driver=SQL Server;'
          r'Server=localhost;'
          r'Database=StudyBuddy;'
          r'UID=sa;'

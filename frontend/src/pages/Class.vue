@@ -27,6 +27,52 @@
 
     onMounted(() => {
         setPageName("Class View");
+
+        let classRoute = null;
+        /******************************************* 
+         * TODO: Get the classRoute
+         *******************************************/
+
+        // Get this class' metadata
+        const host = 'http://127.0.0.1:5000'; 
+        const apiUrlMeta = `/api/class/${classRoute}`;
+        fetch(host + apiUrlMeta, {
+            method: 'GET',
+            mode: 'no-cors',
+            credentials: 'include'
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(`GET fetch location: Class page, URL: ${apiUrlMeta}`)
+                console.log(data)
+                /******************************************* 
+                 * TODO: Replace classInfo with fetched data
+                 *******************************************/
+            })
+        .catch(error => {
+            console.log(`GET fetch location: Class page, URL: ${apiUrlMeta}`)
+            console.error(error);
+        });
+
+        // Get this class' requirements
+        const apiUrlReq = `/api/class/${classRoute}/task`;
+        fetch(host + apiUrlReq, {
+            method: 'GET',
+            mode: 'no-cors',
+            credentials: 'include'
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(`GET fetch location: Class page, URL: ${apiUrlReq}`)
+                console.log(data)
+                /******************************************* 
+                 * TODO: Replace reqs with fetched data
+                 *******************************************/
+            })
+        .catch(error => {
+            console.log(`GET fetch location: Class page, URL: ${apiUrlReq}`)
+            console.error(error);
+        });
     });
 
     // Stub data compensates for unintegrated(future sprint) features

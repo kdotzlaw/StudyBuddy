@@ -21,10 +21,10 @@
 
     <!-- Content presets -->
     <div v-if="contentId=='success'" class="form-ctr">
-        <img :src="SuccessIcon" alt="Success Party hat!" :style="`height:6em;width:6em;`" />
+        <img :src="SuccessIcon" alt="Success Party hat!" :style="`height:6em;width:6em;justify-self:center;`" />
     </div>
     <div v-else-if="contentId=='error'" class="form-ctr">
-        <img :src="ErrorIcon" alt="Error, snap" :style="`height:6em;width:6em;`" />
+        <img :src="ErrorIcon" alt="Error, snap" :style="`height:6em;width:6em;justify-self:center;`" />
     </div>
     <div v-else-if="contentId=='register'" class="form-ctr">
         <Register/>
@@ -45,6 +45,7 @@
     .form-ctr{
         height: inherit;
         width: 100%;
+        display: grid;
     }
 
     #renderString{

@@ -9,18 +9,13 @@
     import ClassCards from "../components/ClassCards.vue";
     import RequirementCards from "../components/RequirementCards.vue";
     import Buddy from "../components/Buddy.vue";
-    import { ref, computed } from "vue";
-    import { onMounted } from "vue";
+    import { ref, computed, onMounted } from "vue";
     import { storeToRefs } from "pinia";
     import { useStore } from "../stores";
     
     const store = useStore();
     const { userId } = storeToRefs(store);
     const { updateSkin, setPageName } = store;
-
-    onMounted(() => {
-        setPageName("Dashboard");
-    });
 
     // Stub data compensates for unintegrated(future sprint) features
     let classes = [
@@ -60,6 +55,63 @@
         chatIndex = (chatIndex + 1) % chats.length;
         chat.value = chats[chatIndex];
     },4000)
+
+    onMounted(() => {
+        setPageName("Dashboard");
+        
+        // Get classes
+        const host = 'http://127.0.0.1:5000'; 
+        let apiUrlClass = '/api/class';
+        fetch(host + apiUrlClass, {
+            method: 'GET',
+            mode: 'no-cors',
+            credentials: 'include'
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(`GET fetch location: Dashboard, URL: ${apiUrlClass}`)
+                console.log(data)
+                /******************************************* 
+                 * TODO: Replace classes with fetched data
+                 *******************************************/
+
+                // Get requirements from classes
+                let classList = []
+                for (let classKey of classList){
+                    const apiUrlTask = `/api/class/${classKey}/task`;
+                    fetch(host + apiUrlTask, {
+                        method: 'GET',
+                        mode: 'no-cors',
+                        credentials: 'include'
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(`GET fetch location: Dashboard, URL: ${apiUrlTask}`)
+                            console.log(data)
+                            /******************************************* 
+                             * TODO: Process impeding tasks from fetched data
+                             *******************************************/
+                            /******************************************* 
+                             * TODO: Generate buddy conversations from processed data
+                             *******************************************/
+                            /******************************************* 
+                             * TODO: Replace reqs with processed data
+                             *******************************************/
+                            /******************************************* 
+                             * TODO: Replace chats with new conversation data
+                             *******************************************/
+                        })
+                    .catch(error => {
+                        console.log(`GET fetch location: Dashboard, URL: ${apiUrlTask}`)
+                        console.error(error);
+                    });
+                }
+            })
+        .catch(error => {
+            console.log(`GET fetch location: Dashboard, URL: ${apiUrlClass}`)
+            console.error(error);
+        });
+    });
 </script>
 
 <template>

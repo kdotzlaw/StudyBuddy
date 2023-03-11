@@ -27,7 +27,7 @@ class dbTests(unittest.TestCase):
                     r'PWD=dbtools.IO'
                     )
             # DEV CONNECTION STRING D.N.T
-            '''conn = (r'Driver=ODBC Driver 17 for SQL Server;'
+            '''conn = (r'Driver=SQL Server;'
                     r'Server=(local);'
                     r'Database=StudyBuddy;'
                     r'Trusted_Connection=yes'

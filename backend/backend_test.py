@@ -19,8 +19,8 @@ class dbTests(unittest.TestCase):
 
     def test_cnxn(self):
         try:
-            # PROD CONNECTION STRING 'Driver=ODBC Driver 17 for SQL Server;
-            conn = (r'Driver=SQL Server;'
+            # PROD CONNECTION STRING 
+            conn = (r'Driver=ODBC Driver 17 for SQL Server;'
                     r'Server=localhost;'
                     r'Database=StudyBuddy;'
                     r'UID=sa;'

@@ -14,7 +14,7 @@ BEGIN
 	username VARCHAR(50) NOT NULL UNIQUE,
 	password VARCHAR(8) NOT NULL,
 	user_email VARCHAR(50),
-	xp FLOAT DEFAULT 0.0,
+	xp FLOAT DEFAULT 0.0
 	);
 END
 

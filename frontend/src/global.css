@@ -106,6 +106,9 @@
 .yellow{
     background: var(--yellow);
 }
+.grey{
+    background: var(--button-disabled);
+}
 
 /*================================
     GLOBAL document styles

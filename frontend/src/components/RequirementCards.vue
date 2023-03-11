@@ -13,25 +13,11 @@
 
     // Color tag and Month legend maps
     let today = Date.now();
-    const typeClassMapping = {
-        "quiz": "blue",
-        "assignment": "green",
-        "test": "red",
-        "misc": "yellow"
-    }
     const monthNames = [
         "January", "February", "March", "April", 
         "May", "June", "July", "August", 
         "September", "October", "November", "December"
     ];
-
-    // Return color tag by requirement type
-    function typeClass(type){
-        let mapping = typeClassMapping[type];
-        if(!mapping)
-            return typeClassMapping.misc;
-        return mapping;
-    }
 
     /* getUrgent
      *   Adds an urgent note on cards with impending deadlines (0-3 days before due date) 
@@ -61,7 +47,7 @@
         <div v-for="req in reqs" :class="`reqCard fullCard`">
 
             <!-- Color tag -->
-            <div :class="`tag ${typeClass(req.type)}`"></div>
+            <div :class="`tag ${req.tagColor}`"></div>
 
             <!-- Due date -->
             <div class="dues">
@@ -144,6 +130,7 @@
         align-items: center;
         color: var(--gold);
         margin-bottom: 1em;
+        align-self: center;
     }
 
     .dueDate{
@@ -156,12 +143,13 @@
         color: var(--white);
         font-weight: 200;
         font-size: 30px;
-        line-height: 6px;
+        line-height: 1em;
         margin-top: 1.5em;
     }
 
     .urgent{
         color: var(--button-hover);
+        line-height: 0px;
     }
 
     .goal, .reqManage{

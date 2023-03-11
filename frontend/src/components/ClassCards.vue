@@ -28,9 +28,6 @@
 <template>
     <div id="classCards">
         
-        <!-- Add New card -->
-        <div v-if="reqs.length==0" :class="`classCard addNew`"> + </div>
-        
         <!-- Class card set -->
         <div v-for="req in reqs" :class="`classCard studyClass`">
             <router-link to="/class">
@@ -58,6 +55,10 @@
 
             </div>
         </div>
+
+        <!-- Add New card -->
+        <div :class="`classCard addNew`"> + </div>
+
     </div>
 </template>
 
@@ -72,11 +73,11 @@
     }
 
     .classCard{
-        min-height: 6em;
-        width: 9.5em;
-        border-radius: 0.8em;
+        min-height: 100px;
+        width: 190px;
+        border-radius: 20px;
         cursor: pointer;
-        margin: 1em 0.5em 1em 0.5em;
+        margin: 2vh 0.5vw 2vh 0.5vw;
         box-shadow: inset 0.1em 0.1em 0.3em rgba(0,0,0,0.4);
     }
 
@@ -86,9 +87,8 @@
         display: grid;
         justify-items: center;
         align-items: center;
-        font-size: 30px;
+        font-size: 50px;
         line-height: 30px;
-        font-weight: 900;
     }
 
     .addNew:hover{

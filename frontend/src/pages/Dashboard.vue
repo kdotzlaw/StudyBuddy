@@ -7,6 +7,7 @@
 <script setup>
     import Accordion from "../components/Accordion.vue";
     import ClassCards from "../components/ClassCards.vue";
+    import RequirementCards from "../components/RequirementCards.vue";
     import Buddy from "../components/Buddy.vue";
     import { ref, computed } from "vue";
     import { onMounted } from "vue";
@@ -22,11 +23,29 @@
     });
 
     // Stub data compensates for unintegrated(future sprint) features
-    let reqs = [
+    let classes = [
         { name: "COMP2080", timeStudied: 2.5 },
         { name: "COMP4350", timeStudied: 6.2 },
         { name: "COMP4620", timeStudied: 0.0 },
         { name: "COMP4380", timeStudied: 10.0 },
+    ]
+    // Return color tag by class key
+    function getTagColor(key) {
+        let map = {
+            "COMP2080": "red",
+            "COMP4350": "blue",
+            "COMP4620": "green",
+            "COMP4380": "yellow",
+        }
+        let mapping = map[key];
+        if(!mapping)
+            return "grey";
+        return mapping;
+    }
+    let reqs = [
+        { classKey: "COMP4620", tagColor: getTagColor("COMP4620"), name: "Assignment 4", due: new Date("March 12, 2023"), goal: "C" },
+        { classKey: "COMP2080", tagColor: getTagColor("COMP2080"), name: "Catch up", due: new Date("March 13, 2023"), goal: "C" },
+        { classKey: "COMP4350", tagColor: getTagColor("COMP4350"), name: "Final Exam", due: new Date("April 20, 2023"), goal: "A+" },
     ]
     let chats = [
         "Press on the Play ▶ button on a class to start studying!",
@@ -57,11 +76,11 @@
         <!-- Dashboard accordions -->
         <div v-if="userId" v-motion-slide-bottom>
             <Accordion title="Calendar Overview" :toggled="false">
-                <h3>Current Quests</h3>
-                <p class="delius">You have an assignment due tomorrow for COMP2080!</p>
+                <h3>Current Tasks</h3>
+                <RequirementCards :reqs="reqs" />
             </Accordion>
             <Accordion title="Choose a Class to Study for">
-                <ClassCards :reqs="reqs" />
+                <ClassCards :reqs="classes" />
             </Accordion>
         </div>
         

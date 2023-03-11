@@ -1,8 +1,7 @@
-/*IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'StudyBuddy')
+IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'StudyBuddy')
 BEGIN
 	CREATE DATABASE StudyBuddy;
-END*/
-CREATE DATABASE StudyBuddy;
+END
 GO
 
 USE StudyBuddy;
@@ -30,7 +29,7 @@ BEGIN
 	studyTime FLOAT DEFAULT 0.0,
 	/* Metadata */
 	breakdown VARCHAR(255),
-	courseCode varchar(50).
+	courseCode varchar(50),
 	section VARCHAR(8),
 	classroom VARCHAR(50), /* room number, building*/
 	prof_Name VARCHAR(50),

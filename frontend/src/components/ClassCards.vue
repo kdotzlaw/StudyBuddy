@@ -30,7 +30,7 @@
         
         <!-- Class card set -->
         <div v-for="req in reqs" :class="`classCard studyClass`">
-            <router-link to="/class">
+            <router-link :to="'/class/' + req.name">
                 
                 <!-- Class name -->
                 <h3> {{ req.name }} </h3>

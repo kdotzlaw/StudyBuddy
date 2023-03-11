@@ -13,6 +13,7 @@
     import Timer from "../logic/timer";
     import Mgmt from "../logic/managetimer";
     import { ref, computed, onMounted } from "vue";
+    import { useRoute } from 'vue-router';
     import { storeToRefs } from "pinia";
     import { useStore } from "../stores";
     
@@ -20,6 +21,7 @@
     const { sessionTimer, userId, studyClass } = storeToRefs(store);
     const { updateSkin, setPageName, setStudyClass } = store;
 
+    let classRoute = useRoute().params.slug;
 
     /*===========================
        MANAGE CLASS METADATA
@@ -27,11 +29,6 @@
 
     onMounted(() => {
         setPageName("Class View");
-
-        let classRoute = null;
-        /******************************************* 
-         * TODO: Get the classRoute
-         *******************************************/
 
         // Get this class' metadata
         const host = 'http://127.0.0.1:5000'; 
@@ -145,18 +142,18 @@
 
     // Start or pause study for this class
     function manageStudy(){
-        setStudyClass(classInfo.name);
-        Mgmt.manageTimer(userId.value,classInfo.name);
+        setStudyClass(classRoute);
+        Mgmt.manageTimer(userId.value,classRoute);
     }
 
     // Reflect study session's paused/running state with icons and notes
     const studyNote = computed(() => {
-        if(studyClass.value == classInfo.name && !sessionTimer.value.isPaused())
+        if(studyClass.value == classRoute && !sessionTimer.value.isPaused())
             return "Pause session";
         return "Study now";
     });
     const studyIcon = computed(() => {
-        if(studyClass.value == classInfo.name && !sessionTimer.value.isPaused())
+        if(studyClass.value == classRoute && !sessionTimer.value.isPaused())
             return Pause;
         return Play;
     });
@@ -227,7 +224,7 @@
                 <div>
 
                     <!-- Class name and time studied -->
-                    <h1 v-motion-pop> {{ classInfo.name }} </h1>
+                    <h1 v-motion-pop> {{ classRoute }} </h1>
                     <h2 v-motion-pop> Studied {{ classInfo.timeStudied }} hours this week </h2>
 
                 </div>

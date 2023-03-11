@@ -17,7 +17,7 @@ const routes = [
     component: Dashboard
   },
   {
-    path: '/class', 
+    path: '/class/:slug', 
     name: 'Class',
     component: Class
   },

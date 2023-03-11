@@ -1,7 +1,7 @@
 IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'StudyBuddy')
 BEGIN
 	CREATE DATABASE StudyBuddy;
-END;
+END
 GO
 
 USE StudyBuddy;

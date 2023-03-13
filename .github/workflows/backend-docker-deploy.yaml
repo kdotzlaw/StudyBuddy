@@ -3,8 +3,7 @@ name: Backend Docker Deployment
 on:
   workflow_dispatch:    # Allows this workflow to be ran manually from the Actions tab
   push:
-    branches: [ main, develop ]
-
+    branches: [ main ]
 
 env:
   IMAGE_NAME: capillae/studybuddy-python-backend
@@ -32,7 +31,7 @@ jobs:
         run:
           pip install -r requirements.txt
 
-      - name: Log into Docker
+      - name: Login to Docker
         uses: docker/login-action@v2.1.0
         with:
           username: ${{ secrets.DOCKER_USERNAME }}

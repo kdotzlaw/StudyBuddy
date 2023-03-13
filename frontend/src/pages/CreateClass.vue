@@ -14,19 +14,43 @@
     <div id="class-details-container">
       <h2>Class Details</h2>
       <div id="class-details-input">
-        <input type="text" id="class-name-input" placeholder="Enter class name" v-model="username">
+        
+        <div id="class-name-container">
+          <input type="text" id="class-name-input" placeholder="Enter class name" v-model="className">
+        </div>
+        <div id="section-name-container">
+          <input type="text" id="section-name-input" placeholder="Enter section (optional)" v-model="sectionName">
+        </div>
+        <div id="class-code-container">
+          <input type="text" id="class-code-input" placeholder="Enter class code" v-model="classCode">
+        </div>
+        <div id="room-container">
+          <input type="text" id="room-input" placeholder="Enter room (optional)" v-model="room">
+        </div>
+        <div id="class-time-container">
+          <input type="text" id="class-time-input" placeholder="Enter class time" v-model="classTime">
+        </div>
       </div>
     </div>
     
     <div id="professor-container">
       <h2>Professor Details</h2>
       <div id="professor-input">
-        <input type="text" id="class-name-input" placeholder="Enter class name" v-model="username">
+        <div id="professor-name-container">
+          <input type="text" id="professor-name-input" placeholder="Enter class name" v-model="profName">
+        </div>
+        <div id="professor-email-container">
+          <input type="text" id="professor-email-input" placeholder="Enter class name" v-model="profEmail">
+        </div>
+        <div id="professor-office-container">
+          <input type="text" id="professor-office-input" placeholder="Enter class name" v-model="profOffice">
+        </div>
+        
       </div>
     </div>
 
     <div id="add-button">
-      <button class="button bar">Add New Class</button>
+      <button class="button bar" id="add-button">Add New Class</button>
     </div>
 
   </div>
@@ -47,6 +71,55 @@
   onMounted(() => {
       setPageName("Grade Calculator");
     });
+
+  setTimeout(() => {
+    const addButton = document.getElementById("add-button");
+    addButton.addEventListener("click", () => {
+      console.log("clicked")
+    });
+  }, 500);
+
+  function createClass() {
+    let className = document.getElementById("className").value;
+    let sectionName = document.getElementById("sectionName").value;
+    let classCode = document.getElementById("classCode").value;
+    let room = document.getElementById("room").value;
+    let classTime = document.getElementById("classTime").value;
+    let profName = document.getElementById("profName").value;
+    let profEmail = document.getElementById("profEmail").value;
+    let profOffice = document.getElementById("profOffice").value;
+
+    const host = 'http://127.0.0.1:5000'; 
+    const apiUrl = '/api/class/'+className+'/update_meta';
+    const data = {
+      className: className,
+      sectionName: sectionName,
+      classCode: classCode,
+      room: room,
+      classTime: classTime,
+      profName: profName,
+      profEmail: profEmail,
+      profOffice: profOffice
+    };
+    fetch(host + apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      mode: 'no-cors',
+      body: JSON.stringify(data),
+      credentials: 'include'
+    })
+      .then(response => response.text())
+      .then(data => {
+        setModal("Success", "success", data);
+        toggleModal();
+      })
+    .catch(error => {
+      console.log(error);
+    });
+  };
+
 
 </script>
 
@@ -90,11 +163,12 @@
   #add-button{
     margin-left: 75%; 
     margin-right: 0;
+    margin-top: 20vh;
   }
 
   .button{
     background: var(--button);
-    border: 3px solid var(--gold);
+    border: 3px solid var;
     box-shadow: inset 0.2em 0.2em 0.6em rgba(0,0,0,0.4);
     display: grid;
     justify-items: center;
@@ -128,7 +202,7 @@
   #create-class-container h2{
     display: flex;
     justify-content: left;
-    padding-left: 3.5vw;
+    padding-left: 3vw;
   }
 
   #create-class-container h2{
@@ -140,13 +214,27 @@
   }
 
   /* Class Details Style*/
+
+  #class-details-container{
+    justify-items: flex;
+  }
+
   #class-details-input, #professor-input{
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-gap: 1vh 2vw;
+    grid-template-columns: 50% 50%;
+    padding-left: 8vw;
+    padding-right: 10vw;
+  }
+
+  #class-name-container{
+    width: 100%;
+    grid-column: 1/3;
+    grid-row: 1;
   }
 
   #class-name-input{
-    width: 50%;
+    width: 100%;
     height: 5vh;
     font-size: medium;
     border-radius: 1em;
@@ -154,10 +242,106 @@
     color: var(--black);
   }
 
+  #section-name-container{
+    grid-column: 2/3;
+    grid-row: 3;
+  }
 
+  #section-name-input{
+    align-items: right;
+    width: 100%;
+    height: 5vh;
+    font-size: medium;
+    border-radius: 1em;
+    background: var(--white);
+    color: var(--black);
+  }
+
+  #class-code-container{
+    grid-column: 2/3;
+    grid-row: 2;
+  }
+
+  #class-code-input{
+    width: 100%;
+    height: 5vh;
+    font-size: medium;
+    border-radius: 1em;
+    background: var(--white);
+    color: var(--black);
+  }
+
+  #room-container{
+    grid-column: 1/2;
+    grid-row: 3;
+  }
+
+  #room-input{
+    width: 100%;
+    height: 5vh;
+    font-size: medium;
+    border-radius: 1em;
+    background: var(--white);
+    color: var(--black);
+  }
+
+  #class-time-container{
+    grid-column: 1/2;
+    grid-row: 2;
+  }
+
+  #class-time-input{
+    width: 100%;
+    height: 5vh;
+    font-size: medium;
+    border-radius: 1em;
+    background: var(--white);
+    color: var(--black);
+  }
+
+  #professor-name-container{
+    grid-column: 1/3;
+    grid-row: 4;
+  }
+
+  #professor-name-input{
+    width: 100%;
+    height: 5vh;
+    font-size: medium;
+    border-radius: 1em;
+    background: var(--white);
+    color: var(--black);
+  }
+
+  #professor-email-container{
+    grid-column: 1/2;
+    grid-row: 5;
+  }
+
+  #professor-email-input{
+    width: 100%;
+    height: 5vh;
+    font-size: medium;
+    border-radius: 1em;
+    background: var(--white);
+    color: var(--black);
+  }
+
+  #professor-office-container{
+    grid-column: 2/3;
+    grid-row: 5;
+  }
+  
+  #professor-office-input{
+    width: 100%;
+    height: 5vh;
+    font-size: medium;
+    border-radius: 1em;
+    background: var(--white);
+    color: var(--black);
+  }
 
 /*
-
   #min-input, #max-input{
     background-color: var(--box);
     color: var(--white);

@@ -13,36 +13,28 @@
   <div id="grade-container">
     <div id="breakdown-container">
       <h2>Breakdown and Weights</h2>
-
-      <!-- <div id="breakdown-input">
-        <h3 id="subtitle">New Assesment:</h3>
-        <label for="name-input">Name: </label>
-        <input type="text" id="name-input" placeholder="Quiz" v-model="username">
-        <label for="qty-input">QTY: </label>
-        <input type="number" min="0" id="qty-input" placeholder="0" v-model="username">
-        <label for="percent-input">Percent: </label>
-        <input type="number" min="0" max="100" id="percent-input" placeholder="0" v-model="username">
-        <button class="button bar">Add</button>
-      </div> -->
+      <button id="add-row" @click="createRow()"> + </button>
 
       <div id="breakdown-table">
         <table> 
           <thead id="breakdown-table-header">
-            <tr>
+            <tr class="grid">
               <th id="col-one">Name</th>
               <th id="col-two">QTY</th>
               <th id="col-three">Percentage</th>
               <th id="col-four">Delete</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
+          <tbody id="table-buddy">
+            <tr class="grid">
               <td><input type="text" id="name-input" placeholder="Quiz" v-model="username"></td>
               <td><input type="number" min="0" id="qty-input" placeholder="0" v-model="username"></td>
               <td><input type="number" min="0" max="100" id="percent-input" placeholder="0" v-model="username"> %</td>
+              <td> <button></button></td>
             </tr> 
           </tbody>
         </table>
+
       </div>
       
     </div>
@@ -95,7 +87,7 @@
     </div>
 
     <div id="save-button">
-      <button class="button bar">Save Changes</button>
+      <button class="button bar" @click="getData()">Save Changes</button>
     </div>
 
   </div>
@@ -116,6 +108,79 @@
   onMounted(() => {
       setPageName("Grade Calculator");
     });
+
+
+    function createRow(){
+      let newRow = document.createElement("tr");
+
+      let name = document.createElement("td");
+      let qty = document.createElement("td");
+      let percent = document.createElement("td");
+      let deleteButton = document.createElement("td");
+
+      let nameInput = document.createElement("input");
+      let qtyInput = document.createElement("input");
+      let percentInput = document.createElement("input");
+      let deleteButtonInput = document.createElement("button");
+
+      newRow.classList.add("grid");
+
+      nameInput.setAttribute("type", "text");
+      nameInput.setAttribute("placeholder", "Quiz");
+
+      qtyInput.setAttribute("type", "number");
+      qtyInput.setAttribute("placeholder", "0");
+      qtyInput.setAttribute("min", "0");
+
+      percentInput.setAttribute("type", "number");
+      percentInput.setAttribute("placeholder", "0");
+      percentInput.setAttribute("min", "0");
+      percentInput.setAttribute("max", "100")
+
+      deleteButtonInput.setAttribute("type", "button");
+
+      name.appendChild(nameInput);
+      qty.appendChild(qtyInput);
+      percent.appendChild(percentInput);
+      deleteButton.appendChild(deleteButtonInput);
+
+      newRow.appendChild(name);
+      newRow.appendChild(qty);
+      newRow.appendChild(percent);
+      newRow.appendChild(deleteButton);
+
+      percent.innerHTML += " %";
+
+      document.getElementById("table-buddy").appendChild(newRow);
+
+
+
+
+    }
+
+    function getData(){
+      let table = document.getElementById("table-buddy");
+      let rows = table.getElementsByTagName("tr");
+      let data = [];
+
+      for(let i = 0; i < rows.length; i++){
+        let row = rows[i];
+        let cols = row.getElementsByTagName("td");
+        let name = cols[0].getElementsByTagName("input")[0].value;
+        let qty = cols[1].getElementsByTagName("input")[0].value;
+        let percent = cols[2].getElementsByTagName("input")[0].value;
+
+        data.push({
+          name: name,
+          qty: qty,
+          percent: percent
+        });
+      }
+
+      console.log(data)
+
+      return data;
+    }
 
 </script>
 
@@ -225,21 +290,25 @@
     text-align: center;
   }
 
+  
   tr{
+    display: flex;
     height: 5vh;
     justify-content: center;
   }
 
-  #col-two, #col-three{
+  tr td:nth-child(2) input, td:nth-child(3) input{
     width: 25%;
   }
 
-  #name-input{
+  tr td:nth-child(1) input{
     width: 80%
   }
 
-  #qty-input, #percent-input{
-    width: 20%;
+  .grid{
+    display: grid;
+    grid-template-columns: 25% 25% 25% 25%;
+
   }
 
   #min-input, #max-input{
@@ -275,7 +344,7 @@
   }
 
   #breakdown-table-header #col-one{
-    width: 35%;
+    width: 100%;
   }
 
   /* Letter Grade Table Style*/

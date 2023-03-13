@@ -3,11 +3,11 @@ name: Frontend Docker Deployment
 on:
   workflow_dispatch:    # Allows this workflow to be ran manually from the Actions tab
   push:
-    branches: [ main, develop, CICD]
+    branches: [ main ]
 
 env:
-  IMAGE_NAME: capillae/studybuddy
-  IMAGE_TAG: 1.0.${{ github.run_number }}
+  IMAGE_NAME: capillae/studybuddy-vue-frontend
+  IMAGE_TAG: 1.1.${{ github.run_number }}
 
 jobs:
   deploy_to_docker:

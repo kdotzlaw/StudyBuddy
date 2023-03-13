@@ -1,0 +1,48 @@
+version: '3.9'
+
+services:
+  # MS SQL Container
+  ms_sql:
+    container_name: database_container
+    # The base image for the container
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    # If the container fails, default to always restart
+    restart: always
+    environment:
+      SQL_SERVER: 1433
+      SQL_USER: sa
+      SQL_PASSWORD: dbtools.IO
+      SQL_DATABASE: StudyBuddy
+    # Allow data persistency when starting & stopping containers
+    volumes:
+      - ms_sql:/data/db
+
+  # Vue Container
+  vue:
+    container-name: frontend_container
+    # Location of the Dockerfile to build the base image
+    build: ./frontend
+    ports:
+      - 5173:5173
+    environment:
+      PORT: 5173
+      # PLACEHOLDER. TODO: Find actual URI
+      # mssql://[Server_Name[:Portno]]/[Database_Instance_Name]/[Database_Name]?FailoverPartner=[Partner_Server_Name]&InboundId=[Inbound_ID]
+      MSSQL_URI: mssql://ms_sql:1433/StudyBuddy/StudyBuddy/
+      DB_NAME: StudyBuddy
+    depends_on:
+      - ms_sql
+
+  # Flask Container
+  flask:
+    container-name: backend_container
+    # Location of the Dockerfile to build the base image
+    build: ./backend
+    ports:
+      - 5000:5000
+    depends_on:
+      - ms_sql
+
+
+volumes:
+  ms_sql: {}

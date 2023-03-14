@@ -10,6 +10,8 @@
     import Login from "./Login.vue";
     import Register from "./Register.vue"; 
     import Settings from "./Settings.vue";
+    import AddRequirement from "./AddRequirement.vue";
+
 
     const props = defineProps({ 
         contentId: {type: String, required: false, default: null},
@@ -34,6 +36,9 @@
     </div>
     <div v-else-if="contentId=='settings'" class="form-ctr">
         <Settings/>
+    </div>
+    <div v-else-if="contentId=='addRequirement'" class="form-ctr">
+        <AddRequirement/>
     </div>
 
     <!-- HTML render -->

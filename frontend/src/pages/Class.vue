@@ -19,7 +19,7 @@
     
     const store = useStore();
     const { sessionTimer, userId, studyClass } = storeToRefs(store);
-    const { updateSkin, setPageName, setStudyClass } = store;
+    const { updateSkin, setPageName, setStudyClass, setModal } = store;
 
     let classRoute = useRoute().params.slug;
 
@@ -201,6 +201,11 @@
     function changeView(){
         current.value = !current.value;
     }
+
+    function addRequirement(){
+      setModal("Add Requirement", "addRequirement");
+    }
+
 </script>
 
 <template>
@@ -244,7 +249,7 @@
             <!-- Class requirements list -->
             <div id="req-ctr" v-motion-slide-left>
                 <div id="req-head">
-                    <button id="add-req" class="button bar">
+                    <button id="add-req" class="button bar" @click="addRequirement()">
                         Add Requirements
                     </button>
                     <button id="change-view" class="button bar" @click="changeView">

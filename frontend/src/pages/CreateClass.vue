@@ -16,8 +16,8 @@
         <div id="class-name-container">
           <input type="text" id="class-name-input" placeholder="Enter class name" v-model="className">
         </div>
-        <div id="section-name-container">
-          <input type="text" id="section-name-input" placeholder="Enter section (optional)" v-model="sectionName">
+        <div id="class-time-container">
+          <input type="text" id="class-time-input" placeholder="Enter class time" v-model="classTime">
         </div>
         <div id="class-code-container">
           <input type="text" id="class-code-input" placeholder="Enter class code" v-model="classCode">
@@ -25,8 +25,8 @@
         <div id="room-container">
           <input type="text" id="room-input" placeholder="Enter room (optional)" v-model="room">
         </div>
-        <div id="class-time-container">
-          <input type="text" id="class-time-input" placeholder="Enter class time" v-model="classTime">
+        <div id="section-name-container">
+          <input type="text" id="section-name-input" placeholder="Enter section (optional)" v-model="sectionName">
         </div>
       </div>
     </div>
@@ -35,13 +35,13 @@
       <h2>Professor Details</h2>
       <div id="professor-input">
         <div id="professor-name-container">
-          <input type="text" id="professor-name-input" placeholder="Enter class name" v-model="profName">
+          <input type="text" id="professor-name-input" placeholder="Enter professor name" v-model="profName">
         </div>
         <div id="professor-email-container">
-          <input type="text" id="professor-email-input" placeholder="Enter class name" v-model="profEmail">
+          <input type="text" id="professor-email-input" placeholder="Enter professor email" v-model="profEmail">
         </div>
         <div id="professor-office-container">
-          <input type="text" id="professor-office-input" placeholder="Enter class name" v-model="profOffice">
+          <input type="text" id="professor-office-input" placeholder="Enter office location" v-model="profOffice">
         </div>
         
       </div>
@@ -78,14 +78,14 @@
   }, 500);
 
   function createClass() {
-    let className = document.getElementById("className").value;
-    let sectionName = document.getElementById("sectionName").value;
-    let classCode = document.getElementById("classCode").value;
-    let room = document.getElementById("room").value;
-    let classTime = document.getElementById("classTime").value;
-    let profName = document.getElementById("profName").value;
-    let profEmail = document.getElementById("profEmail").value;
-    let profOffice = document.getElementById("profOffice").value;
+    let className = document.getElementById("class-name-input").value;
+    let sectionName = document.getElementById("section-name-input").value;
+    let classCode = document.getElementById("class-code-input").value;
+    let room = document.getElementById("room-input").value;
+    let classTime = document.getElementById("class-time-input").value;
+    let profName = document.getElementById("professor-name-input").value;
+    let profEmail = document.getElementById("professor-email-input").value;
+    let profOffice = document.getElementById("professor-office-input").value;
 
     const host = 'http://127.0.0.1:5000'; 
     const apiUrl = '/api/class/'+className+'/update_meta';
@@ -99,23 +99,23 @@
       profEmail: profEmail,
       profOffice: profOffice
     };
-    fetch(host + apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      mode: 'no-cors',
-      body: JSON.stringify(data),
-      credentials: 'include'
-    })
-      .then(response => response.text())
-      .then(data => {
-        setModal("Success", "success", data);
-        toggleModal();
+      fetch(host + apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        mode: 'no-cors',
+        body: JSON.stringify(data),
+        credentials: 'include'
       })
-    .catch(error => {
-      console.log(error);
-    });
+        .then(response => response.text())
+        .then(data => {
+          setModal("Success", "success", data);
+          toggleModal();
+        })
+      .catch(error => {
+        console.log(error);
+      });
   };
 
 

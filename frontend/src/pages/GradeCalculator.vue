@@ -85,7 +85,7 @@
     </div>
 
     <div id="save-button">
-      <button class="button bar" @click="getData()">Save Changes</button>
+      <button class="button bar" @click="update">Save Changes</button>
     </div>
 
   </div>
@@ -101,84 +101,107 @@
 
   const store = useStore();
   const { sessionTimer, userId, studyClass } = storeToRefs(store);
-  const { updateSkin, setPageName, setStudyClass } = store;
+  const { updateSkin, setPageName, setStudyClass, setModal, toggleModal } = store;
 
   onMounted(() => {
       setPageName("Grade Calculator");
+  });
+
+
+  function createRow(){
+    let newRow = document.createElement("tr");
+
+    let name = document.createElement("td");
+    let qty = document.createElement("td");
+    let percent = document.createElement("td");
+    let deleteButton = document.createElement("td");
+
+    let nameInput = document.createElement("input");
+    let qtyInput = document.createElement("input");
+    let percentInput = document.createElement("input");
+    let deleteButtonInput = document.createElement("button");
+
+    newRow.classList.add("grid");
+
+    nameInput.setAttribute("type", "text");
+    nameInput.setAttribute("placeholder", "Quiz");
+
+    qtyInput.setAttribute("type", "number");
+    qtyInput.setAttribute("placeholder", "0");
+    qtyInput.setAttribute("min", "0");
+
+    percentInput.setAttribute("type", "number");
+    percentInput.setAttribute("placeholder", "0");
+    percentInput.setAttribute("min", "0");
+    percentInput.setAttribute("max", "100")
+
+    deleteButtonInput.setAttribute("type", "button");
+
+    name.appendChild(nameInput);
+    qty.appendChild(qtyInput);
+    percent.appendChild(percentInput);
+    deleteButton.appendChild(deleteButtonInput);
+
+    newRow.appendChild(name);
+    newRow.appendChild(qty);
+    newRow.appendChild(percent);
+    newRow.appendChild(deleteButton);
+
+    percent.innerHTML += " %";
+
+    document.getElementById("table-buddy").appendChild(newRow);
+  }
+
+  function getData(){
+    let table = document.getElementById("table-buddy");
+    let rows = table.getElementsByTagName("tr");
+    let data = [];
+
+    for(let i = 0; i < rows.length; i++){
+      let row = rows[i];
+      let cols = row.getElementsByTagName("td");
+      let name = cols[0].getElementsByTagName("input")[0].value;
+      let qty = cols[1].getElementsByTagName("input")[0].value;
+      let percent = cols[2].getElementsByTagName("input")[0].value;
+
+      data.push({
+        name: name,
+        qty: qty,
+        percent: percent
+      });
+    }
+
+    console.log(data)
+
+    return data;
+  }
+
+  function update(){
+    /******************************************* 
+     * TODO: Update POST endpoint
+     *******************************************/
+
+     const host = 'http://127.0.0.1:5000'; 
+    const apiUrl = '/api/';
+    const data = getData();
+    fetch(host + apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      mode: 'no-cors',
+      body: JSON.stringify(data),
+      credentials: 'include'
+    })
+      .then(response => response.text())
+      .then(data => {
+        setModal("Success", "success", data);
+        toggleModal();
+      })
+    .catch(error => {
+      console.log(error);
     });
-
-
-    function createRow(){
-      let newRow = document.createElement("tr");
-
-      let name = document.createElement("td");
-      let qty = document.createElement("td");
-      let percent = document.createElement("td");
-      let deleteButton = document.createElement("td");
-
-      let nameInput = document.createElement("input");
-      let qtyInput = document.createElement("input");
-      let percentInput = document.createElement("input");
-      let deleteButtonInput = document.createElement("button");
-
-      newRow.classList.add("grid");
-
-      nameInput.setAttribute("type", "text");
-      nameInput.setAttribute("placeholder", "Quiz");
-
-      qtyInput.setAttribute("type", "number");
-      qtyInput.setAttribute("placeholder", "0");
-      qtyInput.setAttribute("min", "0");
-
-      percentInput.setAttribute("type", "number");
-      percentInput.setAttribute("placeholder", "0");
-      percentInput.setAttribute("min", "0");
-      percentInput.setAttribute("max", "100")
-
-      deleteButtonInput.setAttribute("type", "button");
-
-      name.appendChild(nameInput);
-      qty.appendChild(qtyInput);
-      percent.appendChild(percentInput);
-      deleteButton.appendChild(deleteButtonInput);
-
-      newRow.appendChild(name);
-      newRow.appendChild(qty);
-      newRow.appendChild(percent);
-      newRow.appendChild(deleteButton);
-
-      percent.innerHTML += " %";
-
-      document.getElementById("table-buddy").appendChild(newRow);
-
-
-
-
-    }
-
-    function getData(){
-      let table = document.getElementById("table-buddy");
-      let rows = table.getElementsByTagName("tr");
-      let data = [];
-
-      for(let i = 0; i < rows.length; i++){
-        let row = rows[i];
-        let cols = row.getElementsByTagName("td");
-        let name = cols[0].getElementsByTagName("input")[0].value;
-        let qty = cols[1].getElementsByTagName("input")[0].value;
-        let percent = cols[2].getElementsByTagName("input")[0].value;
-
-        data.push({
-          name: name,
-          qty: qty,
-          percent: percent
-        });
-      }
-
-      console.log(data)
-
-      return data;
-    }
+  }
 
 </script>
 

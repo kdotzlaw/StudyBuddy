@@ -38,7 +38,10 @@
         <Settings/>
     </div>
     <div v-else-if="contentId=='addRequirement'" class="form-ctr">
-        <AddRequirement/>
+        <AddRequirement />
+    </div>
+    <div v-else-if="contentId=='editRequirement'" class="form-ctr">
+        <AddRequirement :edit="true" />
     </div>
 
     <!-- HTML render -->

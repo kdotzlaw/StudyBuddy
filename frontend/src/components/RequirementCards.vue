@@ -7,6 +7,10 @@
 <script setup>
     import Gear from "/artifacts/gear.svg";
     import { computed } from "vue";
+    import { useStore } from "../stores";
+    
+    const store = useStore();
+    const {setModal, toggleModal} = store;
 
     const props = defineProps({ 
         reqs: {type: Array, required: false, default: []},
@@ -79,7 +83,7 @@
             <h2 class="goal"> {{ req.goal }} </h2>
 
             <!-- Open Settings control -->
-            <img class="reqManage" :src="Gear" alt="Manage requirement" />
+            <img class="reqManage" :src="Gear" alt="Manage requirement" @click="setModal('Edit Requirement', 'editRequirement')" />
 
         </div>
     </div>

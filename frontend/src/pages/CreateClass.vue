@@ -47,8 +47,11 @@
       </div>
     </div>
 
-    <div id="add-button">
-      <button class="button bar" id="add-button">Add New Class</button>
+    <div v-if="classRoute" id="add-button">
+      <button class="button bar" id="add-button" @click="createClass">Update Class</button>
+    </div>
+    <div v-else id="add-button">
+      <button class="button bar" id="add-button" @click="createClass">Add New Class</button>
     </div>
 
   </div>
@@ -58,17 +61,18 @@
 <script setup>
   import ArrowBack from "/artifacts/arrowback.svg";
   import { ref, computed, onMounted } from "vue";
+  import { useRoute } from 'vue-router';
   import { storeToRefs } from "pinia";
   import { useStore } from "../stores";
 
 
   const store = useStore();
   const { sessionTimer, userId, studyClass } = storeToRefs(store);
-  const { updateSkin, setPageName, setStudyClass } = store;
+  const { updateSkin, setPageName, setStudyClass, setModal, toggleModal } = store;
 
   onMounted(() => {
-      setPageName("Grade Calculator");
-    });
+    setPageName("Grade Calculator");
+  });
 
   setTimeout(() => {
     const addButton = document.getElementById("add-button");
@@ -77,15 +81,18 @@
     });
   }, 500);
 
+  let classRoute = useRoute().params.slug;
+  let className, sectionName, classCode, room, classTime, profName, profEmail, profOffice;
+
   function createClass() {
-    let className = document.getElementById("class-name-input").value;
-    let sectionName = document.getElementById("section-name-input").value;
-    let classCode = document.getElementById("class-code-input").value;
-    let room = document.getElementById("room-input").value;
-    let classTime = document.getElementById("class-time-input").value;
-    let profName = document.getElementById("professor-name-input").value;
-    let profEmail = document.getElementById("professor-email-input").value;
-    let profOffice = document.getElementById("professor-office-input").value;
+    className = document.getElementById("class-name-input").value;
+    sectionName = document.getElementById("section-name-input").value;
+    classCode = document.getElementById("class-code-input").value;
+    room = document.getElementById("room-input").value;
+    classTime = document.getElementById("class-time-input").value;
+    profName = document.getElementById("professor-name-input").value;
+    profEmail = document.getElementById("professor-email-input").value;
+    profOffice = document.getElementById("professor-office-input").value;
 
     const host = 'http://127.0.0.1:5000'; 
     const apiUrl = '/api/class/'+className+'/update_meta';

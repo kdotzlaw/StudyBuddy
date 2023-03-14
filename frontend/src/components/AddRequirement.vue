@@ -1,24 +1,28 @@
 <template>
-<div id="add-req-container">
-  
-  <div id="name-req">
-    <h3>Requirement Name</h3>
-    <input type="text" id="name-req-input" placeholder="Enter requirement name" v-model="reqName">
-  </div>
-  <div id="grade-req">
-    <h3>Letter Goal</h3>
-    <input type="text" id="grade-req-input" placeholder="A" v-model="gradeReq">
-  </div>
-  <div id="date-req">
-    <h3>Due Date</h3>
-    <input type="datetime-local" id="date-req-input" placeholder="" v-model="reqDate">
-  </div>
+  <div id="add-req-container">
+    
+    <div id="name-req">
+      <h3>Requirement Name</h3>
+      <input type="text" id="name-req-input" placeholder="Enter requirement name" v-model="reqName">
+    </div>
+    <div id="grade-req">
+      <h3>Letter Goal</h3>
+      <input type="text" id="grade-req-input" placeholder="A" v-model="gradeReq">
+    </div>
+    <div id="date-req">
+      <h3>Due Date</h3>
+      <input type="datetime-local" id="date-req-input" placeholder="" v-model="reqDate">
+    </div>
+    <div v-if="edit" id="finish-req">
+      <h3>Grade Received</h3>
+      <input type="number" id="finish-req-input" placeholder="90" v-model="finishReq">
+    </div>
 
-  <div id="add-button">
-    <button class="button bar" id="add-button" @click="addToCalendar()">Add to calendar</button>
-  </div>
+    <div id="add-button-outer">
+      <button class="button bar" id="add-button" @click="addToCalendar()">Add to calendar</button>
+    </div>
 
-</div>
+  </div>
 
 
 </template>
@@ -31,11 +35,22 @@
   const store = useStore();
   const {setModal, toggleModal} = store;
 
+  const props = defineProps({ 
+    edit: {type: Boolean, required: false, default: false}
+  })
   
+  let reqName, gradeReq, reqDate, finishReq;
+
   function addToCalendar(){
-    let reqName = document.getElementById("name-req-input").value;
-    let gradeReq = document.getElementById("grade-req-input").value;
-    let reqDate = document.getElementById("date-req-input").value;
+    reqName = document.getElementById("name-req-input").value;
+    gradeReq = document.getElementById("grade-req-input").value;
+    reqDate = document.getElementById("date-req-input").value;
+    if(props.edit)
+      finishReq = document.getElementById("finish-req-input").value;
+
+    /******************************************* 
+     * TODO: Update POST endpoint
+     *******************************************/
 
     const host = 'http://127.0.0.1:5000'; 
     const apiUrl = '/api/';
@@ -63,7 +78,6 @@
       console.log(error);
     });
   }
-
 
 </script>
 
@@ -102,6 +116,15 @@
   text-align: center;
 }
 
+#finish-req{
+  width: 100%;
+
+  grid-column: 2;
+  grid-row: 2;
+
+  text-align: center;
+}
+
 #date-req{
   width: 70%;
 
@@ -118,7 +141,7 @@
   color: var(--black);
 }
 
-#grade-req-input{
+#grade-req-input, #finish-req-input{
   width: 40%;
   height: 5vh;
   font-size: medium;
@@ -141,8 +164,10 @@
   margin-left: 70%; 
   margin-right: 0;
   position: absolute;
-  bottom: -1em;
+  bottom: -0.5em;
+  right: 5em;
   width: max-content;
+  transform: scale(1.15);
 }
 
 .button{

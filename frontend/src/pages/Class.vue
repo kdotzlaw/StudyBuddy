@@ -222,7 +222,9 @@
                 </router-link>
 
                 <!-- Manage Class information -->
-                <img id="class-settings" :src="Gear" alt="Manage class information" />
+                <router-link :to="'/editClass/' + classRoute">
+                    <img id="class-settings" :src="Gear" alt="Manage class information" />
+                </router-link>
 
             </div>
             <div id="hero-items">

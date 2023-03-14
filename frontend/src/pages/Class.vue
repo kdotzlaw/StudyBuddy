@@ -48,7 +48,7 @@
             })
         .catch(error => {
             console.log(`GET fetch location: Class page, URL: ${apiUrlMeta}`)
-            console.error(error);
+            console.log(error);
         });
 
         // Get this class' requirements
@@ -68,7 +68,7 @@
             })
         .catch(error => {
             console.log(`GET fetch location: Class page, URL: ${apiUrlReq}`)
-            console.error(error);
+            console.log(error);
         });
     });
 
@@ -496,6 +496,12 @@
 
     #details-ctr table{
         width: 100%;
+    }
+
+    td{
+        margin: inherit;
+        width: 100%;
+        text-align: left;
     }
 
     @media screen and (max-width: 820px) {

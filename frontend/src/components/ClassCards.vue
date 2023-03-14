@@ -57,8 +57,9 @@
         </div>
 
         <!-- Add New card -->
-        <div :class="`classCard addNew`"> + </div>
-
+        <router-link to="/createClass">
+            <div :class="`classCard addNew`"> + </div>
+        </router-link>
     </div>
 </template>
 

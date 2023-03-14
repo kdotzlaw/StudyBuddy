@@ -2,12 +2,10 @@
   <!-- <div class="gradeCalcPage"> -->
 
     <div id="back-items" v-motion-slide-right>
-      <router-link to="/class">
-          <button id="back">
-              <img :src="ArrowBack" alt="Go back to Dashboard" />
-              <span> Back </span>
-          </button>
-      </router-link>
+        <button id="back" @click="$router.back(-1)">
+            <img :src="ArrowBack" alt="Go back to Dashboard" />
+            <span> Back </span>
+        </button>
     </div>
     
   <div id="grade-container">
@@ -224,6 +222,8 @@
   #save-button{
     margin-left: 75%; 
     margin-right: 0;
+    position: absolute;
+    bottom: -1em;
   }
 
   .button{
@@ -248,6 +248,7 @@
   }
 
   #grade-container{
+    position: relative;
     width: 50%;
     height: 90%;
     background: var(--indigo);

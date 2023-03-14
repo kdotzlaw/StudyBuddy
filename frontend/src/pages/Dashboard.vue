@@ -103,13 +103,13 @@
                         })
                     .catch(error => {
                         console.log(`GET fetch location: Dashboard, URL: ${apiUrlTask}`)
-                        console.error(error);
+                        console.log(error);
                     });
                 }
             })
         .catch(error => {
             console.log(`GET fetch location: Dashboard, URL: ${apiUrlClass}`)
-            console.error(error);
+            console.log(error);
         });
     });
 </script>

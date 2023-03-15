@@ -429,10 +429,13 @@ def delete_class(classname):
 @flask_login.login_required
 def complete_task(classname, taskname):
     username = flask_login.current_user.get_id()
+    print("----------------PARSING JSON")
     req = flask.request.get_json(force=True)
     if 'grade' not in req.keys():
         grade = 0
+        print('--------------- GRADE NOT IN KEYS')
     else:
+        print('--------------- GRADE IN KEYS')
         grade = req['grade']
 
     res = db.completeTask(username, classname, taskname, grade)

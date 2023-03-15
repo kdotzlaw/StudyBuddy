@@ -59,6 +59,7 @@
 </template>
 
 <script setup>
+  import { default as axios } from 'axios';
   import ArrowBack from "/artifacts/arrowback.svg";
   import { ref, computed, onMounted } from "vue";
   import { useRoute } from 'vue-router';
@@ -95,7 +96,8 @@
     profOffice = document.getElementById("professor-office-input").value;
 
     const host = 'http://127.0.0.1:5000'; 
-    const apiUrl = '/api/class/'+className+'/update_meta';
+    const apiUrlNew = `/api/newclass`;
+    const apiUrlUpdate = `/api/class/${classRoute}/update_meta`;
     const data = {
       className: className,
       sectionName: sectionName,
@@ -106,23 +108,35 @@
       profEmail: profEmail,
       profOffice: profOffice
     };
-      fetch(host + apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        mode: 'no-cors',
-        body: JSON.stringify(data),
-        credentials: 'include'
-      })
-        .then(response => response.text())
-        .then(data => {
-          setModal("Success", "success", data);
+
+    // Update current class information
+    if(classRoute){
+      axios.post(host + apiUrlUpdate, data)
+        .then(function (response) {
+          console.log(response);
+          setModal("Success", "success", response.data);
           toggleModal();
         })
-      .catch(error => {
-        console.log(error);
-      });
+        .catch(function (error) {
+          console.log(error.response);
+          setModal("Error", "error", error.response.data);
+          toggleModal();
+        });
+    }
+    // Create new class
+    else{
+      axios.post(host + apiUrlNew, data)
+        .then(function (response) {
+          console.log(response);
+          setModal("Success", "success", response.data);
+          toggleModal();
+        })
+        .catch(function (error) {
+          console.log(error.response);
+          setModal("Error", "error", error.response.data);
+          toggleModal();
+        });
+    }
   };
 
 

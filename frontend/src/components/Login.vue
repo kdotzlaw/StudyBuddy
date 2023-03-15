@@ -8,11 +8,11 @@
     <form class="form" id="login">
         <div class="login-container">
           <div class="form-input-group">
-            <input type="text" id="signinUsername" class="form-input" autofocus placeholder="Username" v-model="username">
+            <input type="text" id="signinUsername" class="form-input" autofocus placeholder="Username" v-model="username" @keydown="checkEnter">
             <div class="form-input-error-message" v-if="usernameErrorMsg">{{ usernameErrorMsg }}</div>
           </div>
           <div class="form-input-group">
-            <input type="password" id="signinPassword" class="form-input" autofocus placeholder="Password" v-model="password">
+            <input type="password" id="signinPassword" class="form-input" autofocus placeholder="Password" v-model="password" @keydown="checkEnter">
             <div class="form-input-error-message" v-if="passwordErrorMsg">{{ passwordErrorMsg }}</div>
           </div>
           <button class="login-button" type="button" @click="validateForm">Log In</button>
@@ -65,6 +65,13 @@
   }
 
   checkLinks();
+
+  // Detect when ENTER key pressed to submit form
+  function checkEnter(event){
+    if(event.key == "Enter")
+        validateForm();
+    event.stopImmediatePropagation();
+  }
 
   /* validateForm
    *   Runs all validation checks on form submit, and sends data to login authentication endpoint when validations pass.

@@ -8,19 +8,19 @@
     <form class="form " id="createAccount">
       <div class="register-container">
         <div class="form-input-group">
-          <input type="text" id="signupUsername" class="form-input" autofocus placeholder="Username" v-model="username">
+          <input type="text" id="signupUsername" class="form-input" autofocus placeholder="Username" v-model="username" @keydown="checkEnter">
           <div class="form-input-error-message" v-if="usernameErrorMsg">{{ usernameErrorMsg }}</div>
         </div>
         <div class="form-input-group">
-            <input type="text" id="signupEmail" class="form-input" autofocus placeholder="Email Address" v-model="email">
+            <input type="text" id="signupEmail" class="form-input" autofocus placeholder="Email Address" v-model="email" @keydown="checkEnter">
             <div class="form-input-error-message" v-if="emailErrorMsg">{{ emailErrorMsg }}</div>
         </div>
         <div class="form-input-group">
-            <input type="password" id="signupPassword" class="form-input" autofocus placeholder="Password" v-model="password">
+            <input type="password" id="signupPassword" class="form-input" autofocus placeholder="Password" v-model="password" @keydown="checkEnter">
             <div class="form-input-error-message" v-if="passwordErrorMsg">{{ passwordErrorMsg }}</div>
         </div>
         <div class="form-input-group">
-            <input type="password" id="signupPasswordConfirm" class="form-input" autofocus placeholder="Confirm password" v-model="confirmPassword">
+            <input type="password" id="signupPasswordConfirm" class="form-input" autofocus placeholder="Confirm password" v-model="confirmPassword" @keydown="checkEnter">
             <div class="form-input-error-message" v-if="confirmpasswordErrorMsg">{{ confirmpasswordErrorMsg }}</div>
         </div>
         <button class="register-button" type="button" @click="validateForm">Register</button>
@@ -62,6 +62,13 @@
   }
 
   checkLinks();
+
+  // Detect when ENTER key pressed to submit form
+  function checkEnter(event){
+    if(event.key == "Enter")
+        validateForm();
+    event.stopImmediatePropagation();
+  }
 
   /* validateForm
    *   Runs all validation checks on form submit, and sends data to newuser authentication endpoint when validations pass.

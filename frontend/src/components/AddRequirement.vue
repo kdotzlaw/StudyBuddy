@@ -3,11 +3,11 @@
     
     <div id="name-req">
       <h3>Requirement Name</h3>
-      <input type="text" id="name-req-input" placeholder="Enter requirement name" v-model="reqName">
+      <input type="text" id="name-req-input" placeholder="Enter requirement name" v-model="reqName" @keydown="checkEnter">
     </div>
     <div id="grade-req">
       <h3>Letter Goal</h3>
-      <input type="text" id="grade-req-input" placeholder="A" v-model="gradeReq">
+      <input type="text" id="grade-req-input" placeholder="A" v-model="gradeReq" @keydown="checkEnter">
     </div>
     <div id="date-req">
       <h3>Due Date</h3>
@@ -15,7 +15,7 @@
     </div>
     <div v-if="edit" id="finish-req">
       <h3>Grade Received</h3>
-      <input type="number" id="finish-req-input" placeholder="90" v-model="finishReq">
+      <input type="number" id="finish-req-input" placeholder="90" v-model="finishReq" @keydown="checkEnter">
     </div>
 
     <div id="add-button-outer">
@@ -28,6 +28,8 @@
 </template>
 
 <script setup>
+  import { default as axios } from 'axios';
+  import { useRoute } from 'vue-router';
   import { storeToRefs } from "pinia";
   import { ref, computed } from "vue";
   import { useStore } from "../stores";
@@ -36,47 +38,66 @@
   const {setModal, toggleModal} = store;
 
   const props = defineProps({ 
-    edit: {type: Boolean, required: false, default: false}
+    edit: {type: Boolean, required: false, default: false},
   })
   
+  let classRoute = useRoute().params.slug;
   let reqName, gradeReq, reqDate, finishReq;
+
+  // Detect when ENTER key pressed to submit form
+  function checkEnter(event){
+    if(event.key == "Enter")
+        addToCalendar();
+    event.stopImmediatePropagation();
+  }
 
   function addToCalendar(){
     reqName = document.getElementById("name-req-input").value;
     gradeReq = document.getElementById("grade-req-input").value;
     reqDate = document.getElementById("date-req-input").value;
-    if(props.edit)
-      finishReq = document.getElementById("finish-req-input").value;
-
-    /******************************************* 
-     * TODO: Update POST endpoint
-     *******************************************/
 
     const host = 'http://127.0.0.1:5000'; 
-    const apiUrl = '/api/';
-    const data = {
-      reqName: reqName,
-      gradeReq: gradeReq,
-      reqDate: reqDate,
+    const apiUrlNew = `/api/class/${classRoute}/newtask`;
+    const apiUrlUpdate = `/api/class/${classRoute}/newtask`;
+    let data = {
+      taskname: reqName,
+      weight: gradeReq, // TODO: Sync reqs with backend
+      deadline: reqDate,
     };
-    console.log(data);
-    fetch(host + apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      mode: 'no-cors',
-      body: JSON.stringify(data),
-      credentials: 'include'
-    })
-      .then(response => response.text())
-      .then(data => {
-        setModal("Success", "success", data);
+
+    if(props.edit){
+      finishReq = document.getElementById("finish-req-input").value;
+      data.grade = finishReq;
+    }
+
+    // Update current task information
+    if(props.edit){
+      axios.post(host + apiUrlUpdate, data)
+      .then(function (response) {
+        console.log(response);
+        setModal("Success", "success", response.data);
         toggleModal();
       })
-    .catch(error => {
-      console.log(error);
-    });
+      .catch(function (error) {
+        console.log(error.response);
+        setModal("Error", "error", error.response.data);
+        toggleModal();
+      });
+    }
+    // Create new task
+    else{
+      axios.post(host + apiUrlNew, data)
+      .then(function (response) {
+        console.log(response);
+        setModal("Success", "success", response.data);
+        toggleModal();
+      })
+      .catch(function (error) {
+        console.log(error.response);
+        setModal("Error", "error", error.response.data);
+        toggleModal();
+      });
+    }
   }
 
 </script>

@@ -5,6 +5,7 @@
 -->
 
 <script setup>
+    import { default as axios } from 'axios';
     import ArrowBack from "/artifacts/arrowback.svg";
     import Gear from "/artifacts/gear.svg";
     import Play from "/artifacts/play.svg";
@@ -33,50 +34,51 @@
         // Get this class' metadata
         const host = 'http://127.0.0.1:5000'; 
         const apiUrlMeta = `/api/class/${classRoute}`;
-        fetch(host + apiUrlMeta, {
-            method: 'GET',
-            mode: 'no-cors',
-            credentials: 'include'
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log(`GET fetch location: Class page, URL: ${apiUrlMeta}`)
-                console.log(data)
+
+        axios.get(host + apiUrlMeta)
+            .then(function (response) {
+                console.log(response);
                 /******************************************* 
-                 * TODO: Replace classInfo with fetched data
+                 * TODO: Replace classInfo with fetched response.data json
                  *******************************************/
             })
-        .catch(error => {
-            console.log(`GET fetch location: Class page, URL: ${apiUrlMeta}`)
-            console.log(error);
-        });
+            .catch(function (error) {
+                console.log(error.response);
+            })
 
         // Get this class' requirements
         const apiUrlReq = `/api/class/${classRoute}/task`;
-        fetch(host + apiUrlReq, {
-            method: 'GET',
-            mode: 'no-cors',
-            credentials: 'include'
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log(`GET fetch location: Class page, URL: ${apiUrlReq}`)
-                console.log(data)
+
+        axios.get(host + apiUrlReq)
+            .then(function (response) {
+                console.log(response);
                 /******************************************* 
-                 * TODO: Replace reqs with fetched data
+                 * TODO: Replace reqs with fetched response.data json
                  *******************************************/
             })
-        .catch(error => {
-            console.log(`GET fetch location: Class page, URL: ${apiUrlReq}`)
-            console.log(error);
-        });
+            .catch(function (error) {
+                console.log(error.response);
+            })
+
+        // Get this class' letter grade
+        const apiUrlGrade = `/api/class/${classRoute}/grade`;
+
+        axios.get(host + apiUrlGrade)
+            .then(function (response) {
+                console.log(response);
+                /******************************************* 
+                 * TODO: Replace grade with fetched response.data json
+                 *******************************************/
+            })
+            .catch(function (error) {
+                console.log(error.response);
+            })
     });
 
-    // Stub data compensates for unintegrated(future sprint) features
-    let classInfo = {
+    const grade = ref("C+");
+    const classInfo = ref({
         name: "COMP 2080", // Class primary key
         timeStudied: 2.3,
-        grade: "C+",
         details: {
             name: "Analysis of Algorithms",
             section: "A02",
@@ -89,7 +91,7 @@
             officeLocation: "Machray 200",
             officeHours: "5:00-6:00"
         }
-    }
+    });
     // Smart detect requirement type by checking keywords in title
     function getMatch(title){
         let matchList = [ 
@@ -124,7 +126,7 @@
             return "grey";
         return mapping;
     }
-    let reqs = [
+    const reqs = ref([
         { name: "Quiz 5", tagColor: getTagColor("Quiz 5"), due: new Date("February 12, 2023"), goal: "C" },
         { name: "Homework 4", tagColor: getTagColor("Homework 4"), due: new Date("March 1, 2023"), goal: "C" },
         { name: "Quiz 6", tagColor: getTagColor("Quiz 6"), due: new Date("March 5, 2023"), goal: "B" },
@@ -133,7 +135,7 @@
         { name: "Final Project", tagColor: getTagColor("Final Project"), due: new Date("April 16, 2023"), goal: "C" },
         { name: "Final Exam", tagColor: getTagColor("Final Exam"), due: new Date("April 17, 2023"), goal: "C" },
         { name: "Become a Bee", tagColor: getTagColor("Become a Bee"), due: new Date("October 10, 2023"), goal: "" },
-    ]
+    ]);
 
 
     /*===========================
@@ -169,7 +171,7 @@
 
     // Filter requirements by current(present-upcoming) or expired(past)
     const currentReqs = computed(() => {
-        return reqs.filter(req => {
+        return reqs.value.filter(req => {
             let diffTime = req.due - today;
             let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             if(diffDays > -1)
@@ -177,7 +179,7 @@
         })
     });
     const expiredReqs = computed(() => {
-        return reqs.filter(req => {
+        return reqs.value.filter(req => {
             let diffTime = req.due - today;
             let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             if(diffDays < 0)
@@ -265,7 +267,7 @@
 
                 <!-- Class grade projection -->
                 <div id="grade-ctr" v-motion-slide-right>
-                    <h1 id="grade"> {{ classInfo.grade }} </h1>
+                    <h1 id="grade"> {{ grade }} </h1>
                     <div id="grade-note" class="delius">
                         Wow! <br/>
                         You are doing okay

@@ -618,7 +618,7 @@ class apiTest(flask_unittest.ClientTestCase):
 
     def test_grade(self, client):
         # log in
-        resp = resp = client.post('/api/login', json={'username': 'andrea22', 'password': '2222'})
+        resp = client.post('/api/login', json={'username': 'andrea22', 'password': '2222'})
         # check valid login
         self.assertStatus(resp, 200)
         # get grade for class
@@ -628,7 +628,7 @@ class apiTest(flask_unittest.ClientTestCase):
 
     def test_grade_notasks(self, client):
         # log in
-        resp = resp = client.post('/api/login', json={'username': 'andrea22', 'password': '2222'})
+        resp = client.post('/api/login', json={'username': 'andrea22', 'password': '2222'})
         # check valid login
         self.assertStatus(resp, 200)
         # get grade for class
@@ -647,6 +647,92 @@ class apiTest(flask_unittest.ClientTestCase):
         resp = client.get('/api/class/COMP 9999')
         self.assertStatus(resp, 200)
 
+    def test_updatemeta(self, client):
+        # log in
+        resp = client.post('/api/login', json={'username': 'katDot', 'password': '1234'})
+        # check valid login
+        self.assertStatus(resp, 200)
+        # update metadata
+        resp = client.post('/api/class/COMP 3820/update_meta', json={"breakdown": '{"A+":"(90,100)", "A":"(80,89)", "B+":"(75,79)", "B":"(70,74)", "C+":"(65,69)", "C":"(56,64)", "D":"(50,55)", "F":"(0, 49)"}'})
+        self.assertStatus(resp, 200)
+        
+
+    def test_editclass(self, client):
+        # log in
+        resp = client.post('/api/login', json=creds)
+        # check valid login
+        self.assertStatus(resp, 200)
+        # edit class
+        resp = client.post('/api/class/COMP 9999/edit', json={"classname": "COMP 8888"})
+        self.assertStatus(resp, 200)
+        # double check
+        resp = client.get('/api/class/COMP 8888')
+        # name changed
+        self.assertStatus(resp, 200)
+        # timeslot didn't change
+        self.assertEquals(resp.get_json(force=True)['timeslot'], "11:30")
+    def test_edittask(self, client):
+        # log in
+        resp = client.post('/api/login', json={'username': 'andrea22', 'password': '2222'})
+        # check valid login
+        self.assertStatus(resp, 200)
+        # edit task
+        resp = client.post('/api/class/COMP 4350/task/Exam/edit', json={"newname": "Final Exam", "newweight": 0.40})
+        self.assertStatus(resp, 200)
+        # ensure only desired changes were made
+        resp = client.get('/api/class/COMP 4350/task/Final Exam')
+        # ensure name change
+        self.assertStatus(resp, 200)
+        # deadline didn't change
+        self.assertEquals(resp.get_json(force=True)['deadline'], '2023-02-16 10:00')
+        # weight did change
+        self.assertEqual(resp.get_json(force=True)['task_Weight'], 0.40)
+
+    def test_deleteclass(self, client):
+        # log in
+        resp = client.post('/api/login', json={"username": "EliStudy", "password": "2#!6A"})
+        # check valid login
+        self.assertStatus(resp, 200)
+        # delete class
+        resp = client.post('/api/class/COMP 4350/delete')
+        self.assertStatus(resp, 200)
+        # ensure class is gone
+        resp = client.get('/api/class/COMP 4350')
+        self.assertStatus(resp, 400)
+
+    def test_deletetask(self, client):
+        # log in
+        resp = client.post('/api/login', json=creds)
+        # check valid login
+        self.assertStatus(resp, 200)
+        # new task
+        resp = client.post('/api/class/COMP 4350/newtask', json={'taskname': 'Final', 'weight': 0.7, 'deadline': '2023-02-16 10:00'})
+        self.assertStatus(resp, 200)
+        # delete task
+        resp = client.post('/api/class/COMP 4350/task/Final/delete')
+        self.assertStatus(resp, 200)
+        # ensure task is gone
+        resp = client.post('/api/class/COMP 4350/task/Final')
+        self.assertStatus(resp, 400)
+
+
+    def test_donetasks(self, client):
+        # log in
+        resp = client.post('/api/login', json={'username': 'andrea22', 'password': '2222'})
+        # check valid login
+        self.assertStatus(resp, 200)
+        # grab graded tasks
+        resp = client.get('/api/class/COMP 2080/done_tasks')
+        self.assertStatus(resp, 200)
+        self.assertIn("A1", resp.get_data())
+    def test_completeclass(self, client):
+        # log in
+        resp = client.post('/api/login', json=creds)
+        # check valid login
+        self.assertStatus(resp, 200)
+        # complete class
+        resp = client.post('/api/class/COMP 4350/complete')
+        self.assertStatus(resp, 200)
 
 if __name__ == '__main__':
     unittest.main()

@@ -244,7 +244,7 @@ def completeClass(classname):
     elif res is None:
         return "Class not found", 404
     else:
-        return "Bad Request: Class not found, or class already completed", 400
+        return "Bad Request: Class already completed", 400
 
 
 # updates the metadata for class: 'classname', any missing metadata remains the same
@@ -413,7 +413,7 @@ def edit_class(classname):
     else:
         newtime = req['newtime']
 
-    db.editClass(username, classname, newname, newtime)
+    db.editClassReqData(username, classname, newname, newtime)
     return "Class edited", 200
 
 

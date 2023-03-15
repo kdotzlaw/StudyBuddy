@@ -409,7 +409,7 @@ def edit_class(classname):
 
 @app.route('/api/class/<classname>/delete', methods=["POST"])
 @flask_login.login_required
-def edit_class(classname):
+def delete_class(classname):
     username = flask_login.current_user.get_id()
     res = db.removeClass(username, classname)
     return "Class removed", 200

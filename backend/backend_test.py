@@ -439,12 +439,12 @@ class dbTests(unittest.TestCase):
 #//TODO: test for getDeadlines, update timeslot and name
 
 
-    ''' def test_getDeadlines(self):
+    def test_getDeadlines(self):
             username = 'katDot'
             d1 = datetime.datetime(year=2023, month=2, day=9, hour=14, minute=0, second=0)
             record = db.getDeadlines(username)
             self.assertNotEqual(record, None)
-            self.assertEqual(d1,record.deadline)'''
+            self.assertEqual(record.deadline,d1)
 
 
 creds = {'username': 'ryan2023', 'password': 'password'}

@@ -301,10 +301,10 @@ class dbTests(unittest.TestCase):
         username = "katDot"
         className = "COMP 3820"
         taskName = "A1"
-        db.completeTask(username, className, taskName, 0.98)
+        db.completeTask(username, className, taskName, 98)
         record = db.getCompleteTasksForClass(username, className)
         self.assertNotEqual(record, None)
-        self.assertEqual(record[0].task_grade, 0.98)
+        self.assertEqual(record[0].task_grade, 98)
 
     '''
     Test passes if completed task is successfully reset to be uncompleted (ie not in completed tasks and grade = 0.0)
@@ -318,7 +318,7 @@ class dbTests(unittest.TestCase):
         record = db.getCompleteTasksForClass(username, className)
         self.assertEqual(record, None)
         record = db.getTaskList(username, className)
-        self.assertEqual(record[0].task_grade, 0.0)
+        self.assertEqual(record[0].task_grade, 0)
 
     '''
     Test passes if the single, completed task appears in the list
@@ -340,7 +340,7 @@ class dbTests(unittest.TestCase):
         className = "COMP 2080"
         task1ID = db.getTaskID(username, className, "A1")
         task2ID = db.getTaskID(username, className, "Exam")
-        db.completeTask(username, className, "Exam", .88)
+        db.completeTask(username, className, "Exam", 88)
         record = db.getCompleteTasksForClass(username, className)
         self.assertNotEqual(record, None)
         task1 = ["A1", task1ID]
@@ -397,7 +397,7 @@ class dbTests(unittest.TestCase):
     def test_removeTask(self):
         username = "katDot"
         className = "COMP 3820"
-        record = db.addTask(username, className, "Final Exam", 0.50, "2023-04-20 23:59:00")
+        record = db.addTask(username, className, "Final Exam", 50, "2023-04-20 23:59:00")
         self.assertNotEqual(record, None)
         db.removeTask(username, className, "Final Exam")
         task = db.getSingleTask(username, className, "Final Exam")
@@ -410,7 +410,7 @@ class dbTests(unittest.TestCase):
     def test_addTask(self):
         username = "katDot"
         className = "COMP 3820"
-        record = db.addTask(username, className, "Final Exam", 0.50, "2023-04-20 23:59:00")
+        record = db.addTask(username, className, "Final Exam", 50, "2023-04-20 23:59:00")
         self.assertNotEqual(record, None)
         task = db.getSingleTask(username, className, "Final Exam")
         self.assertIn("Final Exam", task)

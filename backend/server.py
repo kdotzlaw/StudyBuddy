@@ -403,7 +403,7 @@ def grade(classname):
     username = flask_login.current_user.get_id()
 
     # get <classname> class, process grade breakdown
-    breakdown = json.loads(db.getClassID(username, classname).breakdown)
+    breakdown = json.loads(db.getSingleClass(username, classname).breakdown)
     # get <classname> completed tasks, process their grades
     comp_tasks = db.getCompleteTasksForClass(username, classname)
     if comp_tasks is None:

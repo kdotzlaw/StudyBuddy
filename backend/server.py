@@ -493,8 +493,8 @@ def grade(classname):
     # return letter grade based on breakdown and done task grades
     print(classname, "has a grade of: ", class_grade)
     for k in breakdown.keys():
-        print(str(breakdown[k][0] / 100), " < ", str(class_grade), " <= ", str(breakdown[k][1] / 100))
-        if (breakdown[k][0] / 100) < class_grade <= (breakdown[k][1] / 100):
+        print(eval(breakdown[k])[0] / 100, " < ", str(class_grade), " <= ", eval(breakdown[k])[1] / 100)
+        if eval(breakdown[k])[0] / 100 < class_grade <= eval(breakdown[k])[1] / 100:
             return {"result": k, "message": messages[k]}
     print(username, "didn't find grade range for", classname)
     return "Server Error: Grade range wasn't found", 500

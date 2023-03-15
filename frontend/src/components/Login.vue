@@ -32,9 +32,10 @@
 </template>
 
 <script setup>
-  import{ ref } from "vue"
-  import validate from "../logic/validate"
-  import { useStore } from "../stores"
+  import { default as axios } from 'axios';
+  import{ ref } from "vue";
+  import validate from "../logic/validate";
+  import { useStore } from "../stores";
   import { storeToRefs } from "pinia";
 
   let username, password;
@@ -102,35 +103,28 @@
         username: username,
         password: password
       };
-      fetch(host + apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        mode: 'no-cors',
-        body: JSON.stringify(data),
-        credentials: 'include'
+      axios.post(host + apiUrl, data)
+      .then(function (response) {
+        console.log(response);
+        loginUser(username);
+        setModal("Success", "success", response.data);
+        toggleModal();
       })
-        .then(response => response.text())
-        .then(data => {
-          loginUser(username);
-          setModal("Success", "success", data);
-          toggleModal();
-        })
-      .catch(error => {
+      .catch(function (error) {
+        console.log(error.response);
         // Temporary superuser admission for offline debugging. Removed before final release
         if(username == "admin" && "admitpls"){
           loginUser(username);
           setModal("So be it.", "success", "Welcome StudyBuddy Superuser!");
         }
-        else
-          setModal("Error", "error", "Error connecting to server.");
+        else{
+          loginUser(username);
+          setModal("Error", "error", error.response.data);
+        }
         toggleModal();
-        console.log(error);
       });
     }
   }
-
 </script>
 
 <style>

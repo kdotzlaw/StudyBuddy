@@ -36,6 +36,7 @@
 </template>
 
 <script setup>
+  import { default as axios } from 'axios';
   import{ ref } from "vue"
   import validate from "../logic/validate"
   import { useStore } from "../stores"
@@ -132,23 +133,23 @@
         email: email,
         password: password
       };
-      fetch(host + apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        mode: 'no-cors',
-        credentials: 'include',
-        body: JSON.stringify(data)
+
+      axios.post(host + apiUrl, data)
+      .then(function (response) {
+        console.log(response);
+        loginUser(username);
+        setModal("Success", "success", response.data);
+        toggleModal();
       })
-        .then(response => response.text())
-        .then(data => {
+      .catch(function (error) {
+        console.log(error.response);
+        // Temporary superuser admission for offline debugging. Removed before final release
+        if(username == "admin" && "admitpls"){
           loginUser(username);
-          setModal("Success", "success", data);
-          toggleModal();
-        })
-      .catch(error => {
-        setModal("Error", "error", "Error connecting to server.");
+          setModal("So be it.", "success", "Welcome StudyBuddy Superuser!");
+        }
+        else
+          setModal("Error", "error", error.response.data);
         toggleModal();
       });
     }

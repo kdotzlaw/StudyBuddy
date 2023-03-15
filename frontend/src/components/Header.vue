@@ -5,6 +5,7 @@
 -->
 
 <script setup>
+    import { default as axios } from 'axios';
     import { storeToRefs } from "pinia";
     import { ref, computed } from "vue";
     import Logo from "/assets/logo.png";
@@ -88,13 +89,10 @@
         // Send logout request to endpoint; Clear userId on success
         const host = 'http://127.0.0.1:5000'; 
         const apiUrl = '/api/logout';
-        fetch(host + apiUrl, {
-            method: 'POST',
-            mode: 'no-cors',
-            credentials: 'include'
-        })
-            .then(response => response.text())
-            .then(data => {
+
+        axios.post(host + apiUrl)
+            .then(function (response) {
+                console.log(response);
                 // Commit timer totals to database
                 Mgmt.commitTimer(userId.value, studyClass.value, studyTime.value);
                 
@@ -105,13 +103,20 @@
                 logoutUser();
 
                 // Display success modal
-                setModal("Success", "success", data);
+                setModal("Success", "success", response.data);
                 toggleModal();
             })
-        .catch(error => {
-            setModal("Error", "error", "Error connecting to server.");
-            toggleModal();
-        });
+            .catch(function (error) {
+                console.log(error.response);
+                setModal("Error", "error", error.response.data);
+                toggleModal();
+
+                // Temp: Destroy timer and purge sessional stores
+                setStudyClass(null);
+                setStudyTime(0);
+                setTimer(null);
+                logoutUser();
+            });
     }
 
     // Login option

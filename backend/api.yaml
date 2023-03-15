@@ -223,7 +223,7 @@ paths:
           required: true
       responses:
         200:
-          description: "The time in the associated class was increased successfully"
+          description: "The task was gotten successfully"
           content:
             application/json:
               schemas:
@@ -438,7 +438,89 @@ paths:
           description: "The request maker wasn't logged in, or forgot to send the session cookie"
         500:
           description: "Internal server error, problem with backend logic or database"
-
+  /class/{classname}/edit:
+    post:
+      tags: [ "Tracking Related" ]
+      summary: "Edit a class"
+      description: "Edits the 'timeslot', and/or the 'classname' attribute"
+      operationId: editclass
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+        - name: classname
+          in: url
+          required: true
+        - name: newtime
+          in: body
+          required: false
+        - name: newname
+          in: body
+          required: false
+      responses:
+        200:
+          description: "The class was edited successfully"
+  /class/{classname}/delete:
+    post:
+      tags: [ "Tracking Related" ]
+      summary: "Delete a class"
+      description: "Removes the class {classname} from the database"
+      operationId: deleteclass
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+        - name: classname
+          in: url
+          required: true
+      responses:
+        200:
+          description: "The class was removed successfully"
+  /class/{classname}/task/{taskname}/edit:
+    post:
+      tags: [ "Tracking Related" ]
+      summary: "Edit a task"
+      description: "Edits the "
+      operationId: edittask
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+        - name: classname
+          in: url
+          required: true
+        - name: newname
+          in: body
+          required: false
+        - name: newdeadline
+          in: body
+          required: false
+        - name: newweight
+          in: body
+          required: false
+      responses:
+        200:
+          description: "The task was edited successfully"
+  /class/{classname}/task/{taskname}/delete:
+    post:
+      tags: [ "Tracking Related" ]
+      summary: "Delete a task"
+      description: "Removes the task {taskname} associated with the class {classname} from the database"
+      operationId: deletetask
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+        - name: classname
+          in: url
+          required: true
+      responses:
+        200:
+          description: "The task was removed successfully"
 tags:
   - name: Account Related
     description: "Operations that pertain to a user's account management."

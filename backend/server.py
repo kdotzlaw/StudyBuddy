@@ -1,5 +1,6 @@
 import datetime
 import json
+import time
 
 import flask
 import flask_login
@@ -10,7 +11,18 @@ from werkzeug.security import check_password_hash, generate_password_hash
 import uuid
 import flask_cors
 
+
+class customJSON(flask.json.provider.JSONProvider):
+
+    def dumps(self, obj, **kwargs):
+        return json.dumps(obj, **kwargs, default=str)
+
+    def loads(self, s: str | bytes, **kwargs):
+        return json.loads(s, **kwargs)
+
+
 app = flask.Flask(__name__)
+app.json = customJSON(app)
 app.secret_key = uuid.uuid4().hex  # reset secret key each time the server starts
 
 # instantiate flask login manager
@@ -356,6 +368,63 @@ def get_task(classname, taskname):
         return {"result": parse_row(res)}, 200
 
 
+@app.route('/api/class/<classname>/task/<taskname>/edit', methods=["POST"])
+@flask_login.login_required
+def edit_task(classname, taskname):
+    username = flask_login.current_user.get_id()
+    req = flask.request.get_json(force=True)
+    if 'newname' not in req.keys():
+        newname = ""
+    else:
+        newname = req['newname']
+    if 'newdeadline' not in req.keys():
+        newdeadline = ""
+    else:
+        newdeadline = req['newdeadline']
+    if 'newweight' not in req.keys():
+        newweight = ""
+    else:
+        newweight = req['newweight']
+
+    db.editTask(username, classname, taskname, newname, newdeadline, newweight)
+    return "Task edited", 200
+
+
+@app.route('/api/class/<classname>/task/<taskname>/delete', methods=["POST"])
+@flask_login.login_required
+def delete_task(classname, taskname):
+    username = flask_login.current_user.get_id()
+    res = db.removeTask(username, classname, taskname)
+    return "Task removed", 200
+
+
+@app.route('/api/class/<classname>/edit', methods=["POST"])
+@flask_login.login_required
+def edit_class(classname):
+    username = flask_login.current_user.get_id()
+    req = flask.request.get_json(force=True)
+
+    if 'newname' not in req.keys():
+        newname = ""
+    else:
+        newname = req['newname']
+    if 'newtime' not in req.keys():
+        newtime = ""
+    else:
+        newtime = req['newtime']
+
+    db.editClass(username, classname, newname, newtime)
+    return "Class edited", 200
+
+
+@app.route('/api/class/<classname>/delete', methods=["POST"])
+@flask_login.login_required
+def delete_class(classname):
+    username = flask_login.current_user.get_id()
+    res = db.removeClass(username, classname)
+    return "Class removed", 200
+
+
 @app.route('/api/class/<classname>/task/<taskname>/complete', methods=["POST"])
 @flask_login.login_required
 def complete_task(classname, taskname):
@@ -424,8 +493,8 @@ def grade(classname):
     # return letter grade based on breakdown and done task grades
     print(classname, "has a grade of: ", class_grade)
     for k in breakdown.keys():
-        print((breakdown[k][0]/100), " < ", class_grade, " <= ", (breakdown[k][1]/100))
-        if (breakdown[k][0]/100) < class_grade <= (breakdown[k][1]/100):
+        print((breakdown[k][0] / 100), " < ", class_grade, " <= ", (breakdown[k][1] / 100))
+        if (breakdown[k][0] / 100) < class_grade <= (breakdown[k][1] / 100):
             return {"result": k, "message": messages[k]}
     print(username, "didn't find grade range for", classname)
     return "Server Error: Grade range wasn't found", 500

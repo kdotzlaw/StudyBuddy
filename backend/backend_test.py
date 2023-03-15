@@ -639,7 +639,13 @@ class apiTest(flask_unittest.ClientTestCase):
         # log in
         resp = client.post('/api/login', json=creds)
         # check valid login
-        self.assertStatus(resp, -1)
+        self.assertStatus(resp, 200)
+        # create new class
+        resp = client.post('/api/newclass', json={"classname": "COMP 9999", "timeslot": "11:30"})
+        self.assertStatus(resp, 200)
+        # double check class exists
+        resp = client.get('/api/class/COMP 9999')
+        self.assertStatus(resp, 200)
 
 
 if __name__ == '__main__':

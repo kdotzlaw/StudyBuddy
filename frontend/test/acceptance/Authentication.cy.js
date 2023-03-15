@@ -10,7 +10,7 @@ context('Actions', () => {
     cy.visit('/')
   })
 
-  it('/newuser - Create a new account', () => {
+  it('Create a new account', () => {
     cy.wait(300)
     cy.get('#header-dropdown').trigger('mouseover')
       .wait(300)
@@ -48,7 +48,7 @@ context('Actions', () => {
     cy.get('.close').click()
   })
 
-  it('/login - Login existing user', () => {
+  it('Login existing user', () => {
     cy.wait(300)
     cy.get('#header-dropdown').trigger('mouseover')
       .wait(300)
@@ -64,7 +64,7 @@ context('Actions', () => {
     cy.get('.close').click()
   })
 
-  it('/logout - Logout existing user', () => {
+  it('Logout existing user', () => {
     cy.get('#header-dropdown').trigger('mouseover')
     cy.contains('Login').click()
       .wait(500)
@@ -76,7 +76,6 @@ context('Actions', () => {
       .wait(200)
     cy.get('.close').click()
       .wait(800)
-      cy.wait(300)
     cy.get('#header-dropdown').trigger('mouseover')
       cy.contains('Log Out').click()
   })

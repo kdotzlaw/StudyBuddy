@@ -106,6 +106,9 @@
 .yellow{
     background: var(--yellow);
 }
+.grey{
+    background: var(--button-disabled);
+}
 
 /*================================
     GLOBAL document styles
@@ -168,7 +171,7 @@ a, button {
 }
 
 /* Invisible scrollbar on mobile */
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 820px) {
 	::-webkit-scrollbar {
 		width: 0px;
 	}
@@ -181,6 +184,10 @@ a, button {
 		background: rgba(0,0,0,0); 
 		box-shadow: none; 
 	}
+
+    .login-container, .register-container{
+        width: 60% !important;
+    }
 }
 
 .material-symbols-outlined {

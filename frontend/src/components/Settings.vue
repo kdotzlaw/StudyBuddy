@@ -32,15 +32,22 @@
 </script>
 
 <template>
-    <h2>Update UI Skin</h2>
-    <div class="skins">
-        <div :class="`skin-preview skin-default`" @click="updateTheSkin('skin-default')" />
-        <div :class="`skin-preview skin-forest`" @click="updateTheSkin('skin-forest')" />
-        <div :class="`skin-preview skin-sunset`" @click="updateTheSkin('skin-sunset')" />
+    <div class="settings-container">
+        <h2>Update UI Skin</h2>
+        <div class="skins">
+            <div :class="`skin-preview skin-default`" @click="updateTheSkin('skin-default')" />
+            <div :class="`skin-preview skin-forest`" @click="updateTheSkin('skin-forest')" />
+            <div :class="`skin-preview skin-sunset`" @click="updateTheSkin('skin-sunset')" />
+        </div>
     </div>
 </template>
 
 <style scoped>
+    .settings-container{
+        display: grid;
+        justify-items: center;
+    }
+    
     .skins{
         display: flex;
         margin: 1em 0 1em 0;

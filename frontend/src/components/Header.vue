@@ -281,4 +281,25 @@
         width: 2em;
         margin: 0 0.5em 0.5em 0;
     }
+
+    @media screen and (max-width: 820px) {
+        #header{
+            font-size: 70%;
+            grid-gap: 2%;
+            grid-template-columns: 35% 1fr 40%;
+        }
+
+        #header-dropdown{
+            width: 40%;
+        }
+
+        #header-dropdown .dropdown-tab, .userSection div{
+            font-size: 13px;
+        }
+
+        .timerSection{
+            display: flex;
+            flex-direction: column;
+        }
+    }
 </style>

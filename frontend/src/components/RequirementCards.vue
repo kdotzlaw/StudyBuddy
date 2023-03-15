@@ -6,32 +6,24 @@
 
 <script setup>
     import Gear from "/artifacts/gear.svg";
+    import { computed } from "vue";
+    import { useStore } from "../stores";
+    
+    const store = useStore();
+    const {setModal, toggleModal} = store;
 
     const props = defineProps({ 
         reqs: {type: Array, required: false, default: []},
+        borderless: {type: Boolean, required: false, default: false}
     })
 
     // Color tag and Month legend maps
     let today = Date.now();
-    const typeClassMapping = {
-        "quiz": "blue",
-        "assignment": "green",
-        "test": "red",
-        "misc": "yellow"
-    }
     const monthNames = [
         "January", "February", "March", "April", 
         "May", "June", "July", "August", 
         "September", "October", "November", "December"
     ];
-
-    // Return color tag by requirement type
-    function typeClass(type){
-        let mapping = typeClassMapping[type];
-        if(!mapping)
-            return typeClassMapping.misc;
-        return mapping;
-    }
 
     /* getUrgent
      *   Adds an urgent note on cards with impending deadlines (0-3 days before due date) 
@@ -49,10 +41,17 @@
         else
             return "";
     }
+
+    // Borderless style
+    let borderClass = computed(() => {
+        if(props.borderless)
+            return "borderless"
+        return ""
+    })
 </script>
 
 <template>
-    <div id="reqCards">
+    <div id="reqCards" :class="borderClass">
 
         <!-- Add new card -->
         <div v-if="reqs.length==0" :class="`reqCard addNew`"> + </div>
@@ -61,7 +60,7 @@
         <div v-for="req in reqs" :class="`reqCard fullCard`">
 
             <!-- Color tag -->
-            <div :class="`tag ${typeClass(req.type)}`"></div>
+            <div :class="`tag ${req.tagColor}`"></div>
 
             <!-- Due date -->
             <div class="dues">
@@ -84,7 +83,7 @@
             <h2 class="goal"> {{ req.goal }} </h2>
 
             <!-- Open Settings control -->
-            <img class="reqManage" :src="Gear" alt="Manage requirement" />
+            <img class="reqManage" :src="Gear" alt="Manage requirement" @click="setModal('Edit Requirement', 'editRequirement')" />
 
         </div>
     </div>
@@ -144,6 +143,7 @@
         align-items: center;
         color: var(--gold);
         margin-bottom: 1em;
+        align-self: center;
     }
 
     .dueDate{
@@ -156,12 +156,13 @@
         color: var(--white);
         font-weight: 200;
         font-size: 30px;
-        line-height: 6px;
+        line-height: 1em;
         margin-top: 1.5em;
     }
 
     .urgent{
         color: var(--button-hover);
+        line-height: 0px;
     }
 
     .goal, .reqManage{
@@ -178,6 +179,44 @@
         cursor: pointer;
         filter: brightness(120%);
         animation: spin 2s;
+    }
+
+    .borderless .fullCard{
+        border: none;
+        background: transparent;
+        box-shadow: none;
+        overflow: visible;
+        margin-bottom: 2vh;
+        transform: scale(0.9);
+        font-size: 80%;
+    }
+
+    @media screen and (max-width: 820px) {
+        #dashboard .fullCard{
+            grid-template-columns: 2.5em 12% 1fr 3vw 3vw;
+        }
+
+        #dashboard .dueDate{
+            font-size: 36px;
+        }
+        
+        #dashboard .fullCard h3{
+            font-size: 28px;
+        }
+    }
+
+    @media screen and (max-width: 700px) {
+        #classpage .fullCard{
+            grid-template-columns: 2.5em 12% 1fr 3em 3em;
+        }
+
+        #classpage .dueDate{
+            font-size: 36px;
+        }
+
+        #classpage .fullCard h3{
+            font-size: 28px;
+        }
     }
     
 </style>

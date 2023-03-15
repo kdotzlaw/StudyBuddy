@@ -13,13 +13,15 @@
     import Timer from "../logic/timer";
     import Mgmt from "../logic/managetimer";
     import { ref, computed, onMounted } from "vue";
+    import { useRoute } from 'vue-router';
     import { storeToRefs } from "pinia";
     import { useStore } from "../stores";
     
     const store = useStore();
     const { sessionTimer, userId, studyClass } = storeToRefs(store);
-    const { updateSkin, setPageName, setStudyClass } = store;
+    const { updateSkin, setPageName, setStudyClass, setModal } = store;
 
+    let classRoute = useRoute().params.slug;
 
     /*===========================
        MANAGE CLASS METADATA
@@ -27,18 +29,50 @@
 
     onMounted(() => {
         setPageName("Class View");
+
+        // Get this class' metadata
+        const host = 'http://127.0.0.1:5000'; 
+        const apiUrlMeta = `/api/class/${classRoute}`;
+        fetch(host + apiUrlMeta, {
+            method: 'GET',
+            mode: 'no-cors',
+            credentials: 'include'
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(`GET fetch location: Class page, URL: ${apiUrlMeta}`)
+                console.log(data)
+                /******************************************* 
+                 * TODO: Replace classInfo with fetched data
+                 *******************************************/
+            })
+        .catch(error => {
+            console.log(`GET fetch location: Class page, URL: ${apiUrlMeta}`)
+            console.log(error);
+        });
+
+        // Get this class' requirements
+        const apiUrlReq = `/api/class/${classRoute}/task`;
+        fetch(host + apiUrlReq, {
+            method: 'GET',
+            mode: 'no-cors',
+            credentials: 'include'
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(`GET fetch location: Class page, URL: ${apiUrlReq}`)
+                console.log(data)
+                /******************************************* 
+                 * TODO: Replace reqs with fetched data
+                 *******************************************/
+            })
+        .catch(error => {
+            console.log(`GET fetch location: Class page, URL: ${apiUrlReq}`)
+            console.log(error);
+        });
     });
 
     // Stub data compensates for unintegrated(future sprint) features
-    let reqs = [
-        { name: "Quiz 5", type: "quiz", due: new Date("February 12, 2023"), goal: "C" },
-        { name: "Catch up", type: "haha", due: new Date("February 17, 2023"), goal: "C" },
-        { name: "Assignment 4", type: "assignment", due: new Date("March 1, 2023"), goal: "C" },
-        { name: "Quiz 6", type: "quiz", due: new Date("March 5, 2023"), goal: "B" },
-        { name: "Assignment 5", type: "assignment", due: new Date("March 8, 2023"), goal: "C" },
-        { name: "Midterm Exam", type: "test", due: new Date("March 9, 2023"), goal: "B" },
-        { name: "Become a Bee", type: "dne", due: new Date("October 10, 2023"), goal: "" },
-    ]
     let classInfo = {
         name: "COMP 2080", // Class primary key
         timeStudied: 2.3,
@@ -56,6 +90,50 @@
             officeHours: "5:00-6:00"
         }
     }
+    // Smart detect requirement type by checking keywords in title
+    function getMatch(title){
+        let matchList = [ 
+            { 
+                color: "green",
+                matches: ["assignment", "homework", "hw"]
+            },
+            {
+                color: "blue",
+                matches: ["quiz", "assessment"]
+            },
+            {
+                color: "red",
+                matches: ["test", "exam", "midterm", "finals", "examination"]
+            },
+            {
+                color: "yellow",
+                matches: ["project", "report", "essay", "writeup", "presentation", "pitch"]
+            }
+        ]
+        for(let list of matchList){
+            for(let keyword of list.matches){
+                if(title.includes(keyword))
+                    return list.color
+            }
+        }
+    }
+    // Return color tag by req type
+    function getTagColor(title) {
+        let mapping = getMatch(title.toLowerCase());
+        if(!mapping)
+            return "grey";
+        return mapping;
+    }
+    let reqs = [
+        { name: "Quiz 5", tagColor: getTagColor("Quiz 5"), due: new Date("February 12, 2023"), goal: "C" },
+        { name: "Homework 4", tagColor: getTagColor("Homework 4"), due: new Date("March 1, 2023"), goal: "C" },
+        { name: "Quiz 6", tagColor: getTagColor("Quiz 6"), due: new Date("March 5, 2023"), goal: "B" },
+        { name: "Assignment 5", tagColor: getTagColor("Assignment 5"), due: new Date("March 8, 2023"), goal: "C" },
+        { name: "Midterm Exam", tagColor: getTagColor("Midterm Exam"), due: new Date("March 13, 2023"), goal: "B" },
+        { name: "Final Project", tagColor: getTagColor("Final Project"), due: new Date("April 16, 2023"), goal: "C" },
+        { name: "Final Exam", tagColor: getTagColor("Final Exam"), due: new Date("April 17, 2023"), goal: "C" },
+        { name: "Become a Bee", tagColor: getTagColor("Become a Bee"), due: new Date("October 10, 2023"), goal: "" },
+    ]
 
 
     /*===========================
@@ -64,18 +142,18 @@
 
     // Start or pause study for this class
     function manageStudy(){
-        setStudyClass(classInfo.name);
-        Mgmt.manageTimer(userId.value,classInfo.name);
+        setStudyClass(classRoute);
+        Mgmt.manageTimer(userId.value,classRoute);
     }
 
     // Reflect study session's paused/running state with icons and notes
     const studyNote = computed(() => {
-        if(studyClass.value == classInfo.name && !sessionTimer.value.isPaused())
+        if(studyClass.value == classRoute && !sessionTimer.value.isPaused())
             return "Pause session";
         return "Study now";
     });
     const studyIcon = computed(() => {
-        if(studyClass.value == classInfo.name && !sessionTimer.value.isPaused())
+        if(studyClass.value == classRoute && !sessionTimer.value.isPaused())
             return Pause;
         return Play;
     });
@@ -123,6 +201,11 @@
     function changeView(){
         current.value = !current.value;
     }
+
+    function addRequirement(){
+      setModal("Add Requirement", "addRequirement");
+    }
+
 </script>
 
 <template>
@@ -139,14 +222,16 @@
                 </router-link>
 
                 <!-- Manage Class information -->
-                <img id="class-settings" :src="Gear" alt="Manage class information" />
+                <router-link :to="'/editClass/' + classRoute">
+                    <img id="class-settings" :src="Gear" alt="Manage class information" />
+                </router-link>
 
             </div>
             <div id="hero-items">
                 <div>
 
                     <!-- Class name and time studied -->
-                    <h1 v-motion-pop> {{ classInfo.name }} </h1>
+                    <h1 v-motion-pop> {{ classRoute }} </h1>
                     <h2 v-motion-pop> Studied {{ classInfo.timeStudied }} hours this week </h2>
 
                 </div>
@@ -166,7 +251,7 @@
             <!-- Class requirements list -->
             <div id="req-ctr" v-motion-slide-left>
                 <div id="req-head">
-                    <button id="add-req" class="button bar">
+                    <button id="add-req" class="button bar" @click="addRequirement()">
                         Add Requirements
                     </button>
                     <button id="change-view" class="button bar" @click="changeView">
@@ -420,7 +505,13 @@
         width: 100%;
     }
 
-    @media screen and (max-width: 800px) {
+    td{
+        margin: inherit;
+        width: 100%;
+        text-align: left;
+    }
+
+    @media screen and (max-width: 820px) {
         #hero{
             height: 80vh;
         }
@@ -436,6 +527,13 @@
 
         #hero-items div:nth-child(2){
             margin: 2em 0 0 3em;
+        }
+
+        #class-items{
+            display: flex;
+            flex-direction: column;
+            margin-left: 0;
+            width: 90%;
         }
     }
 

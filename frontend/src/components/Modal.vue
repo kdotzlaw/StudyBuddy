@@ -175,7 +175,7 @@
         color: var(--text);
     }
 
-    @media screen and (max-width: 600px) {
+    @media screen and (max-width: 820px) {
         #modal{
             width: 90vw;
         }

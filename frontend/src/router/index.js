@@ -17,7 +17,7 @@ const routes = [
     component: Dashboard
   },
   {
-    path: '/class', 
+    path: '/class/:slug', 
     name: 'Class',
     component: Class
   },
@@ -30,6 +30,12 @@ const routes = [
     path: '/createClass',
     name: 'CreateClass',
     component: CreateClass
+  },
+  {
+    path: '/editClass/:slug',
+    name: 'EditClass',
+    component: CreateClass,
+    props: true
   }
 
 ]

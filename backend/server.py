@@ -356,6 +356,61 @@ def get_task(classname, taskname):
         return {"result": parse_row(res)}, 200
 
 
+@app.route('/api/class/<classname>/task/<taskname>/edit', methods=["POST"])
+@flask_login.login_required
+def edit_task(classname, taskname):
+    username = flask_login.current_user.get_id()
+    req = flask.request.get_json(force=True)
+    if 'newname' not in req.keys():
+        newname = ""
+    else:
+        newname = req['newname']
+    if 'newdeadline' not in req.keys():
+        newdeadline = ""
+    else:
+        newdeadline = req['newdeadline']
+    if 'newweight' not in req.keys():
+        newweight = ""
+    else:
+        newweight = req['newweight']
+
+    db.editTask(username, classname, taskname, newname, newdeadline, newweight)
+    return "Task edited", 200
+@app.route('/api/class/<classname>/task/<taskname>/delete', methods=["POST"])
+@flask_login.login_required
+def delete_task(classname, taskname):
+    username = flask_login.current_user.get_id()
+    res = db.removeTask(username, classname, taskname)
+    return "Task removed", 200
+
+
+
+@app.route('/api/class/<classname>/edit', methods=["POST"])
+@flask_login.login_required
+def edit_class(classname):
+    username = flask_login.current_user.get_id()
+    req = flask.request.get_json(force=True)
+
+    if 'newname' not in req.keys():
+        newname = ""
+    else:
+        newname = req['newname']
+    if 'newtime' not in req.keys():
+        newtime = ""
+    else:
+        newtime = req['newtime']
+
+    db.editClass(username, classname, newname, newtime)
+    return "Class edited", 200
+
+
+@app.route('/api/class/<classname>/delete', methods=["POST"])
+@flask_login.login_required
+def edit_class(classname):
+    username = flask_login.current_user.get_id()
+    res = db.removeClass(username, classname)
+    return "Class removed", 200
+
 @app.route('/api/class/<classname>/task/<taskname>/complete', methods=["POST"])
 @flask_login.login_required
 def complete_task(classname, taskname):

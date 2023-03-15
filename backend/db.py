@@ -316,7 +316,10 @@ POSTCONDITION:
 - Otherwise,  no record is present in db and None is returned
 '''
 def completeTask(username, className, taskName, grade):
-    taskID = getTaskID(username, className, taskName).tID
+    task = getTaskID(username, className, taskName)
+    if task is None:
+        return None
+    taskID = task.tID
     userID = getUser(username).uID
     classID = getClassID(username, className)
     if not taskID or not userID or not classID:
@@ -431,7 +434,7 @@ def getDeadlines(username):
     record = cursor.execute(prep_stmt, today, userID).fetchall()
     return record
 
-def calculateGrade(username, className):
+'''def calculateGrade(username, className):
     userID = getUser(username).uID
     classID = getClassID(username, className)
     if not userID or not classID:
@@ -441,4 +444,4 @@ def calculateGrade(username, className):
 
 
 def getLetterGrade():
-    return
+    return'''

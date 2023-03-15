@@ -36,7 +36,7 @@ class dbTests(unittest.TestCase):
         except Exception:
             self.fail("Connection failed")
         cnxn.close()
-
+    ''' Passes if there is data in the users and class tables'''
     def testData(self):
         users = db.getUserData()
         self.assertNotEqual(users,None)

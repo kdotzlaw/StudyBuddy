@@ -655,7 +655,7 @@ class apiTest(flask_unittest.ClientTestCase):
         # update metadata
         resp = client.post('/api/class/COMP 3820/update_meta', json={"breakdown": '{"A+":"(90,100)", "A":"(80,89)", "B+":"(75,79)", "B":"(70,74)", "C+":"(65,69)", "C":"(56,64)", "D":"(50,55)", "F":"(0, 49)"}'})
         self.assertStatus(resp, 200)
-        
+
 
     def test_editclass(self, client):
         # log in

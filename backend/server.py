@@ -238,7 +238,7 @@ def all_tasks(classname):
 def completeClass(classname):
     username = flask_login.current_user.get_id()
     res = db.getSingleClass(username, classname)
-    if res is not None and res.is_Complete == 0:
+    if res is not None and res.is_complete == 0:
         res = db.completeClass(username, classname)
         return "Class completed", 200
     elif res is None:
@@ -261,7 +261,7 @@ def classMeta(classname):
         breakdown = req['breakdown']
 
     if 'sectionnum' not in req.keys():
-        sectionnum = res.sectionnum
+        sectionnum = res.section
     else:
         sectionnum = req['sectionnum']
 
@@ -271,27 +271,27 @@ def classMeta(classname):
         classroom = req['classroom']
 
     if 'prof' not in req.keys():
-        prof = res.prof
+        prof = res.prof_Name
     else:
         prof = req['prof']
 
     if 'prof_email' not in req.keys():
-        prof_email = res.prof_email
+        prof_email = res.prof_Email
     else:
         prof_email = req['prof_email']
 
     if 'prof_phone' not in req.keys():
-        prof_phone = res.prof_phone
+        prof_phone = res.prof_Phone
     else:
         prof_phone = req['prof_phone']
 
     if 'prof_office' not in req.keys():
-        prof_office = res.prof_office
+        prof_office = res.prof_Office
     else:
         prof_office = req['prof_office']
 
     if 'prof_hours' not in req.keys():
-        prof_hours = str(res.prof_hours)
+        prof_hours = str(res.prof_Hours)
     else:
         prof_hours = req['prof_hours']
 

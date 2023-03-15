@@ -403,7 +403,7 @@ def grade(classname):
     username = flask_login.current_user.get_id()
 
     # get <classname> class, process grade breakdown
-    breakdown = json.loads(db.getClassID(username, classname).breakdown)
+    breakdown = json.loads(db.getSingleClass(username, classname).breakdown)
     # get <classname> completed tasks, process their grades
     comp_tasks = db.getCompleteTasksForClass(username, classname)
     if comp_tasks is None:
@@ -418,10 +418,12 @@ def grade(classname):
     if total_weight > 1:
         print(username, classname, "has a total task weight > 100!")
         return "Server Error", 500
+    if total_weight == 0:
+        return {"result": "-", "message": "You haven't got any grades yet."}, 200
     class_grade = total_grade / total_weight
     # return letter grade based on breakdown and done task grades
     for k in breakdown.keys():
-        if breakdown[k][0] < class_grade <= breakdown[k][1]:
+        if (breakdown[k][0]/100) < class_grade <= (breakdown[k][1]/100):
             return {"result": k, "message": messages[k]}
     print(username, "didn't find grade range for", classname)
     return "Server Error", 500

@@ -599,6 +599,26 @@ class apiTest(flask_unittest.ClientTestCase):
         print(resp.get_data())
         self.assertStatus(resp, 400)
 
+    def test_grade(self, client):
+        # log in
+        resp = resp = client.post('/api/login', json={'username': 'andrea22', 'password': '2222'})
+        # check valid login
+        self.assertStatus(resp, 200)
+        # get grade for class
+        resp = client.post('/api/class/COMP 2080/grade')
+        self.assertStatus(resp, 200)
+        print(resp.get_json())
+
+    def test_grade_notasks(self, client):
+        # log in
+        resp = resp = client.post('/api/login', json={'username': 'andrea22', 'password': '2222'})
+        # check valid login
+        self.assertStatus(resp, 200)
+        # get grade for class
+        resp = client.post('/api/class/COMP 4350/grade')
+        self.assertStatus(resp, 200)
+        print(resp.get_json())
+
     def test_newclass(self, client):
         # log in
         resp = client.post('/api/login', json=creds)

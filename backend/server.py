@@ -418,6 +418,8 @@ def grade(classname):
     if total_weight > 1:
         print(username, classname, "has a total task weight > 100!")
         return "Server Error", 500
+    if total_weight == 0:
+        return {"result": "-", "message": "You haven't got any grades yet."}, 200
     class_grade = total_grade / total_weight
     # return letter grade based on breakdown and done task grades
     for k in breakdown.keys():

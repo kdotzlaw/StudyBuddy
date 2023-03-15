@@ -239,7 +239,7 @@ paths:
     post:
       tags: ["Tracking Related"]
       summary: "Mark a task as complete"
-      description: "Marks the task {taskname} as complete, without removing it from the database"
+      description: "Marks the task {taskname} as complete, without removing it from the database. Assigns a grade to the task if one is given, otherwise defaults to 0"
       operationId: complete_task
       parameters:
         - name: session
@@ -252,6 +252,9 @@ paths:
         - name: taskname
           in: url
           required: true
+        - name: grade
+          in: body
+          required: false
       responses:
         200:
           description: "The associated task was marked as complete"
@@ -259,7 +262,6 @@ paths:
           description: "The request maker wasn't logged in, or forgot to send the session cookie"
         500:
           description: "Internal server error, problem with backend logic or database"
-
   /class/{classname}/done_tasks:
     get:
       tags: ["Tracking Related"]
@@ -288,7 +290,6 @@ paths:
           description: "The request maker wasn't logged in, or forgot to send the session cookie"
         500:
           description: "Internal server error, problem with backend logic or database"
-
   /class/{classname}/update_meta:
     post:
       tags: ["Tracking Related"]
@@ -411,7 +412,6 @@ paths:
           description: "The request maker wasn't logged in, or forgot to send the session cookie"
         500:
           description: "Internal server error, problem with backend logic or database"
-
   /newclass:
     post:
       tags: ["Tracking Related"]

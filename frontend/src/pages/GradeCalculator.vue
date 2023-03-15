@@ -16,7 +16,7 @@
       <div id="breakdown-table">
         <table> 
           <thead id="breakdown-table-header">
-            <tr class="grid">
+            <tr class="grid-one">
               <th id="col-one">Name</th>
               <th id="col-two">QTY</th>
               <th id="col-three">Percentage</th>
@@ -24,11 +24,11 @@
             </tr>
           </thead>
           <tbody id="table-buddy">
-            <tr class="grid">
+            <tr class="grid-one">
               <td><input type="text" id="name-input" placeholder="Quiz" v-model="username"></td>
               <td><input type="number" min="0" id="qty-input" placeholder="0" v-model="username"></td>
               <td><input type="number" min="0" max="100" id="percent-input" placeholder="0" v-model="username"> %</td>
-              <td> <button></button></td>
+              <td> <button type="button" value="Delete">Delete</button></td>
             </tr> 
           </tbody>
         </table>
@@ -42,42 +42,42 @@
       <div id="letter-table">
         <table> 
           <thead id="letter-table-header">
-            <tr>
+            <tr class="grid-two">
               <th id="col-one">Letter Grade</th>
               <th id="col-two">Max</th>
               <th id="col-three">Min</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td>A+</td>
-              <td><input type="number" min="0" max="100" id="max-input" placeholder="100" v-model="username"></td>
-              <td><input type="number" min="0" max="100" id="max-input" placeholder="90" v-model="username"> </td>
+          <tbody id="letter-grade-body">
+            <tr class="grid-two">
+              <td id="letter-grade">A+</td>
+              <td><input type="number" min="0" max="100" id="max-input-A+" placeholder="100" v-model="username"></td>
+              <td><input type="number" min="0" max="100" id="min-input-A+" placeholder="90" v-model="username"> </td>
             </tr>
-            <tr>
-              <td>A</td>
-              <td><input type="number" min="0" max="100" id="max-input" placeholder="89.9" v-model="username"></td>
-              <td><input type="number" min="0" max="100" id="max-input" placeholder="80" v-model="username"> </td>
+            <tr class="grid-two">
+              <td id="letter-grade">A</td>
+              <td><input type="number" min="0" max="100" id="max-input-A" placeholder="89.9" v-model="username"></td>
+              <td><input type="number" min="0" max="100" id="min-input-A" placeholder="80" v-model="username"> </td>
             </tr>
-            <tr>
-              <td>B+</td>
-              <td><input type="number" min="0" max="100" id="max-input" placeholder="79.9" v-model="username"></td>
-              <td><input type="number" min="0" max="100" id="max-input" placeholder="75" v-model="username"> </td>
+            <tr class="grid-two">
+              <td id="letter-grade">B+</td>
+              <td><input type="number" min="0" max="100" id="max-input-B+" placeholder="79.9" v-model="username"></td>
+              <td><input type="number" min="0" max="100" id="min-input-B+" placeholder="75" v-model="username"> </td>
             </tr>
-            <tr>
-              <td>B</td>
-              <td><input type="number" min="0" max="100" id="max-input" placeholder="74.9" v-model="username"></td>
-              <td><input type="number" min="0" max="100" id="max-input" placeholder="70" v-model="username"> </td>
+            <tr class="grid-two"> 
+              <td id="letter-grade">B</td>
+              <td><input type="number" min="0" max="100" id="max-input-B" placeholder="74.9" v-model="username"></td>
+              <td><input type="number" min="0" max="100" id="min-input-B" placeholder="70" v-model="username"> </td>
             </tr>
-            <tr>
-              <td>C+</td>
-              <td><input type="number" min="0" max="100" id="max-input" placeholder="69.9" v-model="username"></td>
-              <td><input type="number" min="0" max="100" id="max-input" placeholder="65" v-model="username"> </td>
+            <tr class="grid-two">
+              <td id="letter-grade">C+</td>
+              <td><input type="number" min="0" max="100" id="max-input-C+" placeholder="69.9" v-model="username"></td>
+              <td><input type="number" min="0" max="100" id="min-input-C+" placeholder="65" v-model="username"> </td>
             </tr>
-            <tr>
-              <td>C</td>
-              <td><input type="number" min="0" max="100" id="max-input" placeholder="64.9" v-model="username"></td>
-              <td><input type="number" min="0" max="100" id="max-input" placeholder="60" v-model="username"> </td>
+            <tr class="grid-two">
+              <td id="letter-grade">C</td>
+              <td><input type="number" min="0" max="100" id="max-input-C" placeholder="64.9" v-model="username"></td>
+              <td><input type="number" min="0" max="100" id="min-input-C" placeholder="60" v-model="username"> </td>
             </tr>
           </tbody>
         </table>
@@ -121,7 +121,7 @@
     let percentInput = document.createElement("input");
     let deleteButtonInput = document.createElement("button");
 
-    newRow.classList.add("grid");
+    newRow.classList.add("grid-one");
 
     nameInput.setAttribute("type", "text");
     nameInput.setAttribute("placeholder", "Quiz");
@@ -136,6 +136,8 @@
     percentInput.setAttribute("max", "100")
 
     deleteButtonInput.setAttribute("type", "button");
+    deleteButtonInput.innerHTML = "Delete";
+    
 
     name.appendChild(nameInput);
     qty.appendChild(qtyInput);
@@ -152,7 +154,7 @@
     document.getElementById("table-buddy").appendChild(newRow);
   }
 
-  function getData(){
+  function getDataOne(){
     let table = document.getElementById("table-buddy");
     let rows = table.getElementsByTagName("tr");
     let data = [];
@@ -174,6 +176,26 @@
     console.log(data)
 
     return data;
+  }
+
+  function getDataTwo() {
+    aPlus = document.getElementById("max-input-A+").value;
+    a = document.getElementById("max-input-A").value;
+    bPlus = document.getElementById("max-input-B+").value;
+    b = document.getElementById("max-input-B").value;
+    cPlus = document.getElementById("max-input-C+").value;
+    c = document.getElementById("max-input-C").value;
+
+    data = {
+      aPlus: aPlus,
+      a: a,
+      bPlus: bPlus,
+      b: b,
+      cPlus: cPlus,
+      c: c
+    }
+
+    console.log(data)
   }
 
   function update(){
@@ -329,10 +351,15 @@
     width: 80%
   }
 
-  .grid{
+  .grid-one{
     display: grid;
     grid-template-columns: 25% 25% 25% 25%;
 
+  }
+
+  .grid-two{
+    display: grid;
+    grid-template-columns: 40% 33% 33%;
   }
 
   #min-input, #max-input{
@@ -394,9 +421,11 @@
 
   #letter-grade-container input{
     font: 500 1rem 'Quicksand', sans-serif;
+    width: 50%;
     border-radius: 5px;
     height: 3vh;
     border-style: none;
+    text-align: center;
   }
 
   #letter-grade-container{
@@ -405,9 +434,15 @@
     margin: auto;
   }
 
+#letter-grade-body td{
+  width: 30%;
+  text-align: left;
+}
+
   #letter-table-header{
     /*background-color: var(--indigo);*/
     color: var(--white);
+    text-align: center;
   }
 
   #letter-table ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */

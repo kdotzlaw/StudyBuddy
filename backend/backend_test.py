@@ -363,6 +363,21 @@ class dbTests(unittest.TestCase):
         self.assertNotEqual(record, None)
         self.assertEqual(breakdown, record.breakdown)
 
+    def test_editClassReqData_Name(self):
+        username = "katDot"
+        className_old = "COMP 3820"
+        className_new = "Bioinformatics"
+        orig = db.getSingleClass(username, className_old)
+        self.assertNotEqual(orig, None)
+        db.editClassReqData(username, className_old, className_new, "")
+        record = db.getSingleClass(username, className_new)
+        self.assertNotEqual(record, orig)
+
+    def test_editClassReqData_Timeslot(self):
+        username = "katDot"
+        className = "COMP 3820"
+        timeslot_new = ""
+
     '''
     Test passes if the requested task [name, id] appears in result of single task request
     '''
@@ -421,13 +436,15 @@ class dbTests(unittest.TestCase):
         db.editTask(username, className, "A1", '', '2023-02-09 14:00:00', 0)
         record = db.getSingleTask(username, className, "A1")
         self.assertEqual(record.deadline, d1)
+#//TODO: test for getDeadlines, update timeslot and name
 
-    ''' def test_getDeadlines(self):
+
+    def test_getDeadlines(self):
             username = 'katDot'
             d1 = datetime.datetime(year=2023, month=2, day=9, hour=14, minute=0, second=0)
             record = db.getDeadlines(username)
             self.assertNotEqual(record, None)
-            self.assertEqual(d1,record.deadline)'''
+            self.assertEqual(record.deadline,d1)
 
 
 creds = {'username': 'ryan2023', 'password': 'password'}

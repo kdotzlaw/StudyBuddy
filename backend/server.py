@@ -1,4 +1,5 @@
 import datetime
+import json
 
 import flask
 import flask_login
@@ -309,7 +310,7 @@ def newtask(classname):
         weight = req['weight']
 
     if 'deadline' not in req.keys():
-        # use undef weight
+        # use undef deadline
         deadline = None
     else:
         deadline = req['deadline']
@@ -386,6 +387,44 @@ def get_done_tasks(classname):
         return {"result": parse_row(res)}, 200
     else:
         return {"result": parse_rows(res)}, 200
+
+
+@app.route('/api/class/<classname>/grade', methods=["GET"])
+@flask_login.login_required
+def grade(classname):
+    messages = {"A+": "What the heck?! I am shocked, astounded, and flabbergasted right now!",
+                "A": "Wow! You're doing amazing!",
+                "B+": "Keep up the good work!",
+                "B": "Hey, that's pretty good!",
+                "C+": "You're doing OK!",
+                "C": "Remember: 'C's get degrees!",
+                "D": "You can do better than that, I believe in you!",
+                "F": "Uh oh."}
+    username = flask_login.current_user.get_id()
+
+    # get <classname> class, process grade breakdown
+    breakdown = json.loads(db.getClassID(username, classname).breakdown)
+    # get <classname> completed tasks, process their grades
+    comp_tasks = db.getCompleteTasksForClass(username, classname)
+    if comp_tasks is None:
+        return "Bad Request: No complete tasks, or invalid class", 400
+    total_weight = 0
+    total_grade = 0
+    for t in comp_tasks:
+        # task is gradable
+        if t.task_weight == -1:
+            total_weight = total_weight + t.task_weight
+            total_grade = t.task_grade * t.task_weight
+    if total_weight > 1:
+        print(username, classname, "has a total task weight > 100!")
+        return "Server Error", 500
+    class_grade = total_grade / total_weight
+    # return letter grade based on breakdown and done task grades
+    for k in breakdown.keys():
+        if breakdown[k][0] < class_grade <= breakdown[k][1]:
+            return {"result": k, "message": messages[k]}
+    print(username, "didn't find grade range for", classname)
+    return "Server Error", 500
 
 
 # for debugging

@@ -345,7 +345,40 @@ paths:
           description: "The request maker wasn't logged in, or forgot to send the session cookie"
         500:
           description: "Internal server error, problem with backend logic or database"
-
+  /class/{classname}/grade:
+    get:
+      tags: ["Tracking Related"]
+      summary: "Gets a letter grade and message for the class"
+      description: "Calculates the letter grade for a class based on the grade breakdown in the class meta data and completed tasks.
+      The use of completed tasks means that it only considers tasks you've been graded for, rather than all tasks"
+      operationId: grade
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+        - name: classname
+          in: url
+          required: true
+      responses:
+        200:
+          description: "Grade calculated successfully"
+          content:
+            application/json:
+              schemas:
+                grade:
+                  type: object
+                  properties:
+                    result:
+                      type: string
+                      example: "B+"
+                    message:
+                      type: string
+                      example: "You got a B+!!! Good job!"
+        400:
+          description: "Either the class doesn't exist, or there are no completed tasks for that class"
+        500:
+          description: "The total weight of the completed tasks is greater than 100%, or the calculator couldn't find a grade range the current grade belongs in."
   /class/{classname}/newtask:
     post:
       tags: ["Tracking Related"]

@@ -399,11 +399,15 @@ def grade(classname):
     username = flask_login.current_user.get_id()
 
     # get <classname> class, process grade breakdown
-    breakdown = json.loads(db.getSingleClass(username, classname).breakdown)
+    res = db.getSingleClass(username, classname)
+    if res is not None:
+        breakdown = json.loads(res.breakdown)
+    else:
+        return "Bad Request: Class not found", 400
     # get <classname> completed tasks, process their grades
     comp_tasks = db.getCompleteTasksForClass(username, classname)
     if comp_tasks is None:
-        return "Bad Request: No complete tasks, or invalid class", 400
+        return {"result": "-", "message": "You haven't got any grades yet."}, 200
     total_weight = 0
     total_grade = 0
     for t in comp_tasks:

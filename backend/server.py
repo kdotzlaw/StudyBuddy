@@ -109,12 +109,8 @@ def login():
             # selection returned
             # grab values for username and password from db
             print("yes user")
-            if app.testing:
-                uname = selection['username']
-                pword = selection['password']
-            else:
-                uname = selection.username
-                pword = selection.password
+            uname = selection.username
+            pword = selection.password
 
             if uname == username and pword == password:
                 user = User()
@@ -422,11 +418,13 @@ def grade(classname):
         return {"result": "-", "message": "You haven't got any grades yet."}, 200
     class_grade = total_grade / total_weight
     # return letter grade based on breakdown and done task grades
+    print(classname, "has a grade of: ", class_grade)
     for k in breakdown.keys():
+        print((breakdown[k][0]/100), " < ", class_grade, " <= ", (breakdown[k][1]/100))
         if (breakdown[k][0]/100) < class_grade <= (breakdown[k][1]/100):
             return {"result": k, "message": messages[k]}
     print(username, "didn't find grade range for", classname)
-    return "Server Error", 500
+    return "Server Error: Grade range wasn't found", 500
 
 
 # for debugging

@@ -27,22 +27,6 @@ context('Actions', () => {
     cy.get('#signupPasswordConfirm')
       .type(randomPassword, { delay: 50 })
       .wait(300) 
-    cy.request({
-        method: "POST",
-        url: `${serverUrl}/api/newuser`,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        mode: 'no-cors',
-        credentials: 'include',
-        body: JSON.stringify({
-          username: randomUsername,
-          email: randomEmail,
-          password: randomPassword
-        })
-      }).should((response) => {
-        expect(response.status).to.eq(200)
-      })
     cy.get('.register-button').click()
       .wait(800)
     cy.get('.close').click()

@@ -45,7 +45,7 @@ def user_check(username):
 # loads user from session
 @login_manager.user_loader
 def user_loader(username):
-    print("u loader")
+    # print("u loader")
     selection = db.getUser(username)
     if app.testing:
         uname = selection['username']
@@ -62,7 +62,7 @@ def user_loader(username):
 # loads user from flask request
 @login_manager.request_loader
 def request_loader(request):
-    print("req loader")
+    # print("req loader")
     username = request.get_json(force=True)['username']
     # check database for username
     selection = db.getUser(username)
@@ -103,12 +103,12 @@ def login():
         if selection is None:
             # not in database
             response = "Bad Request: User not found in database", 400
-            print("no user")
+            # print("no user")
             return response
         else:
             # selection returned
             # grab values for username and password from db
-            print("yes user")
+            # print("yes user")
             uname = selection.username
             pword = selection.password
 
@@ -124,12 +124,12 @@ def login():
                 # invalid password
                 # send 401 bad request response
                 print("failed login: ", username)
-                print("Incorrect password")
+                # print("Incorrect password")
                 response = "Incorrect Password", 401
                 return response
     else:
         # send 400 bad request response
-        print("login missing json")
+        # print("login missing json")
         response = "Bad Request: Missing required JSON", 400
         return response
 
@@ -174,7 +174,7 @@ def update_time(classname):
     t = flask.request.get_json(force=True)['added']
     res = db.addStudyTime(username, classname, t)
     if res is not None:
-        print(username, " increased ", classname, "'s study time by: ", t, " seconds")
+        # print(username, " increased ", classname, "'s study time by: ", t, " seconds")
         return "Time for class updated successfully", 200
     else:
         return "No class called " + classname + " found", 400
@@ -400,10 +400,10 @@ def grade(classname):
 
     # get <classname> class, process grade breakdown
     res = db.getSingleClass(username, classname)
-    if res is not None:
+    if res is not None and res.breakdown is not None:
         breakdown = json.loads(res.breakdown)
     else:
-        return "Bad Request: Class not found", 400
+        return "Bad Request: Class not found, or class has no grade breakdown", 400
     # get <classname> completed tasks, process their grades
     comp_tasks = db.getCompleteTasksForClass(username, classname)
     if comp_tasks is None:

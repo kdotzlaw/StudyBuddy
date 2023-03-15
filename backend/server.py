@@ -195,6 +195,7 @@ def getClass(classname):
 
 
 def parse_rows(rows):
+    json.encoder.JSONEncoder.default(o=str)
     res = []
     for row in rows:
         res.append(dict(zip([t[0] for t in row.cursor_description], row)))
@@ -202,6 +203,7 @@ def parse_rows(rows):
 
 
 def parse_row(row):
+    json.encoder.JSONEncoder.default(o=str)
     return dict(zip([t[0] for t in row.cursor_description], row))
 
 
@@ -376,13 +378,14 @@ def edit_task(classname, taskname):
 
     db.editTask(username, classname, taskname, newname, newdeadline, newweight)
     return "Task edited", 200
+
+
 @app.route('/api/class/<classname>/task/<taskname>/delete', methods=["POST"])
 @flask_login.login_required
 def delete_task(classname, taskname):
     username = flask_login.current_user.get_id()
     res = db.removeTask(username, classname, taskname)
     return "Task removed", 200
-
 
 
 @app.route('/api/class/<classname>/edit', methods=["POST"])
@@ -410,6 +413,7 @@ def edit_class(classname):
     username = flask_login.current_user.get_id()
     res = db.removeClass(username, classname)
     return "Class removed", 200
+
 
 @app.route('/api/class/<classname>/task/<taskname>/complete', methods=["POST"])
 @flask_login.login_required
@@ -479,8 +483,8 @@ def grade(classname):
     # return letter grade based on breakdown and done task grades
     print(classname, "has a grade of: ", class_grade)
     for k in breakdown.keys():
-        print((breakdown[k][0]/100), " < ", class_grade, " <= ", (breakdown[k][1]/100))
-        if (breakdown[k][0]/100) < class_grade <= (breakdown[k][1]/100):
+        print((breakdown[k][0] / 100), " < ", class_grade, " <= ", (breakdown[k][1] / 100))
+        if (breakdown[k][0] / 100) < class_grade <= (breakdown[k][1] / 100):
             return {"result": k, "message": messages[k]}
     print(username, "didn't find grade range for", classname)
     return "Server Error: Grade range wasn't found", 500

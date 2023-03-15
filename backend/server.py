@@ -481,9 +481,9 @@ def grade(classname):
     total_grade = 0
     for t in comp_tasks:
         # task is gradable
-        if t.task_weight == -1:
-            total_weight = total_weight + t.task_weight
-            total_grade = t.task_grade * t.task_weight
+        if t.task_Weight != -1:
+            total_weight = total_weight + t.task_Weight
+            total_grade = total_grade + t.task_grade * t.task_Weight
     if total_weight > 1:
         print(username, classname, "has a total task weight > 100!")
         return "Server Error", 500

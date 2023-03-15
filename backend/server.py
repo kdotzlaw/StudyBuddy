@@ -423,7 +423,7 @@ def grade(classname):
     class_grade = total_grade / total_weight
     # return letter grade based on breakdown and done task grades
     for k in breakdown.keys():
-        if breakdown[k][0] < class_grade <= breakdown[k][1]:
+        if (breakdown[k][0]/100) < class_grade <= (breakdown[k][1]/100):
             return {"result": k, "message": messages[k]}
     print(username, "didn't find grade range for", classname)
     return "Server Error", 500

@@ -8,18 +8,18 @@ import pyodbc
 
 # connection information can change as we include security
 # PROD CONNECTION STRING 
-conn = (r'Driver=ODBC Driver 17 for SQL Server;'
+'''conn = (r'Driver=ODBC Driver 17 for SQL Server;'
          r'Server=localhost;'
          r'Database=StudyBuddy;'
          r'UID=sa;'
          r'PWD=dbtools.IO'
-         )
+         )'''
 # DEV CONNECTION STRING - D.N.T
-'''conn = (r'Driver=SQL Server;'
-        r'Server=localhost\MSSQLSERVER01;'
+conn = (r'Driver=SQL Server;'
+        r'Server=(local)'
         r'Database=StudyBuddy;'
         r'Trusted_Connection=yes'
-        )'''
+        )
 cnxn = pyodbc.connect(conn)
 cursor = cnxn.cursor()
 
@@ -205,7 +205,19 @@ def addClassBreakdown(username, className, breakdown):
     if not userID or not classID:
         return None
     cursor.execute("UPDATE Classes SET breakdown = ? WHERE cID = ? AND FK_uID = ?;", breakdown, classID, userID)
-
+'''classname and timeslot'''
+def editClassReqData(username, className_old,className_new, timeslot_new):
+    user = getUser()
+    classID = getClassID(username, className_old)
+    if not user:
+        return None
+    userID = user.uID
+    if not userID or not classID:
+        return None
+    if not className_new == "":
+        cursor.execute("UPDATE Classes SET class_Name = ? WHERE cID = ? AND FK_uID = ?;", className_new, classID, userID)
+    if not timeslot_new == "":
+        cursor.execute("UPDATE Classes SET timeslot = ? WHERE cID = ? AND FK_uID = ?;", timeslot_new, classID, userID)
 '''
 PRECONDITION: class data remains unchanged
 POSTCONDITION: 
@@ -434,14 +446,3 @@ def getDeadlines(username):
     record = cursor.execute(prep_stmt, today, userID).fetchall()
     return record
 
-'''def calculateGrade(username, className):
-    userID = getUser(username).uID
-    classID = getClassID(username, className)
-    if not userID or not classID:
-        return None
-    #get the grade breakdown for that class
-    breakdown = getSingleClass(username,className).breakdown
-
-
-def getLetterGrade():
-    return'''

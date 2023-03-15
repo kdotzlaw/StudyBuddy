@@ -96,8 +96,11 @@ POSTCONDITION:
 
 
 def getClasses(username):
+    user = getUser(username)
+    if not user:
+        return None
     # get user id
-    userID = getUser(username).uID
+    userID = user.uID
     record = cursor.execute("SELECT * FROM Classes WHERE FK_uID = ? AND is_complete = 0;", userID).fetchall()
     if not userID or not record:
         return None
@@ -111,7 +114,10 @@ POSTCONDITION: returns classID for specified user and specified class, or None i
 
 
 def getClassID(username, className):
-    userID = getUser(username).uID
+    user = getUser(username)
+    if not user:
+        return None
+    userID = user.uID
     # print("getting", userID, className)
     record = cursor.execute("SELECT cID FROM Classes WHERE FK_uID = ? AND class_Name =?;", userID, className).fetchone()
     # print("got: ", type(record))
@@ -129,7 +135,10 @@ POSTCONDITION:
 
 
 def getSingleClass(username, className):
-    userID = getUser(username).uID
+    user = getUser(username)
+    if not user:
+        return None
+    userID = user.uID
     classID = getClassID(username, className)
     # print("extra: ", userID, classID)
     if not userID or not classID:
@@ -153,7 +162,10 @@ POSTCONDITION:
 
 def addClass(username, className, timeslot):
     prep_stmt = "INSERT INTO Classes (class_Name, timeslot, FK_uID) VALUES (?,?,?);"
-    id = getUser(username).uID
+    user = getUser(username)
+    if not user:
+        return None
+    id = user.uID
     if not id:
         return None
     return cursor.execute(prep_stmt, className, timeslot, id)
@@ -168,7 +180,10 @@ POSTCONDITION:
 
 
 def removeClass(username, className):
-    id = getUser(username).uID
+    user = getUser(username)
+    if not user:
+        return None
+    id = user.uID
     classID = getClassID(username, className)
     if not id or not classID:
         return None
@@ -188,8 +203,12 @@ POSTCONDITION:
 
 
 def completeClass(username, className):
+    user = getUser(username)
+    if not user:
+        return None
+    userID = user.uID
     classID = getClassID(username, className)
-    userID = getUser(username).uID
+
     prep_stmt = "UPDATE Classes SET is_complete = ? WHERE cID = ? AND FK_uID = ?;"
     if not classID:
         return None
@@ -200,7 +219,10 @@ PRECONDITION: specified class with specified user either has no breakdown or bre
 POSTCONDITION: breakdown for specified class is updated using breakdown value
 '''
 def addClassBreakdown(username, className, breakdown):
-    userID = getUser(username).uID
+    user = getUser(username)
+    if not user:
+        return None
+    userID = user.uID
     classID = getClassID(username,className)
     if not userID or not classID:
         return None
@@ -228,7 +250,10 @@ POSTCONDITION:
 
 def editClassMeta(username, className, sectionnum, classroom, prof,
                   prof_email, prof_phone, prof_office, prof_hours):
-    userID = getUser(username).uID
+    user = getUser(username)
+    if not user:
+        return None
+    userID = user.uID
     classID = getClassID(username, className)
     if not userID or not classID:
         return None
@@ -251,7 +276,10 @@ POSTCONDITION:
 
 
 def addStudyTime(username, className, t):
-    userID = getUser(username).uID
+    user = getUser(username)
+    if not user:
+        return None
+    userID = user.uID
     record = getSingleClass(username, className)
     # print(username, " ", className)
     if not userID or not record:
@@ -277,7 +305,10 @@ POSTCONDITION:
 
 # not sprint 2
 def getTaskList(username, className):
-    userID = getUser(username).uID
+    user = getUser(username)
+    if not user:
+        return None
+    userID = user.uID
     classID = getClassID(username, className)
     if not userID or not classID:
         return None
@@ -294,7 +325,10 @@ POSTCONDITION:
 - Otherwise, task is not in db and None is returned
 '''
 def getSingleTask(username, className, taskName):
-    userID = getUser(username).uID
+    user = getUser(username)
+    if not user:
+        return None
+    userID = user.uID
     classID = getClassID(username, className)
     if not userID or not classID:
         return None
@@ -310,7 +344,10 @@ POSTCONDITION:
 - Otherwise, None returned
 '''
 def getTaskID(username, className, taskName):
-    userID = getUser(username).uID
+    user = getUser(username)
+    if not user:
+        return None
+    userID = user.uID
     classID = getClassID(username, className)
     if not userID or not classID:
         return None
@@ -332,7 +369,10 @@ def completeTask(username, className, taskName, grade):
     if task is None:
         return None
     taskID = task.tID
-    userID = getUser(username).uID
+    user = getUser(username)
+    if not user:
+        return None
+    userID = user.uID
     classID = getClassID(username, className)
     if not taskID or not userID or not classID:
         return None
@@ -348,7 +388,10 @@ POSTCONDITION:
 
 def uncompleteTask(username, className, taskName):
     taskID = getTaskID(username, className, taskName).tID
-    userID = getUser(username).uID
+    user = getUser(username)
+    if not user:
+        return None
+    userID = user.uID
     classID = getClassID(username, className)
     if not taskID or not userID or not classID:
         return None
@@ -363,7 +406,10 @@ POSTCONDITION:
 
 
 def getCompleteTasksForClass(username, className):
-    userID = getUser(username).uID
+    user = getUser(username)
+    if not user:
+        return None
+    userID = user.uID
     classID = getClassID(username, className)
     if not userID or not classID:
         return None
@@ -382,7 +428,10 @@ POSTCONDITION:
 - Otherwise, None is returned
 '''
 def addTask(username, className, taskName, weight, deadline):
-    userID = getUser(username).uID
+    user = getUser(username)
+    if not user:
+        return None
+    userID = user.uID
     classID = getClassID(username, className)
     if not userID or not classID:
         return None
@@ -396,7 +445,10 @@ POSTCONDITION:
 - Otherwise, None is returned
 '''
 def removeTask(username, className, taskName):
-    userID = getUser(username).uID
+    user = getUser(username)
+    if not user:
+        return None
+    userID = user.uID
     classID = getClassID(username, className)
     taskID = getTaskID(username, className, taskName).tID
     if not userID or not classID or not taskID:
@@ -412,7 +464,10 @@ POSTCONDITION:
 - ** make sure that eDate is passed in as a datetime object or converted
 '''
 def editTask (username, className, taskName, eName, eDate, eWeight):
-    userID = getUser(username).uID
+    user = getUser(username)
+    if not user:
+        return None
+    userID = user.uID
     classID = getClassID(username, className)
     taskID = getTaskID(username, className,taskName).tID
     if not userID or not classID or not taskID:
@@ -431,7 +486,10 @@ def editTask (username, className, taskName, eName, eDate, eWeight):
 get top 3 most current deadlines for dashboard display
 '''
 def getDeadlines(username):
-    userID = getUser(username).uID
+    user = getUser(username)
+    if not user:
+        return None
+    userID = user.uID
     if not userID:
         return None
     # Need to get the built-in SQL method for getting dates

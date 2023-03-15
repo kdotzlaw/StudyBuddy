@@ -1,5 +1,6 @@
 import datetime
 import json
+import time
 
 import flask
 import flask_login
@@ -10,7 +11,18 @@ from werkzeug.security import check_password_hash, generate_password_hash
 import uuid
 import flask_cors
 
+
+class customJSON(flask.json.provider.JSONProvider):
+
+    def dumps(self, obj, **kwargs):
+        return json.dumps(obj, **kwargs, default=str)
+
+    def loads(self, s: str | bytes, **kwargs):
+        return json.loads(s, **kwargs)
+
+
 app = flask.Flask(__name__)
+app.json = customJSON(app)
 app.secret_key = uuid.uuid4().hex  # reset secret key each time the server starts
 
 # instantiate flask login manager
@@ -195,7 +207,6 @@ def getClass(classname):
 
 
 def parse_rows(rows):
-    json.encoder.JSONEncoder.default(o=str)
     res = []
     for row in rows:
         res.append(dict(zip([t[0] for t in row.cursor_description], row)))
@@ -203,7 +214,6 @@ def parse_rows(rows):
 
 
 def parse_row(row):
-    json.encoder.JSONEncoder.default(o=str)
     return dict(zip([t[0] for t in row.cursor_description], row))
 
 

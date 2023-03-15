@@ -498,7 +498,7 @@ def grade(classname):
     for k in breakdown.keys():
         print(eval(breakdown[k])[0] / 100, " < ", str(class_grade), " <= ", eval(breakdown[k])[1] / 100)
         if eval(breakdown[k])[0] / 100 < class_grade <= eval(breakdown[k])[1] / 100:
-            return {"result": k, "message": messages[k]}
+            return {"result": k, "message": messages[k]}, 200
     print(username, "didn't find grade range for", classname)
     return "Server Error: Grade range wasn't found", 500
 

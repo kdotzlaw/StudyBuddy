@@ -19,7 +19,13 @@ context('Actions', () => {
   })
 
   it('View important dates from Dashboard', () => {
-    cy.wait(300)
+    cy.contains('Calendar Overview').click()
+      .wait(200)
+    cy.get('#workspace')
+      .scrollTo('bottom')
+      .wait(200)
+      .scrollTo('top')
+    cy.contains('Calendar Overview').click()
   })
 
   it('View current and elapsed requirements from each class', () => {

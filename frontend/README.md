@@ -12,9 +12,9 @@
 
         npm test
 
-## Run integration tests
+## Run component tests
 
-        npm run integtest
+        npm run compotest
 
 ## Run user acceptance tests
 

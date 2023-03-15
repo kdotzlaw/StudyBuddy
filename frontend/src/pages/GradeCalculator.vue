@@ -96,6 +96,7 @@
   import { default as axios } from 'axios';
   import ArrowBack from "/artifacts/arrowback.svg";
   import { ref, computed, onMounted } from "vue";
+  import { useRoute } from 'vue-router';
   import { storeToRefs } from "pinia";
   import { useStore } from "../stores";
 
@@ -108,6 +109,7 @@
       setPageName("Grade Calculator");
   });
 
+  let classRoute = useRoute().params.slug;
 
   function createRow(){
     let newRow = document.createElement("tr");

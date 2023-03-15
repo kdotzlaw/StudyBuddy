@@ -1,11 +1,10 @@
 import { mount } from 'cypress/vue';
+import Settings from "../../src/components/Settings.vue";
 import { setActivePinia, createPinia } from 'pinia';
-import App from "../../src/App.vue";
-
 setActivePinia(createPinia());
 
-describe('<App />', () => {
+describe('<Settings />', () => {
   it('renders', () => {
-    mount(App);
+    mount(Settings);
   })
 })

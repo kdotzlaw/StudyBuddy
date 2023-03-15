@@ -13,7 +13,7 @@ export default defineConfig({
     specPattern: "test/acceptance/**/*.cy.{js,jsx,ts,tsx}",
   },
   component: {
-    indexHtmlFile: "test/integration/component-index.html",
+    indexHtmlFile: "test/component/component-index.html",
     supportFile: false,
     video: false,
     devServer: {

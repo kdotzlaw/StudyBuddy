@@ -272,11 +272,11 @@
                         Wow! <br/>
                         You are doing okay
                     </div>
-                    <router-link to="/gradeCalculator">
+                    <router-link :to="'/gradeCalculator/' + classRoute">
                       <button class="button bar">
                         Grade breakdown
                       </button>
-                  </router-link>
+                    </router-link>
                 </div>
 
                 <!-- Class meta details -->

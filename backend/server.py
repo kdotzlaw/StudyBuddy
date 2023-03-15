@@ -431,7 +431,7 @@ def complete_task(classname, taskname):
     username = flask_login.current_user.get_id()
     # print("----------------PARSING JSON")
     req = flask.request.get_json(force=True, silent=True)
-    if 'grade' not in req.keys():
+    if req is None or 'grade' not in req.keys():
         grade = 0
         # print('--------------- GRADE NOT IN KEYS')
     else:

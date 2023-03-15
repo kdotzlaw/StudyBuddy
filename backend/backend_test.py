@@ -712,7 +712,7 @@ class apiTest(flask_unittest.ClientTestCase):
         resp = client.post('/api/class/COMP 4350/task/Final/delete')
         self.assertStatus(resp, 200)
         # ensure task is gone
-        resp = client.post('/api/class/COMP 4350/task/Final')
+        resp = client.get('/api/class/COMP 4350/task/Final')
         self.assertStatus(resp, 400)
 
 

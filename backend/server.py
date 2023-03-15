@@ -128,14 +128,14 @@ def login():
                 user = User()
                 user.id = username
                 flask_login.login_user(user)
-                print("logged in: ", username)
+                # print("logged in: ", username)
                 # redirect to homepage
                 # flask.redirect("../../frontend/index.html", 200)
                 return "Logged In", 200
             else:
                 # invalid password
                 # send 401 bad request response
-                print("failed login: ", username)
+                # print("failed login: ", username)
                 # print("Incorrect password")
                 response = "Incorrect Password", 401
                 return response
@@ -488,18 +488,18 @@ def grade(classname):
             total_weight = total_weight + t.task_Weight
             total_grade = total_grade + t.task_grade * t.task_Weight
     if total_weight > 1:
-        print(username, classname, "has a total task weight > 100!")
+        # print(username, classname, "has a total task weight > 100!")
         return "Server Error", 500
     if total_weight == 0:
         return {"result": "-", "message": "You haven't got any grades yet."}, 200
     class_grade = total_grade / total_weight
     # return letter grade based on breakdown and done task grades
-    print(classname, "has a grade of: ", class_grade)
+    # print(classname, "has a grade of: ", class_grade)
     for k in breakdown.keys():
-        print(eval(breakdown[k])[0] / 100, " < ", str(class_grade), " <= ", eval(breakdown[k])[1] / 100)
+        # print(eval(breakdown[k])[0] / 100, " < ", str(class_grade), " <= ", eval(breakdown[k])[1] / 100)
         if eval(breakdown[k])[0] / 100 < class_grade <= eval(breakdown[k])[1] / 100:
             return {"result": k, "message": messages[k]}, 200
-    print(username, "didn't find grade range for", classname)
+    # print(username, "didn't find grade range for", classname)
     return "Server Error: Grade range wasn't found", 500
 
 

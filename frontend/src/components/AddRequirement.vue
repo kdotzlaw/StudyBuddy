@@ -28,6 +28,8 @@
 </template>
 
 <script setup>
+  import { default as axios } from 'axios';
+  import { useRoute } from 'vue-router';
   import { storeToRefs } from "pinia";
   import { ref, computed } from "vue";
   import { useStore } from "../stores";
@@ -36,47 +38,59 @@
   const {setModal, toggleModal} = store;
 
   const props = defineProps({ 
-    edit: {type: Boolean, required: false, default: false}
+    edit: {type: Boolean, required: false, default: false},
   })
   
+  let classRoute = useRoute().params.slug;
   let reqName, gradeReq, reqDate, finishReq;
 
   function addToCalendar(){
     reqName = document.getElementById("name-req-input").value;
     gradeReq = document.getElementById("grade-req-input").value;
     reqDate = document.getElementById("date-req-input").value;
-    if(props.edit)
-      finishReq = document.getElementById("finish-req-input").value;
-
-    /******************************************* 
-     * TODO: Update POST endpoint
-     *******************************************/
 
     const host = 'http://127.0.0.1:5000'; 
-    const apiUrl = '/api/';
-    const data = {
-      reqName: reqName,
-      gradeReq: gradeReq,
-      reqDate: reqDate,
+    const apiUrlNew = `/api/class/${classRoute}/newtask`;
+    const apiUrlUpdate = `/api/class/${classRoute}/newtask`;
+    let data = {
+      taskname: reqName,
+      weight: gradeReq, // TODO: Sync reqs with backend
+      deadline: reqDate,
     };
-    console.log(data);
-    fetch(host + apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      mode: 'no-cors',
-      body: JSON.stringify(data),
-      credentials: 'include'
-    })
-      .then(response => response.text())
-      .then(data => {
-        setModal("Success", "success", data);
+
+    if(props.edit){
+      finishReq = document.getElementById("finish-req-input").value;
+      data.grade = finishReq;
+    }
+
+    // Update current task information
+    if(props.edit){
+      axios.post(host + apiUrlUpdate, data)
+      .then(function (response) {
+        console.log(response);
+        setModal("Success", "success", response.data);
         toggleModal();
       })
-    .catch(error => {
-      console.log(error);
-    });
+      .catch(function (error) {
+        console.log(error.response);
+        setModal("Error", "error", error.response.data);
+        toggleModal();
+      });
+    }
+    // Create new task
+    else{
+      axios.post(host + apiUrlNew, data)
+      .then(function (response) {
+        console.log(response);
+        setModal("Success", "success", response.data);
+        toggleModal();
+      })
+      .catch(function (error) {
+        console.log(error.response);
+        setModal("Error", "error", error.response.data);
+        toggleModal();
+      });
+    }
   }
 
 </script>

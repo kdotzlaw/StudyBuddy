@@ -58,5 +58,7 @@
 
     #renderString{
         font-size: 120%;
+        text-align: center;
+        max-width: 80%;
     }
 </style>

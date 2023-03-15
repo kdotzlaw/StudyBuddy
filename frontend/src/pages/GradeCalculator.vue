@@ -93,6 +93,7 @@
 </template>
 
 <script setup>
+  import { default as axios } from 'axios';
   import ArrowBack from "/artifacts/arrowback.svg";
   import { ref, computed, onMounted } from "vue";
   import { storeToRefs } from "pinia";
@@ -203,26 +204,16 @@
      * TODO: Update POST endpoint
      *******************************************/
 
-     const host = 'http://127.0.0.1:5000'; 
+    const host = 'http://127.0.0.1:5000'; 
     const apiUrl = '/api/';
     const data = getData();
-    fetch(host + apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      mode: 'no-cors',
-      body: JSON.stringify(data),
-      credentials: 'include'
-    })
-      .then(response => response.text())
-      .then(data => {
-        setModal("Success", "success", data);
-        toggleModal();
+    /*axios.post(host + apiUrl, data)
+      .then(function (response) {
+        console.log(response);
       })
-    .catch(error => {
-      console.log(error);
-    });
+      .catch(function (error) {
+        console.log(error.response);
+      });*/
   }
 
 </script>

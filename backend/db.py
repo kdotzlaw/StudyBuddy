@@ -229,7 +229,7 @@ def addClassBreakdown(username, className, breakdown):
     cursor.execute("UPDATE Classes SET breakdown = ? WHERE cID = ? AND FK_uID = ?;", breakdown, classID, userID)
 '''classname and timeslot'''
 def editClassReqData(username, className_old,className_new, timeslot_new):
-    user = getUser()
+    user = getUser(username)
     classID = getClassID(username, className_old)
     if not user:
         return None
@@ -494,7 +494,7 @@ def getDeadlines(username):
         return None
     # Need to get the built-in SQL method for getting dates
     today = cursor.execute("SELECT isnull(SOP30200.SOPNUMBE,''), isnull(SOP30200.docdate,'') "
-                           "FROM SOP30200 WHERE SOP30200.docdate = current_date")
+                           "FROM SOP30200 WHERE SOP30200.docdate = CURRENT_DATE")
     prep_stmt = "SELECT Tasks.task_Name, Tasks.deadline " \
                 "FROM Tasks " \
                 "INNER JOIN Classes ON Tasks.FK_cID = Classes.cID " \

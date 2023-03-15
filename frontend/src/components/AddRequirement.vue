@@ -3,11 +3,11 @@
     
     <div id="name-req">
       <h3>Requirement Name</h3>
-      <input type="text" id="name-req-input" placeholder="Enter requirement name" v-model="reqName">
+      <input type="text" id="name-req-input" placeholder="Enter requirement name" v-model="reqName" @keydown="checkEnter">
     </div>
     <div id="grade-req">
       <h3>Letter Goal</h3>
-      <input type="text" id="grade-req-input" placeholder="A" v-model="gradeReq">
+      <input type="text" id="grade-req-input" placeholder="A" v-model="gradeReq" @keydown="checkEnter">
     </div>
     <div id="date-req">
       <h3>Due Date</h3>
@@ -15,7 +15,7 @@
     </div>
     <div v-if="edit" id="finish-req">
       <h3>Grade Received</h3>
-      <input type="number" id="finish-req-input" placeholder="90" v-model="finishReq">
+      <input type="number" id="finish-req-input" placeholder="90" v-model="finishReq" @keydown="checkEnter">
     </div>
 
     <div id="add-button-outer">
@@ -43,6 +43,13 @@
   
   let classRoute = useRoute().params.slug;
   let reqName, gradeReq, reqDate, finishReq;
+
+  // Detect when ENTER key pressed to submit form
+  function checkEnter(event){
+    if(event.key == "Enter")
+        addToCalendar();
+    event.stopImmediatePropagation();
+  }
 
   function addToCalendar(){
     reqName = document.getElementById("name-req-input").value;

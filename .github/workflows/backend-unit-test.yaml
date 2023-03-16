@@ -18,7 +18,6 @@ jobs:
         env:
           SA_PASSWORD: dbtools.IO
           ACCEPT_EULA: Y
-
     defaults:
       run:
         working-directory: ./backend

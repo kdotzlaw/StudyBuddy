@@ -16,7 +16,7 @@ conn = (r'Driver=ODBC Driver 17 for SQL Server;'
          )
 # DEV CONNECTION STRING - D.N.T
 '''conn = (r'Driver=SQL Server;'
-        r'Server=(local)'
+        r'Server=(local);'
         r'Database=StudyBuddy;'
         r'Trusted_Connection=yes'
         )'''
@@ -365,15 +365,18 @@ POSTCONDITION:
 - Otherwise,  no record is present in db and None is returned
 '''
 def completeTask(username, className, taskName, grade):
-    task = getTaskID(username, className, taskName)
-    if not task:
+    task = getSingleTask(username, className, taskName)
+    if task is None:
         return None
     taskID = task.tID
     user = getUser(username)
     if not user:
         return None
     userID = user.uID
-    classID = getClassID(username, className)
+    cls = getSingleClass(username, className)
+    if not cls:
+        return None
+    classID = cls.cID
     if not taskID or not userID or not classID:
         return None
     cursor.execute("UPDATE Tasks SET task_grade = ? WHERE FK_uID = ? AND FK_cID = ? AND tID = ?", grade, userID,
@@ -387,10 +390,7 @@ POSTCONDITION:
 '''
 
 def uncompleteTask(username, className, taskName):
-    task = getTaskID(username, className, taskName)
-    if not task:
-        return None
-    taskID = task.tID
+    taskID = getTaskID(username, className, taskName).tID
     user = getUser(username)
     if not user:
         return None
@@ -453,10 +453,7 @@ def removeTask(username, className, taskName):
         return None
     userID = user.uID
     classID = getClassID(username, className)
-    task = getTaskID(username, className, taskName)
-    if not task:
-        return None
-    taskID = task.tID
+    taskID = getTaskID(username, className, taskName).tID
     if not userID or not classID or not taskID:
         return None
     prep_stmt = "DELETE FROM Tasks WHERE tID = ? AND FK_uID = ? AND FK_cID = ?;"
@@ -474,8 +471,11 @@ def editTask (username, className, taskName, eName, eDate, eWeight):
     if not user:
         return None
     userID = user.uID
-    classID = getClassID(username, className)
-    task = getTaskID(username, className,taskName)
+    cls = getSingleClass(username, className)
+    if not cls:
+        return None
+    classID = cls.cID
+    task = getSingleTask(username, className, taskName)
     if not task:
         return None
     taskID = task.tID

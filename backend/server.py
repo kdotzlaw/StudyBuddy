@@ -201,7 +201,7 @@ def getClass(classname):
     # print("the class is: ", res, ' and logic says: ', res is None)
     if res is None:
         # no class found
-        return {"result": "Bad Request: No class found"}, 400
+        return "GETCLASS - Bad Request: No class found", 400
     else:
         return {"result": parse_row(res)}, 200
 
@@ -225,7 +225,7 @@ def all_tasks(classname):
     res = db.getSingleClass(username, classname)
     if res is None:
         # no class found
-        return {"result": "Bad Request: No class found"}, 400
+        return "ALLTASKS - Bad Request: No class found", 400
     else:
         res = db.getTaskList(username, classname)
         # need to parse
@@ -363,7 +363,7 @@ def get_task(classname, taskname):
     res = db.getTaskID(username, classname, taskname)
     if res is None:
         # no class found
-        return {"result": "Bad Request: No task found"}, 400
+        return "GETTASK - Bad Request: No task found", 400
     else:
         return {"result": parse_row(res)}, 200
 
@@ -440,7 +440,7 @@ def complete_task(classname, taskname):
 
     res = db.completeTask(username, classname, taskname, grade)
     if res is None:
-        return "Bad Request", 400
+        return "COMPLETETASK - Bad Request", 400
     return "Completed Task Successfully", 200
 
 

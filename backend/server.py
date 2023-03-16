@@ -17,7 +17,7 @@ class customJSON(flask.json.provider.JSONProvider):
     def dumps(self, obj, **kwargs):
         return json.dumps(obj, **kwargs, default=str)
 
-    def loads(self, s: str | bytes, **kwargs):
+    def loads(self, s: str or bytes, **kwargs):
         return json.loads(s, **kwargs)
 
 
@@ -208,8 +208,10 @@ def getClass(classname):
 
 def parse_rows(rows):
     res = []
-    for row in rows:
-        res.append(dict(zip([t[0] for t in row.cursor_description], row)))
+    if rows is not None:
+        for row in rows:
+
+            res.append(dict(zip([t[0] for t in row.cursor_description], row)))
     return res
 
 
@@ -255,6 +257,9 @@ def classMeta(classname):
     req = flask.request.get_json(force=True)
     res = db.getSingleClass(username, classname)
 
+    if res is None:
+        return "Bad Request: Failed to find class", 400
+
     if 'breakdown' not in req.keys():
         breakdown = res.breakdown
     else:
@@ -297,11 +302,10 @@ def classMeta(classname):
 
     res = db.editClassMeta(username, classname, sectionnum, classroom, prof, prof_email, prof_phone, prof_office,
                            prof_hours)
-    if res is not None:
-        res = db.addClassBreakdown(username, classname, breakdown)
-        return 'Class Meta updated successfully', 200
-    else:
-        return 'Bad Request: Failed to find class', 400
+
+    res = db.addClassBreakdown(username, classname, breakdown)
+    return 'Class Meta updated successfully', 200
+
 
 
 # creates a new task for the current user for the class: 'classname'
@@ -339,6 +343,8 @@ def newclass():
         return "Bad Request: JSON missing required value(s)", 400
     else:
         res = db.addClass(username, req['classname'], req['timeslot'])
+        if res is None:
+            return "Error", 400
         return "Added Class", 200
 
 
@@ -353,6 +359,8 @@ def all_classes():
         return {"result": parse_rows(res)}, 200
     elif type(res) is Row:
         return {"result": parse_row(res)}, 200
+    elif res is None:
+        return {"result": []}, 200
 
 
 # get specific task: 'taskname'
@@ -439,8 +447,10 @@ def complete_task(classname, taskname):
         grade = req['grade']
 
     res = db.completeTask(username, classname, taskname, grade)
-    if res is None:
-        return "COMPLETETASK - Bad Request", 400
+    cls = db.getClassID(username, classname)
+    task = db.getTaskID(username, classname, taskname)
+    if cls is None or task is None:
+        return "COMPLETETASK - Bad Request: Class or task not found", 400
     return "Completed Task Successfully", 200
 
 

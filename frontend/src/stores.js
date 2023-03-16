@@ -97,6 +97,15 @@ export const useStore = defineStore('store', () => {
         uiSkin.value = skin;
     }
 
+    /* buddyChoice
+     *   ID of buddy character to display in dashboard
+     *   setter @params - skin: String
+     *=====================================*/
+    const buddyChoice = ref("corgi");
+    function updateBuddy(buddy="corgi"){
+        buddyChoice.value = buddy;
+    }
+
     // Export refs and getter/setter functions
     return {
         sessionTimer, setTimer,
@@ -105,6 +114,6 @@ export const useStore = defineStore('store', () => {
         studyTime, studyClass, setStudyTime, setStudyClass,
         isModalOpen, toggleModal,
         modalTitle, modalContent, modalRender, setModal,
-        uiSkin, updateSkin,
+        uiSkin, updateSkin, buddyChoice, updateBuddy
     }
 })

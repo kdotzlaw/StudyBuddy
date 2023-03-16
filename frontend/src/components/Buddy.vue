@@ -92,13 +92,14 @@
 
     #chat-balloon{
         position: absolute;
-        z-index: 4;
+        z-index: 5;
         top: -2em;
-        height: 8em;
+        min-height: 8em;
+        height: max-content;
         width: 9em;
         background: var(--black);
         border-radius: 50%;
-        padding: 0 1.5em 0 1.5em;
+        padding: 0.5em 1.7em 0.5em 1.7em;
         display: grid;
         justify-items: center;
         align-items: center;
@@ -110,7 +111,7 @@
         position: absolute;
         z-index: 4;
         left: 0;
-        top: 4em;
+        top: 5em;
         height: 4em;
         width: 6em;
         background: radial-gradient(circle at top left, transparent 60%, var(--black) 61%);

@@ -5,9 +5,15 @@
 
 <script setup>
     import TitleSq from "/artifacts/buddytemp.svg";
-    import Corgi from "./Corgi.vue";
+    import { storeToRefs } from "pinia";
     import { ref } from "vue";
     import { useMotion } from "@vueuse/motion";
+    import { useStore } from "../stores";
+    import Corgi from "./Corgi.vue";
+    import Bunny from "./Bunny.vue";
+    
+    const store = useStore();
+    const { buddyChoice } = storeToRefs(store);
 
     const props = defineProps({ 
         showLevel: {type: Boolean, required: false, default: false},
@@ -47,7 +53,12 @@
 
     <!-- Buddy container -->
     <div id="buddy">
-        <Corgi />
+        <div v-if="buddyChoice == 'corgi'" >
+            <Corgi />
+        </div>
+        <div v-else>
+            <Bunny />
+        </div>
 
         <!-- Chat balloon -->
         <div class="chat">

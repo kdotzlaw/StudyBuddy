@@ -7,10 +7,12 @@
     import { onMounted } from "vue";
     import { storeToRefs } from "pinia";
     import { useStore } from "../stores";
+    import Corgi from "./Corgi.vue";
+    import Bunny from "./Bunny.vue";
     
     const store = useStore();
     const { uiSkin } = storeToRefs(store);
-    const { updateSkin } = store;
+    const { updateSkin, updateBuddy } = store;
 
     // Add a box glow on current UI skin
     onMounted(() => {
@@ -29,6 +31,11 @@
                 skin.classList.add("skin-active");
         }
     }
+
+    // Swap buddy choice
+    function updateTheBuddy(buddyId){
+        updateBuddy(buddyId);
+    }
 </script>
 
 <template>
@@ -39,6 +46,15 @@
             <div :class="`skin-preview skin-forest`" @click="updateTheSkin('skin-forest')" />
             <div :class="`skin-preview skin-sunset`" @click="updateTheSkin('skin-sunset')" />
         </div>
+        <h2>Swap Buddy</h2>
+        <div class="buddies">
+            <div :class="`buddy-preview`" @click="updateTheBuddy('corgi')">
+                <Corgi />
+            </div>
+            <div :class="`buddy-preview`" @click="updateTheBuddy('buddy')">
+                <Bunny />
+            </div>
+        </div>
     </div>
 </template>
 
@@ -48,7 +64,7 @@
         justify-items: center;
     }
     
-    .skins{
+    .skins, .buddies{
         display: flex;
         margin: 1em 0 1em 0;
     }
@@ -76,5 +92,22 @@
 
     .skin-active{
         box-shadow: 0 0 6px 2px var(--highlight);
+    }
+
+    .buddy-preview{
+        height: 7em;
+        width: 6em;
+        margin: 0 2em 0 2em;
+        cursor: pointer;
+    }
+
+    .buddy-preview:hover{
+        transition: 0.3s ease-in-out;
+        transform: scale(110%);
+    }
+
+    .buddy-preview svg{
+        height: inherit;
+        transform: translateX(-30%);
     }
 </style>

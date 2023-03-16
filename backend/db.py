@@ -483,7 +483,7 @@ def editTask (username, className, taskName, eName, eDate, eWeight):
 
 
 '''
-get top 3 most current deadlines for dashboard display
+get top 5 most current deadlines for dashboard display
 '''
 def getDeadlines(username):
     user = getUser(username)

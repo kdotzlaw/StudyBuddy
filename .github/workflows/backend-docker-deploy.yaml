@@ -1,7 +1,7 @@
 name: Backend Docker Deployment
 
 on:
-  workflow_dispatch:    # Allows this workflow to be ran manually from the Actions tab
+  workflow_dispatch:  # Allows this workflow to be ran manually from the Actions tab
   push:
     branches: [ main ]
 

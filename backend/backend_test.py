@@ -185,7 +185,7 @@ class dbTests(unittest.TestCase):
     '''
     def test_removeClass(self):
         username = 'katDot'
-        className = "COMP 2150"
+        className = "COMP 2080"
         timeslot = "9:00:00.0000000"
         db.addClass(username, className, timeslot)
         # remove it

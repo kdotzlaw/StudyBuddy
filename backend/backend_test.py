@@ -443,8 +443,9 @@ class dbTests(unittest.TestCase):
             username = 'katDot'
             d1 = datetime.datetime(year=2023, month=2, day=9, hour=14, minute=0, second=0)
             record = db.getDeadlines(username)
+            print(record)
             self.assertNotEqual(record, None)
-            self.assertEqual(record.deadline,d1)
+            self.assertEqual(record[0].deadline,d1)
 
 
 creds = {'username': 'ryan2023', 'password': 'password'}

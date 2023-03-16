@@ -492,15 +492,7 @@ def getDeadlines(username):
     userID = user.uID
     if not userID:
         return None
-    # Need to get the built-in SQL method for getting dates
-    today = cursor.execute("SELECT isnull(SOP30200.SOPNUMBE,''), isnull(SOP30200.docdate,'') "
-                           "FROM SOP30200 WHERE SOP30200.docdate = CURRENT_DATE")
-    prep_stmt = "SELECT Tasks.task_Name, Tasks.deadline " \
-                "FROM Tasks " \
-                "INNER JOIN Classes ON Tasks.FK_cID = Classes.cID " \
-                "WHERE  Tasks.deadline < ? AND Tasks.FK_uID = ?" \
-                "ORDER BY Tasks.deadline DESC" \
-                "LIMIT 5"
-    record = cursor.execute(prep_stmt, today, userID).fetchall()
+    prep_stmt = "SELECT TOP 5 Tasks.task_Name, Tasks.deadline FROM Tasks INNER JOIN Classes ON Tasks.FK_cID=Classes.cID WHERE Tasks.FK_uID = ? ORDER BY Tasks.deadline DESC;"
+    record = cursor.execute(prep_stmt, userID).fetchall()
     return record
 

@@ -13,6 +13,7 @@ import tempfile
 
 class dbTests(unittest.TestCase):
     '''
+    TEST: test_cnxn()
         Test passes if a viable connection to db has been established
         Else, connection failed
     '''
@@ -37,8 +38,10 @@ class dbTests(unittest.TestCase):
             self.fail("Connection failed")
         cnxn.close()
 
-    ''' Passes if there is data in the users and class tables'''
-
+    ''' 
+    TEST: testData()
+    Passes if there is data in the users and class tables
+    '''
     def testData(self):
         users = db.getUserData()
         self.assertNotEqual(users, None)
@@ -48,10 +51,10 @@ class dbTests(unittest.TestCase):
         print(classes)
 
     '''
+    TEST: getUser()
     Test passes if the correct record information is retrieved for the specified username
     Test fails if incorrect record returned
     '''
-
     def test_getUser(self):
         username = "katDot"
         result = db.getUser(username)
@@ -59,18 +62,18 @@ class dbTests(unittest.TestCase):
         self.assertIn(username, result.username)
 
     '''
+    TEST: getUserFail()
     Test passes if returns None type for user that doesnt exist in db
     '''
-
     def test_getUserFail(self):
         username = "test"
         result = db.getUser(username)
         self.assertEqual(result, None)
 
     '''
+    TEST: test_removeUser()
     Test passes if mock user successfully removed from db
     '''
-
     def test_removeUser(self):
         username = "test"
         # db.removeUser(username)
@@ -82,19 +85,19 @@ class dbTests(unittest.TestCase):
         self.assertNotIn(username, result)
 
     '''
+    TEST:removeUserFail()
     Test passes if error msg is returned when trying to remove a user that doesnt exist
     '''
-
     def test_removeUserFail(self):
         username = 'test'
         record = db.removeUser(username)
         self.assertIn("is not in database", record)
 
     '''
+    TEST: test_createAccount()
     Test passes if user is sucessfully inserted into the db (asserting that user appears in retrieved record)
     Mock user is removed at the end of the test
     '''
-
     def test_createAccount(self):
         username = "test"
         password = "testing"
@@ -107,9 +110,9 @@ class dbTests(unittest.TestCase):
 
     # Class Tests
     '''
+    TEST: test_getClasses()
     Test passes if given strings are present in the record retrieved
     '''
-
     def test_getClasses(self):
         username = "katDot"
         c1 = "COMP 4350"
@@ -119,9 +122,9 @@ class dbTests(unittest.TestCase):
         self.assertIn(c2, classes[1])
 
     '''
+    TEST: test_getClassesNone()
     Test passes if the None guards present in the function <getClasses> is working
     '''
-
     def test_getClassesNone(self):
         username = "test"
         password = "1234"
@@ -133,9 +136,9 @@ class dbTests(unittest.TestCase):
         self.assertNotIn("test", users)
 
     '''
+    TEST: test_ClassID()
     Test passes if the class ID from the record with username & className matches hardcoded value (3)
     '''
-
     def test_ClassId(self):
         username = 'katDot'
         className = 'Comp 4350'
@@ -143,9 +146,9 @@ class dbTests(unittest.TestCase):
         self.assertEqual(3, record)
 
     '''
+    TEST: test_ClassID_AttrError()
     Test passes if None guard present in function <getClassID> is working; ie no attribute errors thrown
     '''
-
     def test_ClassId_AttrError(self):
         username = 'katDot'
         className = 'fake class'
@@ -153,9 +156,9 @@ class dbTests(unittest.TestCase):
         self.assertEqual(record, None)
 
     '''
+    TEST: test_getSingleClass()
     Test passes if the hardcoded username and className appear in the requested record
     '''
-
     def test_getSingleClass(self):
         username = 'katDot'
         className = "COMP 4350"
@@ -163,9 +166,9 @@ class dbTests(unittest.TestCase):
         self.assertIn(className, record)
 
     '''
+    TEST: test_addClass()
     Test passes if the added class can be successfully retrieved from the db
     '''
-
     def test_addClass(self):
         username = 'katDot'
         className = "COMP 2080"
@@ -177,9 +180,9 @@ class dbTests(unittest.TestCase):
         db.removeClass(username, className)
 
     '''
+    TEST: test_removeClass()
     Test passes if the added class is successfully removed from the db (no longer appears in class list)
     '''
-
     def test_removeClass(self):
         username = 'katDot'
         className = "COMP 2150"
@@ -192,9 +195,9 @@ class dbTests(unittest.TestCase):
             self.assertNotIn(className, record[i])
 
     '''
+    TEST: test_completeClass()
     Test passes if is_complete value for specified class is 1
     '''
-
     def test_completeClass(self):
         username = 'katDot'
         className = "COMP 2150"
@@ -208,9 +211,9 @@ class dbTests(unittest.TestCase):
         db.removeClass(username, className)
 
     '''
+    TEST: test_addStudyTime_base()
     Test passes if new study time matches hardcoded value
     '''
-
     def test_addStudyTime_base(self):
         username = "katDot"
         className = "COMP 2150"
@@ -221,11 +224,11 @@ class dbTests(unittest.TestCase):
         self.assertEqual(record.studyTime, 1.30)
 
     '''
+    TEST: test_editClassMeta
     Test passes if each column in specified class was successfully updated with new metadata
-    NOTE: this fails in the local backend suite, but passes in the github test suite
+    NOTE: can fails in the local backend suite, but will pass in the github test suite
     --> has to do with asserting the datetime obj locally
     '''
-
     def test_editClassMeta(self):
         username = "katDot"
         className = "COMP 2150"
@@ -236,11 +239,8 @@ class dbTests(unittest.TestCase):
         db.editClassMeta(username, className, "A01", "320 Machray", "Steve Stevenson", "Steve@steve.com", "999-9999",
                          "150 EITC", "10:00:00")
         record = db.getSingleClass(username, className)
-        # print(record)
         u = db.getUser(username).uID
-        # print(u)
         c = db.getClassID(username, className)
-        # print(c)
         self.assertNotEqual(record, None)
         self.assertNotEqual(u, None)
         self.assertNotEqual(c, None)
@@ -254,9 +254,9 @@ class dbTests(unittest.TestCase):
         self.assertEqual(d, record.prof_Hours)
 
     '''
-        Test passes if the given breakdown matches the breakdown returned in the record
-        '''
-
+    TEST: test_addClassBreakdown()
+     Test passes if the given breakdown matches the breakdown returned in the record
+    '''
     def test_addClassBreakdown(self):
         username = 'katDot'
         className = 'COMP 3820'
@@ -266,6 +266,10 @@ class dbTests(unittest.TestCase):
         self.assertNotEqual(record, None)
         self.assertEqual(breakdown, record.breakdown)
 
+    '''
+    TEST: test_editClassReqData_Name()
+    Test passes if required class field 'className' is correctly updated to new className, for given user
+    '''
     def test_editClassReqData_Name(self):
         username = "katDot"
         className_old = "COMP 3820"
@@ -282,6 +286,10 @@ class dbTests(unittest.TestCase):
         record = db.getSingleClass(username, className_old)
         self.assertEqual(record, orig)
 
+    '''
+    TEST: test_editClassReqData_Timeslot()
+    Test passes if required class field 'timeslot' is correctly updated to new timeslot, for given user and class
+    '''
     def test_editClassReqData_Timeslot(self):
         username = "katDot"
         className = "COMP 3820"
@@ -299,9 +307,9 @@ class dbTests(unittest.TestCase):
 
     # Tasks tests
     '''
+    TEST: test_getTaskList()
     Test passes if task list for specified user returned successfully
     '''
-
     def test_getTaskList(self):
         username = "katDot"
         className = "COMP 3820"
@@ -309,9 +317,9 @@ class dbTests(unittest.TestCase):
         self.assertNotEqual(record, None)
 
     '''
+    TEST: test_getEmptyTasks()
     Test passes if username, className has no tasks
     '''
-
     def test_getEmptyTasks(self):
         username = "ryan2023"
         className = "COMP 4350"
@@ -319,9 +327,9 @@ class dbTests(unittest.TestCase):
         self.assertEqual(record, None)
 
     '''
+    TEST: test_getTaskID()
     Test passes if correct taskID returned when given specified username and class
     '''
-
     def test_getTaskID(self):
         username = "katDot"
         className = "COMP 3820"
@@ -330,9 +338,9 @@ class dbTests(unittest.TestCase):
         self.assertEqual(record.tID, 1)
 
     '''
+    TEST: test_getTaskIDFail()
     Test passes if None guard in <getTaskID> is working
     '''
-
     def test_getTaskIDFail(self):
         username = "katDot"
         className = "COMP 3820"
@@ -341,9 +349,9 @@ class dbTests(unittest.TestCase):
         self.assertEqual(record, None)
 
     '''
+    TEST: test_completeTask()
     Test passes if Task with the grade (ie newly completed task) appears in the list of completed tasks
     '''
-
     def test_completeTask(self):
         username = "katDot"
         className = "COMP 3820"
@@ -354,9 +362,9 @@ class dbTests(unittest.TestCase):
         self.assertEqual(record[0].task_grade, 0.98)
 
     '''
+    TEST: test_uncompleteTask()
     Test passes if completed task is successfully reset to be uncompleted (ie not in completed tasks and grade = 0.0)
     '''
-
     def test_uncompleteTask(self):
         username = "katDot"
         className = "COMP 3820"
@@ -368,9 +376,9 @@ class dbTests(unittest.TestCase):
         self.assertEqual(record[0].task_grade, 0.0)
 
     '''
+    TEST: test_getCompleteTasksForClassSingle()
     Test passes if the single, completed task appears in the list
     '''
-
     def test_getCompleteTasksForClassSingle(self):
         username = "andrea22"
         className = "COMP 2080"
@@ -379,9 +387,9 @@ class dbTests(unittest.TestCase):
         self.assertEqual(record[0].tID, taskID)
 
     '''
+    TEST: test_getCompleteTasksForClassMulti
     Test passes if all complete tasks appear in the list
     '''
-
     def test_getCompleteTasksForClassMulti(self):
         username = "andrea22"
         className = "COMP 2080"
@@ -399,9 +407,9 @@ class dbTests(unittest.TestCase):
 
 
     '''
+    TEST: test_getSingleTask()
     Test passes if the requested task [name, id] appears in result of single task request
     '''
-
     def test_getSingleTask(self):
         username = "katDot"
         className = "COMP 3820"
@@ -411,9 +419,9 @@ class dbTests(unittest.TestCase):
         self.assertEqual(any(x in task for x in record), True)
 
     '''
+    TEST: test_removeTask()
     Test passes if specified task is correctly removed from the db
     '''
-
     def test_removeTask(self):
         username = "katDot"
         className = "COMP 3820"
@@ -424,9 +432,9 @@ class dbTests(unittest.TestCase):
         self.assertEqual(task, None)
 
     '''
+    TEST: test_addTask()
     Test passes if task specified appears in the db for the specified user and class
     '''
-
     def test_addTask(self):
         username = "katDot"
         className = "COMP 3820"
@@ -437,9 +445,9 @@ class dbTests(unittest.TestCase):
         db.removeTask(username, className, "Final Exam")
 
     '''
+    TEST: test_editTask()
     Test passes if task was successfully edited
     '''
-
     def test_editTask(self):
         username = "katDot"
         className = "COMP 3820"
@@ -458,9 +466,9 @@ class dbTests(unittest.TestCase):
         self.assertEqual(record.deadline, d1)
 
     '''
+    TEST: test_getDeadlines()
     Test passes if retrieved deadlines match the given deadlines
     '''
-
     def test_getDeadlines(self):
         username = 'katDot'
         d1 = datetime.datetime(year=2023, month=2, day=9, hour=14, minute=0, second=0)

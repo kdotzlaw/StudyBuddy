@@ -12,6 +12,7 @@
     import { ref, computed, onMounted } from "vue";
     import { storeToRefs } from "pinia";
     import { useStore } from "../stores";
+    import filter from "../logic/filter";
     
     const store = useStore();
     const { userId } = storeToRefs(store);
@@ -37,16 +38,27 @@
             return "grey";
         return mapping;
     }
+    let reqs = filter.getReqs([
+        { classKey: "COMP4620", tagColor: getTagColor("COMP4620"), name: "Assignment 4", due: new Date("March 12, 2023"), goal: "C" },
+        { classKey: "COMP2080", tagColor: getTagColor("COMP2080"), name: "Catch up", due: new Date("March 13, 2023"), goal: "C" },
+        { classKey: "COMP4350", tagColor: getTagColor("COMP4350"), name: "Final Exam", due: new Date("April 20, 2023"), goal: "A+" },
+    ]);
+    let chats = filter.getChats([
+        { classKey: "COMP4620", tagColor: getTagColor("COMP4620"), name: "Assignment 4", due: new Date("March 12, 2023"), goal: "C" },
+        { classKey: "COMP2080", tagColor: getTagColor("COMP2080"), name: "Catch up", due: new Date("March 13, 2023"), goal: "C" },
+        { classKey: "COMP4350", tagColor: getTagColor("COMP4350"), name: "Final Exam", due: new Date("April 20, 2023"), goal: "A+" },
+    ]);
+    /*
     let reqs = [
         { classKey: "COMP4620", tagColor: getTagColor("COMP4620"), name: "Assignment 4", due: new Date("March 12, 2023"), goal: "C" },
         { classKey: "COMP2080", tagColor: getTagColor("COMP2080"), name: "Catch up", due: new Date("March 13, 2023"), goal: "C" },
         { classKey: "COMP4350", tagColor: getTagColor("COMP4350"), name: "Final Exam", due: new Date("April 20, 2023"), goal: "A+" },
-    ]
+    ] 
     let chats = [
         "Press on the Play ▶ button on a class to start studying!",
         "You have no upcoming deadlines.",
         "Good hooman!"
-    ]
+    ] */
     let chatIndex = 0;
     const chat = ref(chats[0]);
 

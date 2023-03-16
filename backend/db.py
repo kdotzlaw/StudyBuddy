@@ -365,7 +365,7 @@ POSTCONDITION:
 - Otherwise,  no record is present in db and None is returned
 '''
 def completeTask(username, className, taskName, grade):
-    task = getTaskID(username, className, taskName)
+    task = getSingleTask(username, className, taskName)
     if task is None:
         return None
     taskID = task.tID
@@ -373,7 +373,10 @@ def completeTask(username, className, taskName, grade):
     if not user:
         return None
     userID = user.uID
-    classID = getClassID(username, className)
+    cls = getSingleClass(username, className)
+    if not cls:
+        return None
+    classID = cls.cID
     if not taskID or not userID or not classID:
         return None
     cursor.execute("UPDATE Tasks SET task_grade = ? WHERE FK_uID = ? AND FK_cID = ? AND tID = ?", grade, userID,

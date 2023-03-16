@@ -657,7 +657,7 @@ class apiTest(flask_unittest.ClientTestCase):
         # check valid login
         self.assertStatus(resp, 200)
         # create new class
-        resp = client.post('/api/newclass', json={"classname": "COMP 9999", "timeslot": "11:30"})
+        resp = client.post('/api/newclass', json={"classname": "COMP 9999", "timeslot": "11:30:00"})
         self.assertStatus(resp, 200)
         # double check class exists
         resp = client.get('/api/class/COMP 9999')

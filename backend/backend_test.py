@@ -9,7 +9,7 @@ import db
 import server
 import pyodbc
 import tempfile
-
+# //TODO: API Tests completeTask, deleteTask,doneTasks, editClass, editTask, grade_NoTask
 
 class dbTests(unittest.TestCase):
     '''
@@ -250,6 +250,50 @@ class dbTests(unittest.TestCase):
         d = datetime.datetime.strptime("10:00:00", '%H:%M:%S').time()
         self.assertEqual(d, record.prof_Hours)
 
+    '''
+        Test passes if the given breakdown matches the breakdown returned in the record
+        '''
+
+    def test_addClassBreakdown(self):
+        username = 'katDot'
+        className = 'COMP 3820'
+        breakdown = '{"A+":"(90,100)", "A":"(80,89)", "B+":"(75,79)", "B":"(70,74)", "C+":"(65,69)", "C":"(56,64)", "D":"(50,55)", "F":"(0, 49)"}'
+        db.addClassBreakdown(username, className, breakdown)
+        record = db.getSingleClass(username, className)
+        self.assertNotEqual(record, None)
+        self.assertEqual(breakdown, record.breakdown)
+
+    def test_editClassReqData_Name(self):
+        username = "katDot"
+        className_old = "COMP 3820"
+        className_new = "Bioinformatics"
+        orig = db.getSingleClass(username, className_old)
+        self.assertNotEqual(orig, None)
+        print(orig)
+        db.editClassReqData(username, className_old, className_new, "")
+        record = db.getSingleClass(username, className_new)
+        self.assertNotEqual(record, orig)
+        print(record)
+        # reset
+        db.editClassReqData(username, className_new, className_old, "")
+        record = db.getSingleClass(username, className_old)
+        self.assertEqual(record, orig)
+
+    def test_editClassReqData_Timeslot(self):
+        username = "katDot"
+        className = "COMP 3820"
+        timeslot_old = "14:30:00"
+        timeslot_new = "10:00:00"
+        orig = db.getSingleClass(username, className)
+        self.assertNotEqual(orig, None)
+        db.editClassReqData(username, className, "", timeslot_new)
+        record = db.getSingleClass(username, className)
+        self.assertNotEqual(record, orig)
+        # reset
+        db.editClassReqData(username, className, "", timeslot_old)
+        record = db.getSingleClass(username, className)
+        self.assertEqual(record, orig)
+
     # Tasks tests
     '''
     Test passes if task list for specified user returned successfully
@@ -349,50 +393,6 @@ class dbTests(unittest.TestCase):
         self.assertEqual(any(x in task1 for x in record[1]), True)
         # mark "Exam" as uncomplete
         db.uncompleteTask(username, className, "Exam")
-
-    '''
-    Test passes if the given breakdown matches the breakdown returned in the record
-    '''
-
-    def test_addClassBreakdown(self):
-        username = 'katDot'
-        className = 'COMP 3820'
-        breakdown = 'A+: (95,100), A: (86,94), B+:(80,85), B:(70,79), C+:(65,69), C:(56,64), D:(50,55), F(0,49)'
-        db.addClassBreakdown(username, className, breakdown)
-        record = db.getSingleClass(username, className)
-        self.assertNotEqual(record, None)
-        self.assertEqual(breakdown, record.breakdown)
-
-    def test_editClassReqData_Name(self):
-        username = "katDot"
-        className_old = "COMP 3820"
-        className_new = "Bioinformatics"
-        orig = db.getSingleClass(username, className_old)
-        self.assertNotEqual(orig, None)
-        print(orig)
-        db.editClassReqData(username, className_old, className_new, "")
-        record = db.getSingleClass(username, className_new)
-        self.assertNotEqual(record, orig)
-        print(record)
-        #reset
-        db.editClassReqData(username,className_new,className_old,"")
-        record = db.getSingleClass(username, className_old)
-        self.assertEqual(record,orig)
-
-    def test_editClassReqData_Timeslot(self):
-        username = "katDot"
-        className = "COMP 3820"
-        timeslot_old = "14:30:00"
-        timeslot_new = "10:00:00"
-        orig = db.getSingleClass(username, className)
-        self.assertNotEqual(orig, None)
-        db.editClassReqData(username, className, "", timeslot_new)
-        record = db.getSingleClass(username, className)
-        self.assertNotEqual(record, orig)
-        # reset
-        db.editClassReqData(username, className, "", timeslot_old)
-        record = db.getSingleClass(username, className)
-        self.assertEqual(record, orig)
 
 
     '''
@@ -623,6 +623,7 @@ class apiTest(flask_unittest.ClientTestCase):
         self.assertStatus(resp, 200)
         resp = client.post('/api/class/COMP 4350/task/Exam/complete', json={"grade": "0.97"})
         print(resp.get_data())
+        print(resp.get_json())
         self.assertStatus(resp, 200)
 
     def test_complete_task_fail(self, client):
@@ -672,6 +673,7 @@ class apiTest(flask_unittest.ClientTestCase):
         self.assertStatus(resp, 200)
         # update metadata
         resp = client.post('/api/class/COMP 3820/update_meta', json={"breakdown": '{"A+":"(90,100)", "A":"(80,89)", "B+":"(75,79)", "B":"(70,74)", "C+":"(65,69)", "C":"(56,64)", "D":"(50,55)", "F":"(0, 49)"}'})
+        print(resp.get_json())
         self.assertStatus(resp, 200)
         
 

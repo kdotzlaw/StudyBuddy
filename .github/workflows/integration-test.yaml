@@ -42,5 +42,6 @@ jobs:
           sqlcmd -S localhost -U sa -P dbtools.IO -i ./StudyBuddy_create.sql
 
       - name: Run Integration Tests
+        working-directory: ./frontend
         run:
           npm run compotest

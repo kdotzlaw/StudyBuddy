@@ -366,7 +366,7 @@ POSTCONDITION:
 '''
 def completeTask(username, className, taskName, grade):
     task = getTaskID(username, className, taskName)
-    if task is None:
+    if not task:
         return None
     taskID = task.tID
     user = getUser(username)
@@ -387,7 +387,10 @@ POSTCONDITION:
 '''
 
 def uncompleteTask(username, className, taskName):
-    taskID = getTaskID(username, className, taskName).tID
+    task = getTaskID(username, className, taskName)
+    if not task:
+        return None
+    taskID = task.tID
     user = getUser(username)
     if not user:
         return None
@@ -450,7 +453,10 @@ def removeTask(username, className, taskName):
         return None
     userID = user.uID
     classID = getClassID(username, className)
-    taskID = getTaskID(username, className, taskName).tID
+    task = getTaskID(username, className, taskName)
+    if not task:
+        return None
+    taskID = task.tID
     if not userID or not classID or not taskID:
         return None
     prep_stmt = "DELETE FROM Tasks WHERE tID = ? AND FK_uID = ? AND FK_cID = ?;"
@@ -469,7 +475,10 @@ def editTask (username, className, taskName, eName, eDate, eWeight):
         return None
     userID = user.uID
     classID = getClassID(username, className)
-    taskID = getTaskID(username, className,taskName).tID
+    task = getTaskID(username, className,taskName)
+    if not task:
+        return None
+    taskID = task.tID
     if not userID or not classID or not taskID:
         return None
     if eName != "":

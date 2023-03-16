@@ -10,14 +10,6 @@ on:
 jobs:
   run_integration_test:
     runs-on: ubuntu-latest
-    services:
-      mssql:
-        image: mcr.microsoft.com/mssql/server:2022-latest
-        ports:
-          - 1433:1433
-        env:
-          SA_PASSWORD: dbtools.IO
-          ACCEPT_EULA: Y
     steps:
       - name: Push Code onto VM
         uses: actions/checkout@v3.3.0

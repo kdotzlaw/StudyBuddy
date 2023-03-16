@@ -201,7 +201,7 @@ def getClass(classname):
     # print("the class is: ", res, ' and logic says: ', res is None)
     if res is None:
         # no class found
-        return {"result": "Bad Request: No class found"}, 400
+        return "Bad Request: No class found", 400
     else:
         return {"result": parse_row(res)}, 200
 

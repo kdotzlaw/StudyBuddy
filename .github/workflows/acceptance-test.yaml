@@ -39,7 +39,7 @@ jobs:
       - name: Create StudyBuddy Database
         working-directory: ./backend
         run:
-          sqlcmd -S tcp -U sa -P dbtools.IO -i ./StudyBuddy_create.sql
+          sqlcmd -S localhost -U sa -P dbtools.IO -i ./StudyBuddy_create.sql
 
       - name: Run Acceptance Tests
         run:

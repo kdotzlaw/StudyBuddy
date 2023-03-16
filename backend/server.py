@@ -291,7 +291,7 @@ def classMeta(classname):
         prof_office = req['prof_office']
 
     if 'prof_hours' not in req.keys():
-        prof_hours = str(res.prof_Hours)
+        prof_hours = res.prof_Hours
     else:
         prof_hours = req['prof_hours']
 
@@ -439,10 +439,7 @@ def complete_task(classname, taskname):
         grade = req['grade']
 
     res = db.completeTask(username, classname, taskname, grade)
-    if res is None:
-        return "Bad Request", 400
-    elif res:
-        return "Completed Task Successfully", 200
+    return "Completed Task Successfully", 200
 
 
 # returns all the complete tasks for class: 'classname'

@@ -62,7 +62,7 @@
 
     const host = 'http://127.0.0.1:5000'; 
     const apiUrlNew = `/api/class/${classRoute}/newtask`;
-    const apiUrlUpdate = `/api/class/${classRoute}/newtask`;
+    const apiUrlUpdate = `/api/class/${classRoute}/task/${reqName}/edit`;
     let data = {
       taskname: reqName,
       weight: gradeReq, // TODO: Sync reqs with backend

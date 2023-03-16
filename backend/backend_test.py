@@ -698,6 +698,7 @@ class apiTest(flask_unittest.ClientTestCase):
         # ensure only desired changes were made
         resp = client.get('/api/class/COMP 4350/task/Final Exam')
         # ensure name change
+        print(resp.get_data())
         self.assertStatus(resp, 200)
         # deadline didn't change
         self.assertEquals(resp.get_json(force=True)['deadline'], '2023-02-16 10:00')

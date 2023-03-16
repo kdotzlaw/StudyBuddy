@@ -9,7 +9,7 @@ import db
 import server
 import pyodbc
 import tempfile
-# //TODO: API Tests completeTask, deleteTask,doneTasks, editClass, editTask, grade_NoTask
+
 
 class dbTests(unittest.TestCase):
     '''

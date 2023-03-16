@@ -686,6 +686,7 @@ class apiTest(flask_unittest.ClientTestCase):
         print(resp.get_json(force=True, silent=True))
         resp = client.get('/api/class/COMP 8888')
         # name changed
+        print(resp.get_data())
         self.assertStatus(resp, 200)
         # timeslot didn't change
         self.assertEquals(resp.get_json(force=True)['timeslot'], "11:30:00")

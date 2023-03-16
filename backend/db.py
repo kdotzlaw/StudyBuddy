@@ -161,14 +161,14 @@ POSTCONDITION:
 
 
 def addClass(username, className, timeslot):
-    prep_stmt = "INSERT INTO Classes (class_Name, timeslot, FK_uID) VALUES (?,?,?);"
+    prep_stmt = "INSERT INTO Classes (class_Name, timeslot, FK_uID, is_complete) VALUES (?,?,?,?);"
     user = getUser(username)
     if not user:
         return None
     id = user.uID
     if not id:
         return None
-    return cursor.execute(prep_stmt, className, timeslot, id)
+    return cursor.execute(prep_stmt, className, timeslot, id, 0)
 
 
 '''

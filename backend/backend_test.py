@@ -703,11 +703,13 @@ class apiTest(flask_unittest.ClientTestCase):
         self.assertStatus(resp, 200)
         print(resp.get_data())
         # edit class
-        resp = client.get('/api/class')
+        resp = client.get('/api/class/COMP 123')
         print(resp.get_json(force=True, silent=True))
         resp = client.post('/api/class/COMP 123/edit', json={"classname": "COMP 8888"})
         print(resp.get_data())
         self.assertStatus(resp, 200)
+        resp = client.get('/api/class')
+        print(resp.get_data())
         # double check
         resp = client.get('/api/class/COMP 8888')
         # name changed

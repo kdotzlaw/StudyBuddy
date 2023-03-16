@@ -208,9 +208,11 @@ def getClass(classname):
 
 def parse_rows(rows):
     res = []
+    x = 0
     if rows is not None:
         for row in rows:
-
+            print(x)
+            x += 1
             res.append(dict(zip([t[0] for t in row.cursor_description], row)))
     return res
 

@@ -72,15 +72,11 @@
   const { updateSkin, setPageName, setStudyClass, setModal, toggleModal } = store;
 
   onMounted(() => {
-    setPageName("Grade Calculator");
+    if(classRoute)
+      setPageName("Manage Class");
+    else
+      setPageName("Create New Class");
   });
-
-  setTimeout(() => {
-    const addButton = document.getElementById("add-button");
-    addButton.addEventListener("click", () => {
-      console.log("clicked")
-    });
-  }, 500);
 
   let classRoute = useRoute().params.slug;
   let className, sectionName, classCode, room, classTime, profName, profEmail, profOffice;

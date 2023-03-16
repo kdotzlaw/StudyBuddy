@@ -36,14 +36,17 @@ class dbTests(unittest.TestCase):
         except Exception:
             self.fail("Connection failed")
         cnxn.close()
+
     ''' Passes if there is data in the users and class tables'''
+
     def testData(self):
         users = db.getUserData()
-        self.assertNotEqual(users,None)
+        self.assertNotEqual(users, None)
         print(users)
         classes = db.getClassesData()
-        self.assertNotEqual(classes,None)
+        self.assertNotEqual(classes, None)
         print(classes)
+
     '''
     Test passes if the correct record information is retrieved for the specified username
     Test fails if incorrect record returned
@@ -436,15 +439,15 @@ class dbTests(unittest.TestCase):
         db.editTask(username, className, "A1", '', '2023-02-09 14:00:00', 0)
         record = db.getSingleTask(username, className, "A1")
         self.assertEqual(record.deadline, d1)
-#//TODO: test for getDeadlines, update timeslot and name
 
+    # //TODO: test for getDeadlines, update timeslot and name
 
     def test_getDeadlines(self):
-            username = 'katDot'
-            d1 = datetime.datetime(year=2023, month=2, day=9, hour=14, minute=0, second=0)
-            record = db.getDeadlines(username)
-            self.assertNotEqual(record, None)
-            self.assertEqual(record.deadline,d1)
+        username = 'katDot'
+        d1 = datetime.datetime(year=2023, month=2, day=9, hour=14, minute=0, second=0)
+        record = db.getDeadlines(username)
+        self.assertNotEqual(record, None)
+        self.assertEqual(record.deadline, d1)
 
 
 creds = {'username': 'ryan2023', 'password': 'password'}
@@ -562,7 +565,7 @@ class apiTest(flask_unittest.ClientTestCase):
         # check valid login
         self.assertStatus(resp, 200)
         resp = client.get('/api/class/COMP 2080/task/Exam')
-        print(resp.get_json())
+        # print(resp.get_json())
         self.assertStatus(resp, 200)
 
     def test_task_fail1(self, client):
@@ -587,7 +590,7 @@ class apiTest(flask_unittest.ClientTestCase):
         # check valid login
         self.assertStatus(resp, 200)
         resp = client.get('/api/class/COMP 2080/task')
-        print(resp.get_json())
+        # print(resp.get_json())
         self.assertStatus(resp, 200)
 
     def test_newtask(self, client):
@@ -604,7 +607,7 @@ class apiTest(flask_unittest.ClientTestCase):
         # check valid login
         self.assertStatus(resp, 200)
         resp = client.post('/api/class/COMP 4350/task/Exam/complete', json={"grade": "0.97"})
-        print(resp.get_data())
+        # print(resp.get_data())
         self.assertStatus(resp, 200)
 
     def test_complete_task_fail(self, client):
@@ -613,7 +616,7 @@ class apiTest(flask_unittest.ClientTestCase):
         # check valid login
         self.assertStatus(resp, 200)
         resp = client.post('/api/class/COMP 4350/task/task1/complete')
-        print(resp.get_data())
+        # print(resp.get_data())
         self.assertStatus(resp, 400)
 
     def test_grade(self, client):
@@ -624,7 +627,7 @@ class apiTest(flask_unittest.ClientTestCase):
         # get grade for class
         resp = client.get('/api/class/COMP 2080/grade')
         self.assertStatus(resp, 200)
-        print(resp.get_json())
+        # print(resp.get_json())
 
     def test_grade_notasks(self, client):
         # log in
@@ -653,9 +656,9 @@ class apiTest(flask_unittest.ClientTestCase):
         # check valid login
         self.assertStatus(resp, 200)
         # update metadata
-        resp = client.post('/api/class/COMP 3820/update_meta', json={"breakdown": '{"A+":"(90,100)", "A":"(80,89)", "B+":"(75,79)", "B":"(70,74)", "C+":"(65,69)", "C":"(56,64)", "D":"(50,55)", "F":"(0, 49)"}'})
+        resp = client.post('/api/class/COMP 3820/update_meta', json={
+            "breakdown": '{"A+":"(90,100)", "A":"(80,89)", "B+":"(75,79)", "B":"(70,74)", "C+":"(65,69)", "C":"(56,64)", "D":"(50,55)", "F":"(0, 49)"}'})
         self.assertStatus(resp, 200)
-
 
     def test_editclass(self, client):
         # log in
@@ -671,6 +674,7 @@ class apiTest(flask_unittest.ClientTestCase):
         self.assertStatus(resp, 200)
         # timeslot didn't change
         self.assertEquals(resp.get_json(force=True)['timeslot'], "10:00:00")
+
     def test_edittask(self, client):
         # log in
         resp = client.post('/api/login', json={'username': 'andrea22', 'password': '2222'})
@@ -706,7 +710,8 @@ class apiTest(flask_unittest.ClientTestCase):
         # check valid login
         self.assertStatus(resp, 200)
         # new task
-        resp = client.post('/api/class/COMP 4350/newtask', json={'taskname': 'Final', 'weight': 0.7, 'deadline': '2023-02-16 10:00'})
+        resp = client.post('/api/class/COMP 4350/newtask',
+                           json={'taskname': 'Final', 'weight': 0.7, 'deadline': '2023-02-16 10:00'})
         self.assertStatus(resp, 200)
         # delete task
         resp = client.post('/api/class/COMP 4350/task/Final/delete')
@@ -714,7 +719,6 @@ class apiTest(flask_unittest.ClientTestCase):
         # ensure task is gone
         resp = client.get('/api/class/COMP 4350/task/Final')
         self.assertStatus(resp, 400)
-
 
     def test_donetasks(self, client):
         # log in
@@ -725,6 +729,7 @@ class apiTest(flask_unittest.ClientTestCase):
         resp = client.get('/api/class/COMP 2080/done_tasks')
         self.assertStatus(resp, 200)
         self.assertInResponse("A1", resp.get_data())
+
     def test_completeclass(self, client):
         # log in
         resp = client.post('/api/login', json=creds)
@@ -733,6 +738,7 @@ class apiTest(flask_unittest.ClientTestCase):
         # complete class
         resp = client.post('/api/class/COMP 4350/complete')
         self.assertStatus(resp, 200)
+
 
 if __name__ == '__main__':
     unittest.main()

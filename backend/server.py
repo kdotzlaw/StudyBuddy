@@ -439,6 +439,8 @@ def complete_task(classname, taskname):
         grade = req['grade']
 
     res = db.completeTask(username, classname, taskname, grade)
+    if res is None:
+        return "Bad Request", 400
     return "Completed Task Successfully", 200
 
 

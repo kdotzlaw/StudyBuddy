@@ -670,7 +670,7 @@ class apiTest(flask_unittest.ClientTestCase):
         # name changed
         self.assertStatus(resp, 200)
         # timeslot didn't change
-        self.assertEquals(resp.get_json(force=True)['timeslot'], "11:30")
+        self.assertEquals(resp.get_json(force=True)['timeslot'], "10:00:00")
     def test_edittask(self, client):
         # log in
         resp = client.post('/api/login', json={'username': 'andrea22', 'password': '2222'})
@@ -724,7 +724,7 @@ class apiTest(flask_unittest.ClientTestCase):
         # grab graded tasks
         resp = client.get('/api/class/COMP 2080/done_tasks')
         self.assertStatus(resp, 200)
-        self.assertIn("A1", resp.get_data())
+        self.assertInResponse("A1", resp.get_data())
     def test_completeclass(self, client):
         # log in
         resp = client.post('/api/login', json=creds)

@@ -1,4 +1,4 @@
-name: Integration Test & Regression Test
+name: Acceptance Test & Regression Test
 
 on:
   workflow_dispatch:  # Allows this workflow to be ran manually from the Actions tab
@@ -8,7 +8,7 @@ on:
     branches: [ main ] # Run regression tests upon PR to main
 
 jobs:
-  run_integration_test:
+  run_acceptance_test:
     runs-on: ubuntu-latest
     steps:
       - name: Push Code onto VM
@@ -37,17 +37,9 @@ jobs:
           pip install -r requirements.txt
 
       - name: Create StudyBuddy Database
+        working-directory: ./backend
         run:
           sqlcmd -S tcp -U sa -P dbtools.IO -i ./StudyBuddy_create.sql
-
-      - name: Run Unit Tests
-        env:
-          SQL_SERVER: localhost
-          SQL_USER: sa
-          SQL_PASSWORD: dbtools.IO
-          SQL_DATABASE: StudyBuddy
-        run:
-          python -m unittest discover -p "*_test.py"
 
       - name: Run Acceptance Tests
         run:

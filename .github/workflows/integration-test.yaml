@@ -37,17 +37,9 @@ jobs:
           pip install -r requirements.txt
 
       - name: Create StudyBuddy Database
+        working-directory: ./backend
         run:
           sqlcmd -S tcp -U sa -P dbtools.IO -i ./StudyBuddy_create.sql
-
-      - name: Run Unit Tests
-        env:
-          SQL_SERVER: localhost
-          SQL_USER: sa
-          SQL_PASSWORD: dbtools.IO
-          SQL_DATABASE: StudyBuddy
-        run:
-          python -m unittest discover -p "*_test.py"
 
       - name: Run Integration Tests
         run:

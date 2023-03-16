@@ -369,9 +369,11 @@ class dbTests(unittest.TestCase):
         className_new = "Bioinformatics"
         orig = db.getSingleClass(username, className_old)
         self.assertNotEqual(orig, None)
+        print(orig)
         db.editClassReqData(username, className_old, className_new, "")
         record = db.getSingleClass(username, className_new)
         self.assertNotEqual(record, orig)
+        print(record)
         #reset
         db.editClassReqData(username,className_new,className_old,"")
         record = db.getSingleClass(username, className_old)
@@ -678,6 +680,9 @@ class apiTest(flask_unittest.ClientTestCase):
         resp = client.post('/api/login', json=creds)
         # check valid login
         self.assertStatus(resp, 200)
+        resp = client.get('/api/class/COMP 9999')
+        print(resp.get_json())
+        self.assertStatus(resp,200)
         # edit class
         resp = client.post('/api/class/COMP 9999/edit', json={"classname": "COMP 8888"})
         self.assertStatus(resp, 200)

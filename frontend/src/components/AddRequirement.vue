@@ -18,6 +18,10 @@
       <input type="number" id="finish-req-input" placeholder="90" v-model="finishReq" @keydown="checkEnter">
     </div>
 
+    <div v-if="edit" id="delete-req">
+      <button class="button bar" id="delete-button" @click="deleteReq()"> Delete</button>
+    </div>
+
     <div id="add-button-outer">
       <button class="button bar" id="add-button" @click="addToCalendar()">Add to calendar</button>
     </div>
@@ -99,6 +103,30 @@
       });
     }
   }
+
+  function deleteReq(){
+    reqName = document.getElementById("name-req-input").value;
+
+    const host = 'http://127.0.0.1:5000'; 
+    const apiUrl = `/api/class/${classRoute}/task/${reqName}/delete`;
+
+    if(props.edit){
+      axios.post(host + apiUrl, data)
+      .then(function (response) {
+        console.log(response);
+        setModal("Success", "success", response.data);
+        toggleModal();
+      })
+      .catch(function (error) {
+        console.log(error.response);
+        setModal("Error", "error", error.response.data);
+        toggleModal();
+      });
+    }
+
+
+  }
+
 
 </script>
 
@@ -189,6 +217,16 @@
   right: 5em;
   width: max-content;
   transform: scale(1.15);
+}
+
+#delete-button{
+  margin-left: 0; 
+  margin-right: 60%;
+  position: absolute;
+  bottom: -1em;
+  left: 6em;
+  width: max-content;
+  transform: scale(1.2);
 }
 
 .button{

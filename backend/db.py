@@ -468,8 +468,14 @@ def editTask (username, className, taskName, eName, eDate, eWeight):
     if not user:
         return None
     userID = user.uID
-    classID = getClassID(username, className)
-    taskID = getTaskID(username, className,taskName).tID
+    cls = getSingleClass(username, className)
+    if not cls:
+        return None
+    classID = cls.cID
+    task = getSingleTask(username, className, taskName)
+    if not task:
+        return None
+    taskID = task.tID
     if not userID or not classID or not taskID:
         return None
     if eName != "":

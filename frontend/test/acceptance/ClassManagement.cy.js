@@ -1,3 +1,8 @@
+/*
+ * ClassManagement.cy.js
+ *    Acceptance tests on class workspace creation and management user stories.
+ */
+
 /// <reference types="cypress" />
 
 const serverUrl = Cypress.env('serverUrl');

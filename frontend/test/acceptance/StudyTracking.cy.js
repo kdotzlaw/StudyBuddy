@@ -1,3 +1,8 @@
+/*
+ * StudyTracking.cy.js
+ *    Acceptance tests on timing and tracking study sessions user stories.
+ */
+
 /// <reference types="cypress" />
 
 const serverUrl = Cypress.env('serverUrl');

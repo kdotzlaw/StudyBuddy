@@ -1,6 +1,7 @@
-/* 
- * Note: Customization has been decoupled from Progression (labelled as Future Sprint outside project scope) 
- * due to time constraints on the project. This spec will only address customization user stories.
+/*
+ * Customization.cy.js
+ *    Acceptance tests on dashboard feed and customization user stories.
+ *    Note: Customization has been decoupled from Progression (labelled as Future Sprint outside project scope)
  */
 
 /// <reference types="cypress" />

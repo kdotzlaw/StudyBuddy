@@ -1,3 +1,8 @@
+/*
+ * GradeTracking.cy.js
+ *    Acceptance tests on grade tracking user stories.
+ */
+
 /// <reference types="cypress" />
 
 const serverUrl = Cypress.env('serverUrl');

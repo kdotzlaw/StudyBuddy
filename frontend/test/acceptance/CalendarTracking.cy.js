@@ -1,3 +1,8 @@
+/*
+ * CalendarTracking.cy.js
+ *    Acceptance tests on calendar task views and CRUD user stories.
+ */
+
 /// <reference types="cypress" />
 
 const serverUrl = Cypress.env('serverUrl');

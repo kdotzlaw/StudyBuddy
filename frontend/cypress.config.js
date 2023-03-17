@@ -9,7 +9,7 @@ export default defineConfig({
     "env": {
       "serverUrl": "http://127.0.0.1:5000"
     },
-    supportFile: false,
+    supportFile: "test/errorConfig.ts",
     specPattern: "test/acceptance/**/*.cy.{js,jsx,ts,tsx}",
   },
   component: {

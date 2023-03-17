@@ -1,3 +1,8 @@
+/*
+ * Authentication.cy.js
+ *    Acceptance tests on account creation, login, and logout user stories.
+ */
+
 /// <reference types="cypress" />
 
 const serverUrl = Cypress.env('serverUrl');

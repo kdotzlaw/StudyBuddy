@@ -175,13 +175,10 @@
         percent: percent
       });
     }
-
-    console.log(data)
-
     return data;
   }
 
-  function getDataTwo() {
+  function getDataTwo(aPlus=100, a=90, bPlus=85, b=80, cPlus=75, c=70) {
     aPlus = document.getElementById("max-input-A+").value;
     a = document.getElementById("max-input-A").value;
     bPlus = document.getElementById("max-input-B+").value;
@@ -189,33 +186,40 @@
     cPlus = document.getElementById("max-input-C+").value;
     c = document.getElementById("max-input-C").value;
 
-    data = {
-      aPlus: aPlus,
-      a: a,
-      bPlus: bPlus,
-      b: b,
-      cPlus: cPlus,
-      c: c
+    let vals = [aPlus, a, bPlus, b, cPlus, c];
+    for(let i=0; i<vals.length; i++){
+      // If field not empty, convert to int; Else, use preset
+      if(vals[i].length>0) 
+        vals[i] = parseInt(vals[i]);
+      else
+        vals[i] = 100 - i*5;
     }
 
-    console.log(data)
+    let data = {
+      "A+": [vals[0], vals[1]+1],
+      "A": [vals[1], vals[2]+1],
+      "B+": [vals[2], vals[3]+1],
+      "B": [vals[3], vals[4]+1],
+      "C+": [vals[4], vals[5]+1],
+      "C": [vals[5], 65]
+    }
+    return data;
   }
 
   function update(){
-    /******************************************* 
-     * TODO: Update POST endpoint
-     *******************************************/
-
     const host = 'http://127.0.0.1:5000'; 
-    const apiUrl = '/api/';
-    const data = getData();
-    /*axios.post(host + apiUrl, data)
+    const apiUrlMeta = `/api/class/${classRoute}/update_meta`;
+    const gradeBreakdown = JSON.stringify(getDataTwo());
+    let data = {
+      breakdown: gradeBreakdown
+    }
+    axios.post(host + apiUrlMeta, data)
       .then(function (response) {
         console.log(response);
       })
       .catch(function (error) {
         console.log(error.response);
-      });*/
+      });
   }
 
 </script>

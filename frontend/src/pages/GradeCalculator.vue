@@ -1,3 +1,9 @@
+<!-- 
+  GradeCalculator.vue
+    route: /class/${classRoute}/update_meta
+
+    Full-page class to set task weights and set letter grade cutoffs
+-->
 <template>
 
   <!-- Back button -->
@@ -113,10 +119,10 @@
 
   let classRoute = useRoute().params.slug;
 
-  /*
-  This function creates a new row in the table by manually creating
-  the elements to insert. It allows us to dynamically add rows to the table
-  */
+  /*  createRow
+   *    This function creates a new row in the table by manually creating
+   *    the elements to insert. It allows us to dynamically add rows to the table
+   */
   function createRow(){
     // Create the new row
     let newRow = document.createElement("tr");
@@ -171,9 +177,9 @@
     document.getElementById("table-buddy").appendChild(newRow);
   }
 
-  /*
-  This function sends the data from the table to the server
-  */
+  /*  getDataOne
+   *    This function sends the data from the table to the server
+   */
   function getDataOne(){
     let table = document.getElementById("table-buddy");
     let rows = table.getElementsByTagName("tr");
@@ -195,9 +201,9 @@
     return data;
   }
 
-  /*
-  This function sends the grade breakdown data from the table to the server.
-  It has default values
+  /*  getDataTwo
+   *    This function sends the grade breakdown data from the table to the server.
+   *    It has default values
   */
   function getDataTwo(aPlus=100, a=90, bPlus=85, b=80, cPlus=75, c=70) {
     aPlus = document.getElementById("max-input-A+").value;
@@ -227,8 +233,8 @@
     return data;
   }
 
-  /*
-  This function updates the grade calculator data in the database
+  /*  update
+   *    This function updates the grade calculator data in the database
   */
   function update(){
     const host = 'http://127.0.0.1:5000'; 

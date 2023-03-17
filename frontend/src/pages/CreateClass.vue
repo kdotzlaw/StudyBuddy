@@ -1,3 +1,8 @@
+<!-- 
+  CreateClass.vue
+    route: /newclass and class/${classRoute}/update_meta`;
+    Full-page class to create new class or update existing class.
+-->
 <template>
 
   <!-- Back button -->
@@ -85,6 +90,9 @@
   let classRoute = useRoute().params.slug;
   let className, sectionName, classCode, room, classTime, profName, profEmail, profOffice;
 
+  /*  createClass
+   *    Creates a new class or updates an existing class.
+   */
   function createClass() {
     className = document.getElementById("class-name-input").value;
     sectionName = document.getElementById("section-name-input").value;
@@ -96,9 +104,7 @@
     profOffice = document.getElementById("professor-office-input").value;
 
 
-    /*
-    Send data to backend. Can either be a NEW class or an UPDATE to an existing class.
-    */
+    //  Send data to backend. Can either be a NEW class or an UPDATE to an existing class.
     const host = 'http://127.0.0.1:5000'; 
     const apiUrlNew = `/api/newclass`;
     const apiUrlUpdate = `/api/class/${classRoute}/update_meta`;

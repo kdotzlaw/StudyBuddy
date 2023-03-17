@@ -1,3 +1,11 @@
+<!-- 
+  AddRequirement.vue
+    route: /class/${classRoute}/newtask
+           /class/${classRoute}/task/${reqName}/edit
+           /class/${classRoute}/task/${reqName}/complete
+
+    Modal for adding a new requirement
+-->
 <template>
   <div id="add-req-container">
     <div id="name-req">
@@ -49,14 +57,18 @@
   let classRoute = useRoute().params.slug;
   let reqName, gradeReq, reqDate, finishReq;
 
-  // Detect when ENTER key pressed to submit form
+  /*  checkEnter
+   *    Detect when ENTER key pressed to submit form
+   */
   function checkEnter(event){
     if(event.key == "Enter")
         addToCalendar();
     event.stopImmediatePropagation();
   }
 
-  // Add requirement to calendar
+  /*  addToCalendar
+   *    Add requirement to calendar
+   */
   function addToCalendar(){
     reqName = document.getElementById("name-req-input").value;
 
@@ -130,7 +142,9 @@
     
   }
 
-  // Delete requirement from calendar
+  /*  deleteReq
+   *    Delete requirement from calendar
+   */
   function deleteReq(){
     reqName = document.getElementById("name-req-input").value;
 

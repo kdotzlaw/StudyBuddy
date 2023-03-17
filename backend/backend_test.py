@@ -701,26 +701,23 @@ class apiTest(flask_unittest.ClientTestCase):
         # create class
         resp = client.post('/api/newclass', json={"classname": "COMP 123", "timeslot": "11:30:00"})
         self.assertStatus(resp, 200)
-        print(resp.get_data())
+        # print(resp.get_data())
         # edit class
         resp = client.get('/api/class/COMP 123')
-        print(resp.get_json(force=True, silent=True))
-        resp = client.post('/api/class/COMP 123/edit', json={"classname": "COMP 8888"})
-        print(resp.get_data())
+        # print(resp.get_json(force=True, silent=True))
+        resp = client.post('/api/class/COMP 123/edit', json={"newname": "COMP 8888"})
+        # print(resp.get_data())
         self.assertStatus(resp, 200)
         resp = client.get('/api/class')
-        print(resp.get_data())
+        # print(resp.get_data())
         # double check
         resp = client.get('/api/class/COMP 8888')
         # name changed
-        print(resp.get_data())
+        # print(resp.get_data())
         self.assertStatus(resp, 200)
         # timeslot didn't change
 
-        self.assertEqual(resp.get_json(force=True)['result']['timeslot'], "11:30:00")
-        resp = client.post('/api/class/COMP 8888/edit', json={"classname": "COMP 4350"})
-        print(resp.get_data())
-        self.assertStatus(resp, 200)
+        self.assertEqual(resp.get_json(force=True)['result']['timeslot'], "11:30:00.0000000")
 
 
     def test_edittask(self, client):

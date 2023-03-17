@@ -18,6 +18,10 @@
       <input type="number" id="finish-req-input" placeholder="90" v-model="finishReq" @keydown="checkEnter">
     </div>
 
+    <div v-if="edit" id="delete-req">
+      <button class="button bar" id="delete-button" @click="deleteReq()"> Delete</button>
+    </div>
+
     <div id="add-button-outer">
       <button class="button bar" id="add-button" @click="addToCalendar()">Add to calendar</button>
     </div>
@@ -58,31 +62,50 @@
 
     const host = 'http://127.0.0.1:5000'; 
     const apiUrlNew = `/api/class/${classRoute}/newtask`;
-    const apiUrlUpdate = `/api/class/${classRoute}/newtask`;
+    const apiUrlUpdate = `/api/class/${classRoute}/task/${reqName}/edit`;
+    const apiUrlComplete = `/api/class/${classRoute}/task/${reqName}/complete`;
     let data = {
       taskname: reqName,
       weight: gradeReq, // TODO: Sync reqs with backend
       deadline: reqDate,
     };
-
+    
+    let complete = false;
     if(props.edit){
       finishReq = document.getElementById("finish-req-input").value;
-      data.grade = finishReq;
+      if(finishReq.length > 0){
+        data.grade = finishReq;
+        complete = true;
+      }
     }
 
+    // Mark current task as finished
+    if(props.edit && complete){
+      axios.post(host + apiUrlComplete, data)
+        .then(function (response) {
+          console.log(response);
+          setModal("Success", "success", response.data);
+          toggleModal();
+        })
+        .catch(function (error) {
+          console.log(error.response);
+          setModal("Error", "error", error.response.data);
+          toggleModal();
+        });
+    }
     // Update current task information
-    if(props.edit){
+    else if (props.edit && !complete){
       axios.post(host + apiUrlUpdate, data)
-      .then(function (response) {
-        console.log(response);
-        setModal("Success", "success", response.data);
-        toggleModal();
-      })
-      .catch(function (error) {
-        console.log(error.response);
-        setModal("Error", "error", error.response.data);
-        toggleModal();
-      });
+        .then(function (response) {
+          console.log(response);
+          setModal("Success", "success", response.data);
+          toggleModal();
+        })
+        .catch(function (error) {
+          console.log(error.response);
+          setModal("Error", "error", error.response.data);
+          toggleModal();
+        });
     }
     // Create new task
     else{
@@ -99,6 +122,30 @@
       });
     }
   }
+
+  function deleteReq(){
+    reqName = document.getElementById("name-req-input").value;
+
+    const host = 'http://127.0.0.1:5000'; 
+    const apiUrl = `/api/class/${classRoute}/task/${reqName}/delete`;
+
+    if(props.edit){
+      axios.post(host + apiUrl, data)
+      .then(function (response) {
+        console.log(response);
+        setModal("Success", "success", response.data);
+        toggleModal();
+      })
+      .catch(function (error) {
+        console.log(error.response);
+        setModal("Error", "error", error.response.data);
+        toggleModal();
+      });
+    }
+
+
+  }
+
 
 </script>
 
@@ -189,6 +236,16 @@
   right: 5em;
   width: max-content;
   transform: scale(1.15);
+}
+
+#delete-button{
+  margin-left: 0; 
+  margin-right: 60%;
+  position: absolute;
+  bottom: -1em;
+  left: 6em;
+  width: max-content;
+  transform: scale(1.2);
 }
 
 .button{

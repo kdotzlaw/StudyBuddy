@@ -18,7 +18,7 @@
     
     const { loginUser, logoutUser, setStudyClass, setStudyTime, setTimer, setModal, toggleModal } = store;
     const { sessionTimer, userId, studyClass, studyTime, pageName} = storeToRefs(store);
-    let displayName = userId.value;
+    const displayName = computed(() => {return userId.value});
 
 
     /*===========================

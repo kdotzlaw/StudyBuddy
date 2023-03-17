@@ -7,63 +7,106 @@
 import { setActivePinia, createPinia, storeToRefs } from 'pinia';
 import { useStore } from '../../src/stores';
 import { describe, expect, test } from '@jest/globals';
+import Timer from '../../src/logic/timer';
 
 setActivePinia(createPinia());
 const store = useStore();
-const { userId, studyClass } = storeToRefs(store);
-const { loginUser, logoutUser, setStudyClass } = store;
+const { 
+    userId, pageName, 
+    sessionTimer, studyTime, studyClass,
+    isModalOpen, modalTitle, modalContent, modalRender,
+    uiSkin, buddyChoice
+  } = storeToRefs(store);
+const { 
+    loginUser, logoutUser, setPageName,
+    setTimer, setStudyTime, setStudyClass,
+    toggleModal, setModal,
+    updateSkin, updateBuddy
+  } = store;
 
-let userId1: String = "user1";
-let userId2: String = "user2";
-let class1: String = "classA";
-let class2: String = "classB";
-let page1: String = "page1";
-let page2: String = "page2";
-
-describe('Test user login from stores.js', () => {
+let uID: String = "Ohlala a user";
+describe('Test user login and logout', () => {
 
   test('Set userId from null (login)', () => {
     expect(userId.value).toBeNull();
-    loginUser(userId1);
-    expect(userId.value).toBe(userId1);
-  })
-
-  test('Change active userId', () => {
-      loginUser(userId2);
-      expect(userId.value).toBe(userId2);
+    loginUser(uID);
+    expect(userId.value).toBe(uID);
   })
 
   test('Set userId to null (logout)', () => {
-      logoutUser();
-      expect(userId.value).toBe(null);
+    logoutUser();
+    expect(userId.value).toBe(null);
   })
 
 })
 
-describe('Test setting study class from stores.js', () => {
+let cID: String = "classA";
+let time: Number = 12;
+describe('Test setting study timer, class, and time', () => {
 
-  test('Set a class from null (login)', () => {
-    expect(studyClass.value).toBeNull();
-    setStudyClass(class1);
-    expect(studyClass.value).toBe(class1);
+  test('Change session timer (setTimer)', () => {
+    setTimer(new Timer(uID, cID));
+      expect(sessionTimer.value.getSessionUser()).toBe(uID);
+      expect(sessionTimer.value.getCurrentClass()).toBe(cID);
+      expect(sessionTimer.value.getTime()).toBe(0);
   })
 
-  test('Change active class', () => {
-      setStudyClass(class2);
-      expect(studyClass.value).toBe(class2);
+  test('Change active class (setStudyClass)', () => {
+    setStudyClass(cID);
+    expect(studyClass.value).toBe(cID);
+  })
+
+  test('Update study time (setStudyTime)', () => {
+    setStudyTime(time);
+    expect(studyTime.value).toBe(time);
   })
 
 })
 
-
+let page: String = "Page Name";
 describe('Test current page name', () => {
 
-  test('Set a page name (page1)', () => {
-    expect(store.setPageName(page1)).toEqual(page1);
+  test('Set a page name (setPageName)', () => {
+    setPageName(page);
+    expect(pageName.value).toBe(page);
   })
 
-  test('Set a page name (page1)', () => {
-    expect(store.setPageName(page1)).not.toEqual(page2);
+})
+
+let title: String = "The Amazing Wow";
+let contentID: String = "much-amaze-wow";
+let render: String = "<b> An HTML wow </b>";
+describe('Test modal functions', () => {
+
+  test('Switch modal state (toggleModal)', () => {
+    toggleModal();
+    expect(isModalOpen.value).toBeTruthy();
+    toggleModal();
+    expect(isModalOpen.value).not.toBeTruthy();
+  })
+
+  test('Set modal content (setModal)', () => {
+    setModal(title, contentID, render);
+    expect(modalTitle.value).toBe(title);
+    expect(modalContent.value).toBe(contentID);
+    expect(modalRender.value).toBe(render);
+    expect(isModalOpen.value).toBeTruthy();
+  })
+
+})
+
+let skin: String = "skin-forest";
+let buddy: String = "bunny";
+describe('Test user customizations', () => {
+
+  test('Change UI skin (updateSkin)', () => {
+    updateSkin(skin);
+    expect(uiSkin.value).toBe(skin);
+  })
+
+  test('Change buddy choice (updateBuddy)', () => {
+    updateBuddy(buddy);
+    expect(buddyChoice.value).toBe(buddy);
   })
 
 })

@@ -7,7 +7,7 @@ import datetime
 import pyodbc
 
 # connection information can change as we include security
-# PROD CONNECTION STRING 
+# PROD CONNECTION STRING
 conn = (r'Driver=ODBC Driver 17 for SQL Server;'
          r'Server=localhost;'
          r'Database=StudyBuddy;'
@@ -23,18 +23,27 @@ conn = (r'Driver=ODBC Driver 17 for SQL Server;'
 cnxn = pyodbc.connect(conn)
 cursor = cnxn.cursor()
 
+
 '''
+METHOD: getUserData(): Debugging method used in tests to make sure that database contains the stub user data
+'''
+def getUserData():
+    return cursor.execute("SELECT * FROM Users;").fetchall()
+
+'''
+METHOD: getClassesData(): Debugging method used in tests to make sure that database contains the stub class data
+'''
+def getClassesData():
+    return cursor.execute("SELECT * FROM Classes;").fetchall()
+
+
+'''
+METHOD: getUser():
 PRECONDITION: passed string <username> which will be used to find the user in the db
 POSTCONDITION: 
 - if the user with <username> exists in the database, return their information (form of record)
 - Otherwise, None is returned
 '''
-
-
-def getUserData():
-    return cursor.execute("SELECT * FROM Users;").fetchall()
-def getClassesData():
-    return cursor.execute("SELECT * FROM Classes;").fetchall()
 def getUser(name):
     result = cursor.execute("SELECT * FROM Users WHERE username = ?", name).fetchone()
     if not result:
@@ -43,6 +52,7 @@ def getUser(name):
 
 
 '''
+METHOD: createAccount():
 PRECONDITION: account creation requested, need to add a new entry to users table
 POSTCONDITION: 
 - account has been created and added to users table with given information
@@ -56,6 +66,7 @@ def createAccount(username, password):
 
 
 ''' 
+METHODD: removeUser():
 PRECONDITION: all users are present in the db
 POSTCONDITION: 
 - user with 'username' has been removed from the db
@@ -72,6 +83,7 @@ def removeUser(username):
 
 
 '''
+METHOD: getAllUsers():
 PRECONDITION: no users have been retrieved
 POSTCONDITION: 
 - record of all users returned
@@ -88,6 +100,7 @@ def getAllUsers():
 
 # Class Methods
 '''
+METHOD:getClasses():
 PRECONDITION: no classes have been retrieved from db
 POSTCONDITION: 
  - If user exists, and record is not empty, all classes for user 'username' have been retrieved (if the class is uncomplete)
@@ -108,6 +121,7 @@ def getClasses(username):
 
 
 '''
+METHOD: getClassID():
 PRECONDITION: class id for individuals unknown
 POSTCONDITION: returns classID for specified user and specified class, or None if no class exists
 '''
@@ -127,6 +141,7 @@ def getClassID(username, className):
 
 
 '''
+METHOD: getSingleClass():
 PRECONDITION: no classes retrieved
 POSTCONDITION: 
 - If user, class present in db, a single class is returned when given username and class id
@@ -153,6 +168,7 @@ def getSingleClass(username, className):
 
 
 '''
+METHOD: addClass():
 PRECONDITION: no classes have been added 
 POSTCONDITION: 
 -  If user present in db, specified class for specified user is added to the db and record is returned
@@ -172,6 +188,7 @@ def addClass(username, className, timeslot):
 
 
 '''
+METHOD: removeClass():
 PRECONDITION: all classes are present in db
 POSTCONDITION: 
 - If class, user in db, specified class removed for specified user
@@ -195,6 +212,7 @@ def removeClass(username, className):
 
 
 '''
+METHOD: completeClass():
 PRECONDITION: all classes marked uncomplete
 POSTCONDITION: 
 - If class, user in db, specified class marked complete, but not removed from db
@@ -215,6 +233,7 @@ def completeClass(username, className):
     record = cursor.execute(prep_stmt, 1, classID, userID)
     return record
 '''
+METHOD: addClassBreakdown()
 PRECONDITION: specified class with specified user either has no breakdown or breakdown is unchanged
 POSTCONDITION: breakdown for specified class is updated using breakdown value
 '''
@@ -227,7 +246,12 @@ def addClassBreakdown(username, className, breakdown):
     if not userID or not classID:
         return None
     cursor.execute("UPDATE Classes SET breakdown = ? WHERE cID = ? AND FK_uID = ?;", breakdown, classID, userID)
-'''classname and timeslot'''
+
+'''
+METHOD: editClassReqData
+PRECONDITION: required class data 'className' and 'timeslot' are unchanged
+POSTCONDITION: 'className' and/or 'timeslot' changed for given class and user
+'''
 def editClassReqData(username, className_old,className_new, timeslot_new):
     user = getUser(username)
     classID = getClassID(username, className_old)
@@ -240,14 +264,14 @@ def editClassReqData(username, className_old,className_new, timeslot_new):
         cursor.execute("UPDATE Classes SET class_Name = ? WHERE cID = ? AND FK_uID = ?;", className_new, classID, userID)
     if not timeslot_new == "":
         cursor.execute("UPDATE Classes SET timeslot = ? WHERE cID = ? AND FK_uID = ?;", timeslot_new, classID, userID)
+
 '''
+METHOD: editClassMeta()
 PRECONDITION: class data remains unchanged
 POSTCONDITION: 
 - If user and class present in db, class data for specified class and user updated using specified information
 - Otherwise, None returned
 '''
-
-
 def editClassMeta(username, className, sectionnum, classroom, prof,
                   prof_email, prof_phone, prof_office, prof_hours):
     user = getUser(username)
@@ -268,13 +292,12 @@ def editClassMeta(username, className, sectionnum, classroom, prof,
 
 
 '''
+METHOD: addStudyTime()
 PRECONDITION: the total study time for the class is unchanged
 POSTCONDITION: 
 - If class present in db, total study time for the specified class for the specified user has been updated with time studied
 - Otherwise, None returned
 '''
-
-
 def addStudyTime(username, className, t):
     user = getUser(username)
     if not user:
@@ -296,14 +319,12 @@ def addStudyTime(username, className, t):
 
 
 ''''
+METHOD: getTaskList()
 PRECONDITION: no tasks have been retrieved
 POSTCONDITION: 
 -If user and class are present in db, the list of tasks per class is retrieved.
 -Otherwise, either user or class or both isnt present in db and None is returned
 '''
-
-
-# not sprint 2
 def getTaskList(username, className):
     user = getUser(username)
     if not user:
@@ -319,6 +340,7 @@ def getTaskList(username, className):
         return record
 
 '''
+METHOD: getSingleTask()
 PRECONDITION: no tasks retrieved from db
 POSTCONDITION: 
 - If specified task present in db, its returned. 
@@ -338,6 +360,7 @@ def getSingleTask(username, className, taskName):
 
 
 ''''
+METHOD: getTaskID()
 PRECONDITION: no taskID has been retrieved
 POSTCONDITION: 
 - If task is in db, taskID for specified [user,class, name] retrieved. 
@@ -359,6 +382,7 @@ def getTaskID(username, className, taskName):
             return None
         return record
 ''''
+METHOD: completeTask()
 PRECONDITION: no tasks have been completed
 POSTCONDITION: 
 - If task, user, class in db, specifed task has been marked as complete. 
@@ -382,13 +406,14 @@ def completeTask(username, className, taskName, grade):
     cursor.execute("UPDATE Tasks SET task_grade = ? WHERE FK_uID = ? AND FK_cID = ? AND tID = ?", grade, userID,
                    classID, taskID)
     return True
+
 ''''
+METHOD: uncompleteTask()
 PRECONDITION: task was previously marked complete (grade was entered)
 POSTCONDITION: 
 - If specifed task is present in db, task marked uncomplete (grade set to 0).
 - Otherwise, None is returned
 '''
-
 def uncompleteTask(username, className, taskName):
     taskID = getTaskID(username, className, taskName).tID
     user = getUser(username)
@@ -400,14 +425,14 @@ def uncompleteTask(username, className, taskName):
         return None
     cursor.execute("UPDATE Tasks SET task_grade = ? WHERE FK_uID = ? AND FK_cID = ? AND tID = ?", 0.0, userID,
                    classID, taskID)
+
 ''''
+METHOD: getCompleteTasksForClass()
 PRECONDITION: a user has some completed tasks for class <className> in the database
 POSTCONDITION: 
 - If user and class in db, all completed tasks for the specified user and class have been returned
 - Otherwise, None is returned
 '''
-
-
 def getCompleteTasksForClass(username, className):
     user = getUser(username)
     if not user:
@@ -424,6 +449,7 @@ def getCompleteTasksForClass(username, className):
 
 
 '''
+METHOD: addTask()
 PRECONDITION: no tasks have been added to db
 --> required: name and task weight
 POSTCONDITION: 
@@ -442,6 +468,7 @@ def addTask(username, className, taskName, weight, deadline):
     return cursor.execute(prep_stmt, taskName, deadline, weight, userID, classID)
 
 '''
+METHOD: removeTask()
 PRECONDITION: all tasks present in the db
 POSTCONDITION: 
 - If task, user, class present in db, task with specified [user, class, name] removed from db
@@ -460,6 +487,7 @@ def removeTask(username, className, taskName):
     cursor.execute(prep_stmt, taskID, userID, classID)
 
 '''
+METHOD: editTask
 PRECONDITION: all tasks remain unchanged
 POSTCONDITION: 
 - If task, user, class present in db, task with specified [user, class, name] edited based on specified attributes
@@ -492,7 +520,11 @@ def editTask (username, className, taskName, eName, eDate, eWeight):
 
 
 '''
-get top 5 most current deadlines for dashboard display
+METHOD: getDeadlines()
+PRECONDITION: no task deadlines have been retrieved
+POSTCONDITION:
+- if user present, retrieve top 5 task deadlines from database for that user
+- else, return None (user doesnt exist)
 '''
 def getDeadlines(username):
     user = getUser(username)

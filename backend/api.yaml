@@ -89,7 +89,10 @@ paths:
           content:
             application/json:
               schemas:
-                $ref: #/components/schemas/class
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/class'
         400:
           description: "The user requested a class that doesn't exist"
         401:
@@ -113,7 +116,10 @@ paths:
           content:
             application/json:
               schemas:
-                $ref: #/components/schemas/ArrayOfClasses
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/ArrayOfClasses'
         401:
           description: "The request maker wasn't logged in, or forgot to send the session cookie"
         500:
@@ -163,14 +169,358 @@ paths:
           content:
             application/json:
               schemas:
-                $ref: #/components/schemas/ArrayOfTasks
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/ArrayOfTasks'
         400:
           description: "The user requested tasks for a class that doesn't exist"
         401:
           description: "The request maker wasn't logged in, or forgot to send the session cookie"
         500:
           description: "Internal server error, problem with backend logic or database"
-
+  /class/{classname}/complete:
+    post:
+      tags: ["Tracking Related"]
+      summary: "Mark a class as completed"
+      description: "Marks a class as completed without removing it from the database"
+      operationId: complete_class
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+        - name: classname
+          in: url
+          required: true
+      responses:
+        200:
+          description: "The class was completed successfully"
+        400:
+          description: "The class was already completed"
+        401:
+          description: "The request maker wasn't logged in, or forgot to send the session cookie"
+        404:
+          description: "The class was not found"
+        500:
+          description: "Internal server error, problem with backend logic or database"
+  /class/{classname}/task/{taskname}:
+    get:
+      tags: ["Tracking Related"]
+      summary: "Get a single task"
+      description: "Gets a single task named {taskname} for the class {classname}"
+      operationId: gettask
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+        - name: classname
+          in: url
+          required: true
+        - name: taskname
+          in: url
+          required: true
+      responses:
+        200:
+          description: "The task was gotten successfully"
+          content:
+            application/json:
+              schemas:
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/task'
+        401:
+          description: "The request maker wasn't logged in, or forgot to send the session cookie"
+        500:
+          description: "Internal server error, problem with backend logic or database"
+  /class/{classname}/task/{taskname}/complete:
+    post:
+      tags: ["Tracking Related"]
+      summary: "Mark a task as complete"
+      description: "Marks the task {taskname} as complete, without removing it from the database. Assigns a grade to the task if one is given, otherwise defaults to 0"
+      operationId: complete_task
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+        - name: classname
+          in: url
+          required: true
+        - name: taskname
+          in: url
+          required: true
+        - name: grade
+          in: body
+          required: false
+      responses:
+        200:
+          description: "The associated task was marked as complete"
+        401:
+          description: "The request maker wasn't logged in, or forgot to send the session cookie"
+        500:
+          description: "Internal server error, problem with backend logic or database"
+  /class/{classname}/done_tasks:
+    get:
+      tags: ["Tracking Related"]
+      summary: "Gets the done tasks for the {classname} class"
+      description: "Gets all the tasks marked as complete associated with the {classname} class"
+      operationId: donetasks
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+        - name: classname
+          in: url
+          required: true
+      responses:
+        200:
+          description: "Received a list of completed tasks"
+          content:
+            application/json:
+              schemas:
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/ArrayOfTasks'
+        401:
+          description: "The request maker wasn't logged in, or forgot to send the session cookie"
+        500:
+          description: "Internal server error, problem with backend logic or database"
+  /class/{classname}/update_meta:
+    post:
+      tags: ["Tracking Related"]
+      summary: "Update the metadata for the class"
+      description: "Send new metadata values to update the ones on the backend. 
+        If a value for the metadata isn't send (ie don't send metadata for 'prof_email'), then the metadata for that attribute is unchanged"
+      operationId: update_class_meta
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+        - name: classname
+          in: url
+          required: true
+        - name: sectionnum
+          in: body
+          required: false
+          description: "Class Metadata"
+        - name: breakdown
+          in: body
+          required: false
+          description: "The grade breakdown for the class in a JSON string, formatted: {'A+': (90,100), ... } where the tuple is (min, max) inclusive range"
+        - name: classroom
+          in: body
+          required: false
+          description: "Class Metadata"
+        - name: prof
+          in: body
+          required: false
+          description: "Class Metadata"
+        - name: prof_email
+          in: body
+          required: false
+          description: "Class Metadata"
+        - name: prof_phone
+          in: body
+          required: false
+          description: "Class Metadata"
+        - name: prof_office
+          in: body
+          required: false
+          description: "Class Metadata"
+        - name: prof_hours
+          in: body
+          required: false
+          description: "Class Metadata"
+      responses:
+        200:
+          description: "The class metadata was updated successfully"
+        400:
+          description: "The class was not found"
+        401:
+          description: "The request maker wasn't logged in, or forgot to send the session cookie"
+        500:
+          description: "Internal server error, problem with backend logic or database"
+  /class/{classname}/grade:
+    get:
+      tags: ["Tracking Related"]
+      summary: "Gets a letter grade and message for the class"
+      description: "Calculates the letter grade for a class based on the grade breakdown in the class meta data and completed tasks.
+      The use of completed tasks means that it only considers tasks you've been graded for, rather than all tasks"
+      operationId: grade
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+        - name: classname
+          in: url
+          required: true
+      responses:
+        200:
+          description: "Grade calculated successfully"
+          content:
+            application/json:
+              schemas:
+                grade:
+                  type: object
+                  properties:
+                    result:
+                      type: string
+                      example: "B+"
+                    message:
+                      type: string
+                      example: "You got a B+!!! Good job!"
+        400:
+          description: "Either the class doesn't exist, or there are no completed tasks for that class"
+        500:
+          description: "The total weight of the completed tasks is greater than 100%, or the calculator couldn't find a grade range the current grade belongs in."
+  /class/{classname}/newtask:
+    post:
+      tags: ["Tracking Related"]
+      summary: "Creates a new task for the class"
+      description: "Creates a new task for the associated class. If there's no weight attribute sent, it defaults to -1"
+      operationId: newtask
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+        - name: classname
+          in: url
+          required: true
+        - name: taskname
+          in: body
+          required: true
+        - name: deadline
+          in: body
+          requred: true
+        - name: weight
+          in: body
+          required: false
+      responses:
+        200:
+          description: "The task was created successfully"
+        400:
+          description: "The class was not found"
+        401:
+          description: "The request maker wasn't logged in, or forgot to send the session cookie"
+        500:
+          description: "Internal server error, problem with backend logic or database"
+  /newclass:
+    post:
+      tags: ["Tracking Related"]
+      summary: "Creates a new class for the user"
+      description: "Creates a new class for the logged in user"
+      operationId: newclass
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+        - name: classname
+          in: body
+          required: true
+        - name: timeslot
+          in: body
+          required: true
+      responses:
+        200:
+          description: "The class was created successfully"
+        400:
+          description: "The request was missing required JSON values"
+        401:
+          description: "The request maker wasn't logged in, or forgot to send the session cookie"
+        500:
+          description: "Internal server error, problem with backend logic or database"
+  /class/{classname}/edit:
+    post:
+      tags: [ "Tracking Related" ]
+      summary: "Edit a class"
+      description: "Edits the 'timeslot', and/or the 'classname' attribute"
+      operationId: editclass
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+        - name: classname
+          in: url
+          required: true
+        - name: newtime
+          in: body
+          required: false
+        - name: newname
+          in: body
+          required: false
+      responses:
+        200:
+          description: "The class was edited successfully"
+  /class/{classname}/delete:
+    post:
+      tags: [ "Tracking Related" ]
+      summary: "Delete a class"
+      description: "Removes the class {classname} from the database"
+      operationId: deleteclass
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+        - name: classname
+          in: url
+          required: true
+      responses:
+        200:
+          description: "The class was removed successfully"
+  /class/{classname}/task/{taskname}/edit:
+    post:
+      tags: [ "Tracking Related" ]
+      summary: "Edit a task"
+      description: "Edits the "
+      operationId: edittask
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+        - name: classname
+          in: url
+          required: true
+        - name: newname
+          in: body
+          required: false
+        - name: newdeadline
+          in: body
+          required: false
+        - name: newweight
+          in: body
+          required: false
+      responses:
+        200:
+          description: "The task was edited successfully"
+  /class/{classname}/task/{taskname}/delete:
+    post:
+      tags: [ "Tracking Related" ]
+      summary: "Delete a task"
+      description: "Removes the task {taskname} associated with the class {classname} from the database"
+      operationId: deletetask
+      parameters:
+        - name: session
+          description: "The session cookie for the logged in user"
+          in: header
+          required: true
+        - name: classname
+          in: url
+          required: true
+      responses:
+        200:
+          description: "The task was removed successfully"
 tags:
   - name: Account Related
     description: "Operations that pertain to a user's account management."

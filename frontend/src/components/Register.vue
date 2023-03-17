@@ -8,19 +8,19 @@
     <form class="form " id="createAccount">
       <div class="register-container">
         <div class="form-input-group">
-          <input type="text" id="signupUsername" class="form-input" autofocus placeholder="Username" v-model="username">
+          <input type="text" id="signupUsername" class="form-input" autofocus placeholder="Username" v-model="username" @keydown="checkEnter">
           <div class="form-input-error-message" v-if="usernameErrorMsg">{{ usernameErrorMsg }}</div>
         </div>
         <div class="form-input-group">
-            <input type="text" id="signupEmail" class="form-input" autofocus placeholder="Email Address" v-model="email">
+            <input type="text" id="signupEmail" class="form-input" autofocus placeholder="Email Address" v-model="email" @keydown="checkEnter">
             <div class="form-input-error-message" v-if="emailErrorMsg">{{ emailErrorMsg }}</div>
         </div>
         <div class="form-input-group">
-            <input type="password" id="signupPassword" class="form-input" autofocus placeholder="Password" v-model="password">
+            <input type="password" id="signupPassword" class="form-input" autofocus placeholder="Password" v-model="password" @keydown="checkEnter">
             <div class="form-input-error-message" v-if="passwordErrorMsg">{{ passwordErrorMsg }}</div>
         </div>
         <div class="form-input-group">
-            <input type="password" id="signupPasswordConfirm" class="form-input" autofocus placeholder="Confirm password" v-model="confirmPassword">
+            <input type="password" id="signupPasswordConfirm" class="form-input" autofocus placeholder="Confirm password" v-model="confirmPassword" @keydown="checkEnter">
             <div class="form-input-error-message" v-if="confirmpasswordErrorMsg">{{ confirmpasswordErrorMsg }}</div>
         </div>
         <button class="register-button" type="button" @click="validateForm">Register</button>
@@ -36,6 +36,7 @@
 </template>
 
 <script setup>
+  import { default as axios } from 'axios';
   import{ ref } from "vue"
   import validate from "../logic/validate"
   import { useStore } from "../stores"
@@ -61,6 +62,13 @@
   }
 
   checkLinks();
+
+  // Detect when ENTER key pressed to submit form
+  function checkEnter(event){
+    if(event.key == "Enter")
+        validateForm();
+    event.stopImmediatePropagation();
+  }
 
   /* validateForm
    *   Runs all validation checks on form submit, and sends data to newuser authentication endpoint when validations pass.
@@ -125,29 +133,30 @@
 
     // Validation checks pass; Send data to server endpoint
     if (userNameValid && emailValid && passwordErrorValid && passwordConfirmErrorValid && passwordLengthValid) {
-      const host = 'http://localhost:5000';
+      const host = 'http://127.0.0.1:5000';
       const apiUrl = '/api/newuser'; 
       const data = {
         username: username,
         email: email,
         password: password
       };
-      fetch(host + apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        mode: 'no-cors',
-        body: JSON.stringify(data)
+
+      axios.post(host + apiUrl, data)
+      .then(function (response) {
+        console.log(response);
+        loginUser(username);
+        setModal("Success", "success", response.data);
+        toggleModal();
       })
-        .then(response => response.text())
-        .then(data => {
+      .catch(function (error) {
+        console.log(error.response);
+        // Temporary superuser admission for offline debugging. Removed before final release
+        if(username == "admin" && "admitpls"){
           loginUser(username);
-          setModal("Success", "success", data);
-          toggleModal();
-        })
-      .catch(error => {
-        setModal("Error", "error", "Error connecting to server.");
+          setModal("So be it.", "success", "Welcome StudyBuddy Superuser!");
+        }
+        else
+          setModal("Error", "error", error.response.data);
         toggleModal();
       });
     }

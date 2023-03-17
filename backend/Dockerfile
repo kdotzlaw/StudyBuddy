@@ -1,8 +1,8 @@
-# Create Python Image
+# Create Python Flask Image
 FROM python:3.11.1
 WORKDIR /app
-COPY . ./
+COPY requirements.txt .
 RUN pip install -r requirements.txt
-# EXPOSE 3000
-CMD python ./index.py
-ADD main.py
+COPY . .
+EXPOSE 5000
+CMD python ./server.py

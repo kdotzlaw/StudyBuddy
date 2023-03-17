@@ -5,6 +5,7 @@
 -->
 
 <script setup>
+    import { default as axios } from 'axios';
     import { storeToRefs } from "pinia";
     import { ref, computed } from "vue";
     import Logo from "/assets/logo.png";
@@ -17,7 +18,7 @@
     
     const { loginUser, logoutUser, setStudyClass, setStudyTime, setTimer, setModal, toggleModal } = store;
     const { sessionTimer, userId, studyClass, studyTime, pageName} = storeToRefs(store);
-    let displayName = userId.value;
+    const displayName = computed(() => {return userId.value});
 
 
     /*===========================
@@ -86,16 +87,14 @@
     function logOut(){
 
         // Send logout request to endpoint; Clear userId on success
-        const host = 'http://localhost:5000'; 
+        const host = 'http://127.0.0.1:5000'; 
         const apiUrl = '/api/logout';
-        fetch(host + apiUrl, {
-            method: 'POST',
-            mode: 'no-cors',
-        })
-            .then(response => response.text())
-            .then(data => {
+
+        axios.post(host + apiUrl)
+            .then(function (response) {
+                console.log(response);
                 // Commit timer totals to database
-                Mgmt.commitTimer(userId, studyClass, studyTime);
+                Mgmt.commitTimer(userId.value, studyClass.value, studyTime.value);
                 
                 // Destroy timer and purge sessional stores
                 setStudyClass(null);
@@ -104,13 +103,20 @@
                 logoutUser();
 
                 // Display success modal
-                setModal("Success", "success", data);
+                setModal("Success", "success", response.data);
                 toggleModal();
             })
-        .catch(error => {
-            setModal("Error", "error", "Error connecting to server.");
-            toggleModal();
-        });
+            .catch(function (error) {
+                console.log(error.response);
+                setModal("Error", "error", error.response.data);
+                toggleModal();
+
+                // Temp: Destroy timer and purge sessional stores
+                setStudyClass(null);
+                setStudyTime(0);
+                setTimer(null);
+                logoutUser();
+            });
     }
 
     // Login option
@@ -279,5 +285,26 @@
         height: 2em;
         width: 2em;
         margin: 0 0.5em 0.5em 0;
+    }
+
+    @media screen and (max-width: 820px) {
+        #header{
+            font-size: 70%;
+            grid-gap: 2%;
+            grid-template-columns: 35% 1fr 40%;
+        }
+
+        #header-dropdown{
+            width: 40%;
+        }
+
+        #header-dropdown .dropdown-tab, .userSection div{
+            font-size: 13px;
+        }
+
+        .timerSection{
+            display: flex;
+            flex-direction: column;
+        }
     }
 </style>

@@ -5,9 +5,15 @@
 
 <script setup>
     import TitleSq from "/artifacts/buddytemp.svg";
-    import Corgi from "./Corgi.vue";
+    import { storeToRefs } from "pinia";
     import { ref } from "vue";
     import { useMotion } from "@vueuse/motion";
+    import { useStore } from "../stores";
+    import Corgi from "./Corgi.vue";
+    import Bunny from "./Bunny.vue";
+    
+    const store = useStore();
+    const { buddyChoice } = storeToRefs(store);
 
     const props = defineProps({ 
         showLevel: {type: Boolean, required: false, default: false},
@@ -47,14 +53,21 @@
 
     <!-- Buddy container -->
     <div id="buddy">
-        <Corgi />
-    </div>
+        <div v-if="buddyChoice == 'corgi'" >
+            <Corgi />
+        </div>
+        <div v-else>
+            <Bunny />
+        </div>
 
-    <!-- Chat balloon -->
-    <div v-if="props.chat" id="chat-balloon" class="delius" ref="chatBalloon">
-        <p>{{ chat }}</p>
+        <!-- Chat balloon -->
+        <div class="chat">
+            <div v-if="props.chat" id="chat-balloon" class="delius" ref="chatBalloon">
+                <p>{{ chat }}</p>
+            </div>
+            <div v-if="props.chat" id="chat-balloon-curve" ref="chatBalloonCurve"/>
+        </div>
     </div>
-    <div v-if="props.chat" id="chat-balloon-curve" ref="chatBalloonCurve"/>
 
     <!-- Level card -->
     <div v-if="showLevel" id="level-card" class="delius">
@@ -67,25 +80,37 @@
     #buddy{
         position: absolute;
         z-index: 2;
-        top: 10%;
-        transform: translateX(-15%);
+        top: 15%;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 50% 50%;
+        margin-left: 35%;
     }
 
     #buddy svg{
         display: block;
         height: inherit;
+        min-width: 14em;
+        max-height: 17em;
         width: inherit;
+    }
+
+    .chat{
+        height: 100%;
+        width: 100%;
+        transform: scale(0.9);
     }
 
     #chat-balloon{
         position: absolute;
-        z-index: 4;
-        right: 0;
-        height: 8em;
+        z-index: 5;
+        top: -2em;
+        min-height: 8em;
+        height: max-content;
         width: 9em;
         background: var(--black);
         border-radius: 50%;
-        padding: 0 1.5em 0 1.5em;
+        padding: 0.5em 1.7em 0.5em 1.7em;
         display: grid;
         justify-items: center;
         align-items: center;
@@ -96,8 +121,8 @@
     #chat-balloon-curve{
         position: absolute;
         z-index: 4;
-        right: 7em;
-        top: 6em;
+        left: 0;
+        top: 5em;
         height: 4em;
         width: 6em;
         background: radial-gradient(circle at top left, transparent 60%, var(--black) 61%);

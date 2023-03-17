@@ -8,11 +8,11 @@
     <form class="form" id="login">
         <div class="login-container">
           <div class="form-input-group">
-            <input type="text" id="signinUsername" class="form-input" autofocus placeholder="Username" v-model="username">
+            <input type="text" id="signinUsername" class="form-input" autofocus placeholder="Username" v-model="username" @keydown="checkEnter">
             <div class="form-input-error-message" v-if="usernameErrorMsg">{{ usernameErrorMsg }}</div>
           </div>
           <div class="form-input-group">
-            <input type="password" id="signinPassword" class="form-input" autofocus placeholder="Password" v-model="password">
+            <input type="password" id="signinPassword" class="form-input" autofocus placeholder="Password" v-model="password" @keydown="checkEnter">
             <div class="form-input-error-message" v-if="passwordErrorMsg">{{ passwordErrorMsg }}</div>
           </div>
           <button class="login-button" type="button" @click="validateForm">Log In</button>
@@ -32,9 +32,10 @@
 </template>
 
 <script setup>
-  import{ ref } from "vue"
-  import validate from "../logic/validate"
-  import { useStore } from "../stores"
+  import { default as axios } from 'axios';
+  import{ ref } from "vue";
+  import validate from "../logic/validate";
+  import { useStore } from "../stores";
   import { storeToRefs } from "pinia";
 
   let username, password;
@@ -64,6 +65,13 @@
   }
 
   checkLinks();
+
+  // Detect when ENTER key pressed to submit form
+  function checkEnter(event){
+    if(event.key == "Enter")
+        validateForm();
+    event.stopImmediatePropagation();
+  }
 
   /* validateForm
    *   Runs all validation checks on form submit, and sends data to login authentication endpoint when validations pass.
@@ -96,40 +104,34 @@
 
     // Validation checks pass; Send data to server endpoint
     if (!userNameCheck && !passwordErrorCheck) {
-      const host = 'http://localhost:5000'; 
+      const host = 'http://127.0.0.1:5000'; 
       const apiUrl = '/api/login';
       const data = {
         username: username,
         password: password
       };
-      fetch(host + apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        mode: 'no-cors',
-        body: JSON.stringify(data)
+      axios.post(host + apiUrl, data)
+      .then(function (response) {
+        console.log(response);
+        loginUser(username);
+        setModal("Success", "success", response.data);
+        toggleModal();
       })
-        .then(response => response.text())
-        .then(data => {
-          loginUser(username);
-          setModal("Success", "success", data);
-          toggleModal();
-        })
-      .catch(error => {
+      .catch(function (error) {
+        console.log(error.response);
         // Temporary superuser admission for offline debugging. Removed before final release
         if(username == "admin" && "admitpls"){
           loginUser(username);
           setModal("So be it.", "success", "Welcome StudyBuddy Superuser!");
         }
-        else
-          setModal("Error", "error", "Error connecting to server.");
+        else{
+          loginUser(username);
+          setModal("Error", "error", error.response.data);
+        }
         toggleModal();
-        console.log(error);
       });
     }
   }
-
 </script>
 
 <style>

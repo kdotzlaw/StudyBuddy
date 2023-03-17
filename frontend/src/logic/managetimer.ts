@@ -3,7 +3,7 @@
  *    Global session timer management functions. Accesses the Timer instance 
  *    in stores.js that runs independently from component lifecycles.
  */
-
+import { default as axios } from 'axios';
 import Timer from "./timer";
 import { useStore } from "../stores";
 import { storeToRefs } from "pinia";
@@ -60,23 +60,15 @@ function initTimer(userId: String, classId: String){
  *   @params - userId: string , classId: string, total: number 
  *=====================================*/
 function commitTimer(userId: String, classId: String, total: number){
-    const host = 'http://localhost:5000';
+    const host = 'http://127.0.0.1:5000';
     const apiUrl = '/api/' + classId + '/update_time';
-    fetch(host + apiUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        mode: 'no-cors',
-        body: total.toString()
-    })
-        .then(response => console.log(response))
-        .then(data => {
-            console.log('Success:', data);
-        })
-    .catch(error => {
-        console.error('Error:', error);
-    });
+    axios.post(host + apiUrl, total.toString())
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error.response);
+      });
 }
 
 export default { manageTimer, initTimer, commitTimer }

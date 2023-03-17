@@ -82,4 +82,14 @@
     .turnup{
         transform: rotate(180deg);
     }
+
+    @media screen and (max-width: 820px) {
+        .accordion-head{
+            width: 70%;
+        }
+
+        .accordion-body{
+            width: 70%;
+        }
+    }
 </style>

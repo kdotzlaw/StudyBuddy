@@ -151,7 +151,7 @@
         border: 1px solid var(--richgold);
         border-radius: 2em;
         background: var(--darkerteal);
-        overflow-x: scroll;
+        overflow-x: hidden;
     }
 
     #modal-inner-content{
@@ -163,6 +163,7 @@
         justify-items: center;
         align-items: center;
         overflow-y: scroll;
+        overflow-x: hidden;
     }
 
     .close{
@@ -175,7 +176,7 @@
         color: var(--text);
     }
 
-    @media screen and (max-width: 600px) {
+    @media screen and (max-width: 820px) {
         #modal{
             width: 90vw;
         }

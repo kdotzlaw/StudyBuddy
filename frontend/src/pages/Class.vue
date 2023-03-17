@@ -5,6 +5,7 @@
 -->
 
 <script setup>
+    import { default as axios } from 'axios';
     import ArrowBack from "/artifacts/arrowback.svg";
     import Gear from "/artifacts/gear.svg";
     import Play from "/artifacts/play.svg";
@@ -13,13 +14,15 @@
     import Timer from "../logic/timer";
     import Mgmt from "../logic/managetimer";
     import { ref, computed, onMounted } from "vue";
+    import { useRoute } from 'vue-router';
     import { storeToRefs } from "pinia";
     import { useStore } from "../stores";
     
     const store = useStore();
     const { sessionTimer, userId, studyClass } = storeToRefs(store);
-    const { updateSkin, setPageName, setStudyClass } = store;
+    const { updateSkin, setPageName, setStudyClass, setModal } = store;
 
+    let classRoute = useRoute().params.slug;
 
     /*===========================
        MANAGE CLASS METADATA
@@ -27,22 +30,50 @@
 
     onMounted(() => {
         setPageName("Class View");
+
+        // Get this class' metadata
+        const host = 'http://127.0.0.1:5000'; 
+        const apiUrlMeta = `/api/class/${classRoute}`;
+
+        axios.get(host + apiUrlMeta)
+            .then(function (response) {
+                console.log(response);
+                classInfo.value = response.json();
+            })
+            .catch(function (error) {
+                console.log(error.response);
+            })
+
+        // Get this class' requirements
+        const apiUrlReq = `/api/class/${classRoute}/task`;
+
+        axios.get(host + apiUrlReq)
+            .then(function (response) {
+                console.log(response);
+                reqs.value = response.json();
+            })
+            .catch(function (error) {
+                console.log(error.response);
+            })
+
+        // Get this class' letter grade
+        const apiUrlGrade = `/api/class/${classRoute}/grade`;
+
+        axios.get(host + apiUrlGrade)
+            .then(function (response) {
+                console.log(response);
+                let received = response.json();
+                grade.value = received.data;
+            })
+            .catch(function (error) {
+                console.log(error.response);
+            })
     });
 
-    // Stub data compensates for unintegrated(future sprint) features
-    let reqs = [
-        { name: "Quiz 5", type: "quiz", due: new Date("February 12, 2023"), goal: "C" },
-        { name: "Catch up", type: "haha", due: new Date("February 17, 2023"), goal: "C" },
-        { name: "Assignment 4", type: "assignment", due: new Date("March 1, 2023"), goal: "C" },
-        { name: "Quiz 6", type: "quiz", due: new Date("March 5, 2023"), goal: "B" },
-        { name: "Assignment 5", type: "assignment", due: new Date("March 8, 2023"), goal: "C" },
-        { name: "Midterm Exam", type: "test", due: new Date("March 9, 2023"), goal: "B" },
-        { name: "Become a Bee", type: "dne", due: new Date("October 10, 2023"), goal: "" },
-    ]
-    let classInfo = {
+    const grade = ref("C+");
+    const classInfo = ref({
         name: "COMP 2080", // Class primary key
         timeStudied: 2.3,
-        grade: "C+",
         details: {
             name: "Analysis of Algorithms",
             section: "A02",
@@ -55,7 +86,51 @@
             officeLocation: "Machray 200",
             officeHours: "5:00-6:00"
         }
+    });
+    // Smart detect requirement type by checking keywords in title
+    function getMatch(title){
+        let matchList = [ 
+            { 
+                color: "green",
+                matches: ["assignment", "homework", "hw"]
+            },
+            {
+                color: "blue",
+                matches: ["quiz", "assessment"]
+            },
+            {
+                color: "red",
+                matches: ["test", "exam", "midterm", "finals", "examination"]
+            },
+            {
+                color: "yellow",
+                matches: ["project", "report", "essay", "writeup", "presentation", "pitch"]
+            }
+        ]
+        for(let list of matchList){
+            for(let keyword of list.matches){
+                if(title.includes(keyword))
+                    return list.color
+            }
+        }
     }
+    // Return color tag by req type
+    function getTagColor(title) {
+        let mapping = getMatch(title.toLowerCase());
+        if(!mapping)
+            return "grey";
+        return mapping;
+    }
+    const reqs = ref([
+        { name: "Quiz 5", tagColor: getTagColor("Quiz 5"), due: new Date("February 12, 2023"), goal: "C" },
+        { name: "Homework 4", tagColor: getTagColor("Homework 4"), due: new Date("March 1, 2023"), goal: "C" },
+        { name: "Quiz 6", tagColor: getTagColor("Quiz 6"), due: new Date("March 5, 2023"), goal: "B" },
+        { name: "Assignment 5", tagColor: getTagColor("Assignment 5"), due: new Date("March 8, 2023"), goal: "C" },
+        { name: "Midterm Exam", tagColor: getTagColor("Midterm Exam"), due: new Date("March 13, 2023"), goal: "B" },
+        { name: "Final Project", tagColor: getTagColor("Final Project"), due: new Date("April 16, 2023"), goal: "C" },
+        { name: "Final Exam", tagColor: getTagColor("Final Exam"), due: new Date("April 17, 2023"), goal: "C" },
+        { name: "Become a Bee", tagColor: getTagColor("Become a Bee"), due: new Date("October 10, 2023"), goal: "" },
+    ]);
 
 
     /*===========================
@@ -64,18 +139,18 @@
 
     // Start or pause study for this class
     function manageStudy(){
-        setStudyClass(classInfo.name);
-        Mgmt.manageTimer(userId.value,classInfo.name);
+        setStudyClass(classRoute);
+        Mgmt.manageTimer(userId.value,classRoute);
     }
 
     // Reflect study session's paused/running state with icons and notes
     const studyNote = computed(() => {
-        if(studyClass.value == classInfo.name && !sessionTimer.value.isPaused())
+        if(studyClass.value == classRoute && !sessionTimer.value.isPaused())
             return "Pause session";
         return "Study now";
     });
     const studyIcon = computed(() => {
-        if(studyClass.value == classInfo.name && !sessionTimer.value.isPaused())
+        if(studyClass.value == classRoute && !sessionTimer.value.isPaused())
             return Pause;
         return Play;
     });
@@ -91,7 +166,7 @@
 
     // Filter requirements by current(present-upcoming) or expired(past)
     const currentReqs = computed(() => {
-        return reqs.filter(req => {
+        return reqs.value.filter(req => {
             let diffTime = req.due - today;
             let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             if(diffDays > -1)
@@ -99,7 +174,7 @@
         })
     });
     const expiredReqs = computed(() => {
-        return reqs.filter(req => {
+        return reqs.value.filter(req => {
             let diffTime = req.due - today;
             let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             if(diffDays < 0)
@@ -119,15 +194,22 @@
         return "View current requirements";
     });
 
-    // Toggle between two filter states
+    // Toggle between current/expired filter states
     function changeView(){
         current.value = !current.value;
     }
+
+    function addRequirement(){
+      setModal("Add Requirement", "addRequirement");
+    }
+
 </script>
 
 <template>
     <div id="classpage">
         <section v-if="userId && reqs" id="hero">
+
+            <!-- Back arrow to Dashboard -->
             <div id="back-items" v-motion-slide-right>
                 <router-link to="/">
                     <button id="back">
@@ -135,25 +217,38 @@
                         <span> Back </span>
                     </button>
                 </router-link>
-                <img id="class-settings" :src="Gear" alt="Manage class information" />
+
+                <!-- Manage Class information -->
+                <router-link :to="'/editClass/' + classRoute">
+                    <img id="class-settings" :src="Gear" alt="Manage class information" />
+                </router-link>
+
             </div>
             <div id="hero-items">
                 <div>
-                    <h1 v-motion-pop> {{ classInfo.name }} </h1>
+
+                    <!-- Class name and time studied -->
+                    <h1 v-motion-pop> {{ classRoute }} </h1>
                     <h2 v-motion-pop> Studied {{ classInfo.timeStudied }} hours this week </h2>
+
                 </div>
                 <div v-motion-pop>
+
+                    <!-- Study pause/play control -->
                     <button class="button round" @click="manageStudy">
                         <img id="study-ctrl" :src="studyIcon" :alt="studyNote" />
                     </button>
                     <span id="study-note"> {{ studyNote }} </span>
+
                 </div>
             </div>
         </section>
         <section v-if="userId && reqs" id="class-items">
+
+            <!-- Class requirements list -->
             <div id="req-ctr" v-motion-slide-left>
                 <div id="req-head">
-                    <button id="add-req" class="button bar">
+                    <button id="add-req" class="button bar" @click="addRequirement()">
                         Add Requirements
                     </button>
                     <button id="change-view" class="button bar" @click="changeView">
@@ -162,17 +257,24 @@
                 </div>
                 <RequirementCards :reqs="reqSet" />
             </div>
+
             <div>
+
+                <!-- Class grade projection -->
                 <div id="grade-ctr" v-motion-slide-right>
-                    <h1 id="grade"> {{ classInfo.grade }} </h1>
+                    <h1 id="grade"> {{ grade }} </h1>
                     <div id="grade-note" class="delius">
                         Wow! <br/>
                         You are doing okay
                     </div>
-                    <button class="button bar">
+                    <router-link :to="'/gradeCalculator/' + classRoute">
+                      <button class="button bar">
                         Grade breakdown
-                    </button>
+                      </button>
+                    </router-link>
                 </div>
+
+                <!-- Class meta details -->
                 <div id="details-ctr" v-motion-slide-bottom>
                     <h3> Class Details </h3>
                     <table>
@@ -214,6 +316,7 @@
                         </tr>
                     </table>
                 </div>
+
             </div>
         </section>
     </div>
@@ -399,7 +502,13 @@
         width: 100%;
     }
 
-    @media screen and (max-width: 800px) {
+    td{
+        margin: inherit;
+        width: 100%;
+        text-align: left;
+    }
+
+    @media screen and (max-width: 820px) {
         #hero{
             height: 80vh;
         }
@@ -415,6 +524,13 @@
 
         #hero-items div:nth-child(2){
             margin: 2em 0 0 3em;
+        }
+
+        #class-items{
+            display: flex;
+            flex-direction: column;
+            margin-left: 0;
+            width: 90%;
         }
     }
 

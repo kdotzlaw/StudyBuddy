@@ -504,7 +504,7 @@ class apiTest(flask_unittest.ClientTestCase):
         # send post request to login api
         resp = client.post("/api/login", json={'username': 'notauser', 'password': 'password'})
         # check the status
-        self.assertStatus(resp, 400)
+        self.assertStatus(resp, 401)
 
     def test_login_wrongpass(self, client: FlaskClient):
         # send post request to login api
@@ -529,7 +529,7 @@ class apiTest(flask_unittest.ClientTestCase):
     def test_newuser(self, client):
         # send invalid login to ensure user doesn't exist
         resp = client.post('/api/login', json=creds2)
-        self.assertStatus(resp, 400)
+        self.assertStatus(resp, 401)
         # create user
         resp = client.post('/api/newuser', json=creds2)
         self.assertStatus(resp, 200)

@@ -1,18 +1,20 @@
 <template>
-  <!-- <div class="gradeCalcPage"> -->
 
-    <div id="back-items" v-motion-slide-right>
-        <button id="back" @click="$router.back(-1)">
-            <img :src="ArrowBack" alt="Go back to Dashboard" />
-            <span> Back </span>
-        </button>
-    </div>
+  <!-- Back button -->
+  <div id="back-items" v-motion-slide-right>
+    <button id="back" @click="$router.back(-1)">
+      <img :src="ArrowBack" alt="Go back to Dashboard" />
+      <span> Back </span>
+    </button>
+  </div>
     
+
   <div id="grade-container">
     <div id="breakdown-container">
       <h2>Breakdown and Weights</h2>
       <button id="add-row" @click="createRow()"> + </button>
 
+      <!-- Breakdown table -->
       <div id="breakdown-table">
         <table> 
           <thead id="breakdown-table-header">
@@ -34,9 +36,9 @@
         </table>
 
       </div>
-      
     </div>
     
+    <!-- Letter grade -->
     <div id="letter-grade-container">
       <h2>Letter Grade Breakdown</h2>
       <div id="letter-table">
@@ -111,9 +113,15 @@
 
   let classRoute = useRoute().params.slug;
 
+  /*
+  This function creates a new row in the table by manually creating
+  the elements to insert. It allows us to dynamically add rows to the table
+  */
   function createRow(){
+    // Create the new row
     let newRow = document.createElement("tr");
 
+    // Create the new elements
     let name = document.createElement("td");
     let qty = document.createElement("td");
     let percent = document.createElement("td");
@@ -124,29 +132,35 @@
     let percentInput = document.createElement("input");
     let deleteButtonInput = document.createElement("button");
 
+    // Set the attributes for the new elements
     newRow.classList.add("grid-one");
 
+    // Set the attributes for the name input
     nameInput.setAttribute("type", "text");
     nameInput.setAttribute("placeholder", "Quiz");
 
+    // Set the attributes for the qty inputs
     qtyInput.setAttribute("type", "number");
     qtyInput.setAttribute("placeholder", "0");
     qtyInput.setAttribute("min", "0");
 
+    // Set the attributes for the percent input
     percentInput.setAttribute("type", "number");
     percentInput.setAttribute("placeholder", "0");
     percentInput.setAttribute("min", "0");
     percentInput.setAttribute("max", "100")
 
+    // Set the attributes for the delete button
     deleteButtonInput.setAttribute("type", "button");
     deleteButtonInput.innerHTML = "Delete";
     
-
+    // Add the new elements to the row
     name.appendChild(nameInput);
     qty.appendChild(qtyInput);
     percent.appendChild(percentInput);
     deleteButton.appendChild(deleteButtonInput);
 
+    // Add the row to the table
     newRow.appendChild(name);
     newRow.appendChild(qty);
     newRow.appendChild(percent);
@@ -157,6 +171,9 @@
     document.getElementById("table-buddy").appendChild(newRow);
   }
 
+  /*
+  This function sends the data from the table to the server
+  */
   function getDataOne(){
     let table = document.getElementById("table-buddy");
     let rows = table.getElementsByTagName("tr");
@@ -178,6 +195,10 @@
     return data;
   }
 
+  /*
+  This function sends the grade breakdown data from the table to the server.
+  It has default values
+  */
   function getDataTwo(aPlus=100, a=90, bPlus=85, b=80, cPlus=75, c=70) {
     aPlus = document.getElementById("max-input-A+").value;
     a = document.getElementById("max-input-A").value;
@@ -206,6 +227,9 @@
     return data;
   }
 
+  /*
+  This function updates the grade calculator data in the database
+  */
   function update(){
     const host = 'http://127.0.0.1:5000'; 
     const apiUrlMeta = `/api/class/${classRoute}/update_meta`;

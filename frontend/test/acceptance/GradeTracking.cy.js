@@ -2,6 +2,8 @@
 
 const serverUrl = Cypress.env('serverUrl');
 
+let courseCode = "COMP4350";
+
 context('Actions', () => {
   beforeEach(() => {
     cy.visit('/')
@@ -16,30 +18,49 @@ context('Actions', () => {
       .wait(200)
     cy.get('.close').click()
       .wait(300)
+    cy.get('#workspace')
+      .scrollTo('bottom')
   })
 
   it('View estimated letter grades from all classes', () => {
-    cy.get('#workspace')
-      .scrollTo('bottom')
-    cy.get('#classCards')
-      .find('.play-btn')
-      .each(($button) => {
-        cy.wrap($button).click()
-          .wait(2200)
-        cy.get('#timerExpress div').should('have.text', '00:02')
-      })
+    cy.contains(courseCode).click()
+      .wait(200)
+    cy.get('#grade').should('not.be.empty')
+      .wait(200)
   })
 
   it('Completed requirements from each class should have a letter grade assigned', () => {
-    cy.wait(300)
+    cy.contains(courseCode).click()
+      .wait(200)
+      cy.get('.goal').each(($grade) => {
+        cy.wrap($grade).should('not.equal','')
+      })
   })
 
   it('Create grading scheme', () => {
-    cy.wait(300)
-  })
+    cy.contains(courseCode).click()
+      .wait(200)
+    cy.contains('Grade breakdown').click()
+      .wait(200)
+    
+    // Add two new breakdown fields
+      cy.get('#add-row').click()
+    cy.get('#add-row').click()
+      .wait(50)
+    
+    // Fill up fields
+    cy.get('#table-buddy tr:nth-child(1) td:nth-child(1)').type("Quiz", { delay: 20 })
+    cy.get('#table-buddy tr:nth-child(1) td:nth-child(2)').type("4", { delay: 20 })
+    cy.get('#table-buddy tr:nth-child(1) td:nth-child(3)').type("20", { delay: 20 })
+    cy.get('#table-buddy tr:nth-child(2) td:nth-child(1)').type("Assignment", { delay: 20 })
+    cy.get('#table-buddy tr:nth-child(2) td:nth-child(2)').type("2", { delay: 20 })
+    cy.get('#table-buddy tr:nth-child(2) td:nth-child(3)').type("30", { delay: 20 })
+    cy.get('#table-buddy tr:nth-child(3) td:nth-child(1)').type("Final Exam", { delay: 20 })
+    cy.get('#table-buddy tr:nth-child(3) td:nth-child(2)').type("1", { delay: 20 })
+    cy.get('#table-buddy tr:nth-child(3) td:nth-child(3)').type("50", { delay: 20 })
 
-  it('Update grading scheme', () => {
-    cy.wait(300)
+    // Submit
+    cy.get('#save-button button').click()
   })
 
   afterEach(() => {

@@ -2,6 +2,8 @@
 
 const serverUrl = Cypress.env('serverUrl');
 
+let courseCode = "COMP4350";
+
 context('Actions', () => {
   beforeEach(() => {
     cy.visit('/')
@@ -21,6 +23,11 @@ context('Actions', () => {
   it('View important dates from Dashboard', () => {
     cy.contains('Calendar Overview').click()
       .wait(200)
+    cy.get('#reqCards')
+      .find('.dues')
+      .each(($date) => {
+        cy.wrap($date).should('not.be.empty')
+      })
     cy.get('#workspace')
       .scrollTo('bottom')
       .wait(200)
@@ -29,23 +36,64 @@ context('Actions', () => {
   })
 
   it('View current and elapsed requirements from each class', () => {
-    cy.wait(300)
+    cy.get('#workspace')
+      .scrollTo('bottom')
+    cy.contains(courseCode).click()
+      .wait(200)
+    cy.get('#reqCards').should('exist')
+    cy.get('#change-view').click()
+      .wait(100)
+    cy.get('#reqCards').should('exist')
   })
 
   it('Create new task', () => {
-    cy.wait(300)
+    cy.get('#workspace')
+      .scrollTo('bottom')
+    cy.contains(courseCode).click()
+      .wait(200)
+    cy.contains('Add Requirements').click()
+      .wait(200)
+    cy.get('#name-req-input').type('Assignment 1')
+    cy.get('#date-req-input').type('2023-03-28T09:00')
+    cy.get('#grade-req-input').type('A')
+    cy.get('#add-button').click()
   })
 
   it('Edit a current task', () => {
-    cy.wait(300)
+    cy.get('#workspace')
+      .scrollTo('bottom')
+    cy.contains(courseCode).click()
+      .wait(200)
+    cy.get('.reqManage').first().click()
+      .wait(200)
+    cy.get('#name-req-input').type('New Task Name')
+    cy.get('#date-req-input').type('2023-03-28T09:00')
+    cy.get('#grade-req-input').type('A')
+    cy.get('#add-button').click()
   })
 
   it('Delete an existing task', () => {
-    cy.wait(300)
+    cy.get('#workspace')
+      .scrollTo('bottom')
+    cy.contains(courseCode).click()
+      .wait(200)
+    cy.get('.reqManage').first().click()
+      .wait(200)
+    cy.get('#delete-button').click()
   })
 
   it('Complete an existing task by assigning a grade', () => {
-    cy.wait(300)
+    cy.get('#workspace')
+      .scrollTo('bottom')
+    cy.contains(courseCode).click()
+      .wait(200)
+    cy.get('.reqManage').first().click()
+      .wait(200)
+    cy.get('#name-req-input').type('New Task Name')
+    cy.get('#date-req-input').type('2023-03-28T09:00')
+    cy.get('#grade-req-input').type('A')
+    cy.get('#finish-req-input').type('A')
+    cy.get('#add-button').click()
   })
 
   afterEach(() => {

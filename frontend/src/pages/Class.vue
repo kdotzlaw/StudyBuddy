@@ -38,7 +38,7 @@
         axios.get(host + apiUrlMeta)
             .then(function (response) {
                 console.log(response);
-                classInfo = response.json();
+                classInfo.value = response.json();
             })
             .catch(function (error) {
                 console.log(error.response);
@@ -50,7 +50,7 @@
         axios.get(host + apiUrlReq)
             .then(function (response) {
                 console.log(response);
-                reqs = response.json();
+                reqs.value = response.json();
             })
             .catch(function (error) {
                 console.log(error.response);

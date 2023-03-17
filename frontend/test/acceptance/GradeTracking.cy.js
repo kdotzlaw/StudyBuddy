@@ -32,9 +32,11 @@ context('Actions', () => {
   it('Completed requirements from each class should have a letter grade assigned', () => {
     cy.contains(courseCode).click()
       .wait(200)
-      cy.get('.goal').each(($grade) => {
-        cy.wrap($grade).should('not.equal','')
-      })
+    cy.get('#change-view').click()
+      .wait(100)
+    cy.get('.goal').each(($grade) => {
+      cy.wrap($grade).should('not.equal','')
+    })
   })
 
   it('Create grading scheme', () => {

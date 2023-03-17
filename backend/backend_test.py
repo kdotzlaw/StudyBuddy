@@ -725,7 +725,7 @@ class apiTest(flask_unittest.ClientTestCase):
         self.assertStatus(resp, 200)
         # timeslot didn't change
 
-        self.assertEqual(resp.get_json(force=True)['result']['timeslot'], "11:30:00.0000000")
+        self.assertEqual(resp.get_json(force=True)['result']['timeslot'], "11:30:00")
 
 
     def test_edittask(self, client):

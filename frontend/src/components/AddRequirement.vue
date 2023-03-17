@@ -22,7 +22,10 @@
       <button class="button bar" id="delete-button" @click="deleteReq()"> Delete</button>
     </div>
 
-    <div id="add-button-outer">
+    <div v-if="edit" id="add-button-outer">
+      <button class="button bar" id="add-button" @click="addToCalendar()">Save changes</button>
+    </div>
+    <div v-else id="add-button-outer">
       <button class="button bar" id="add-button" @click="addToCalendar()">Add to calendar</button>
     </div>
 
@@ -57,92 +60,101 @@
 
   function addToCalendar(){
     reqName = document.getElementById("name-req-input").value;
-    gradeReq = document.getElementById("grade-req-input").value;
-    reqDate = document.getElementById("date-req-input").value;
 
-    const host = 'http://127.0.0.1:5000'; 
-    const apiUrlNew = `/api/class/${classRoute}/newtask`;
-    const apiUrlUpdate = `/api/class/${classRoute}/task/${reqName}/edit`;
-    const apiUrlComplete = `/api/class/${classRoute}/task/${reqName}/complete`;
-    let data = {
-      taskname: reqName,
-      weight: gradeReq, // TODO: Sync reqs with backend
-      deadline: reqDate,
-    };
-    
-    let complete = false;
-    if(props.edit){
-      finishReq = document.getElementById("finish-req-input").value;
-      if(finishReq.length > 0){
-        data.grade = finishReq;
-        complete = true;
+    if(reqName){
+      gradeReq = document.getElementById("grade-req-input").value;
+      reqDate = document.getElementById("date-req-input").value;
+
+      const host = 'http://127.0.0.1:5000'; 
+      const apiUrlNew = `/api/class/${classRoute}/newtask`;
+      const apiUrlUpdate = `/api/class/${classRoute}/task/${reqName}/edit`;
+      const apiUrlComplete = `/api/class/${classRoute}/task/${reqName}/complete`;
+      let data = {
+        taskname: reqName,
+        weight: gradeReq,
+        deadline: reqDate,
+      };
+      
+      let complete = false;
+      if(props.edit){
+        finishReq = document.getElementById("finish-req-input").value;
+        if(finishReq.length > 0){
+          data.grade = finishReq;
+          complete = true;
+        }
+      }
+
+      // Mark current task as finished
+      if(props.edit && complete){
+        axios.post(host + apiUrlComplete, data)
+          .then(function (response) {
+            console.log(response);
+            setModal("Success", "success", response.data);
+            toggleModal();
+          })
+          .catch(function (error) {
+            console.log(error.response);
+            setModal("Error", "error", error.response.data);
+            toggleModal();
+          });
+      }
+      // Update current task information
+      else if (props.edit && !complete){
+        axios.post(host + apiUrlUpdate, data)
+          .then(function (response) {
+            console.log(response);
+            setModal("Success", "success", response.data);
+            toggleModal();
+          })
+          .catch(function (error) {
+            console.log(error.response);
+            setModal("Error", "error", error.response.data);
+            toggleModal();
+          });
+      }
+      // Create new task
+      else{
+        axios.post(host + apiUrlNew, data)
+        .then(function (response) {
+          console.log(response);
+          setModal("Success", "success", response.data);
+          toggleModal();
+        })
+        .catch(function (error) {
+          console.log(error.response);
+          setModal("Error", "error", error.response.data);
+          toggleModal();
+        });
       }
     }
-
-    // Mark current task as finished
-    if(props.edit && complete){
-      axios.post(host + apiUrlComplete, data)
-        .then(function (response) {
-          console.log(response);
-          setModal("Success", "success", response.data);
-          toggleModal();
-        })
-        .catch(function (error) {
-          console.log(error.response);
-          setModal("Error", "error", error.response.data);
-          toggleModal();
-        });
-    }
-    // Update current task information
-    else if (props.edit && !complete){
-      axios.post(host + apiUrlUpdate, data)
-        .then(function (response) {
-          console.log(response);
-          setModal("Success", "success", response.data);
-          toggleModal();
-        })
-        .catch(function (error) {
-          console.log(error.response);
-          setModal("Error", "error", error.response.data);
-          toggleModal();
-        });
-    }
-    // Create new task
-    else{
-      axios.post(host + apiUrlNew, data)
-      .then(function (response) {
-        console.log(response);
-        setModal("Success", "success", response.data);
-        toggleModal();
-      })
-      .catch(function (error) {
-        console.log(error.response);
-        setModal("Error", "error", error.response.data);
-        toggleModal();
-      });
-    }
+    
   }
 
   function deleteReq(){
     reqName = document.getElementById("name-req-input").value;
 
-    const host = 'http://127.0.0.1:5000'; 
-    const apiUrl = `/api/class/${classRoute}/task/${reqName}/delete`;
+    if(reqName){
+      const host = 'http://127.0.0.1:5000'; 
+      const apiUrl = `/api/class/${classRoute}/task/${reqName}/delete`;
 
-    if(props.edit){
-      axios.post(host + apiUrl, data)
-      .then(function (response) {
-        console.log(response);
-        setModal("Success", "success", response.data);
-        toggleModal();
-      })
-      .catch(function (error) {
-        console.log(error.response);
-        setModal("Error", "error", error.response.data);
-        toggleModal();
-      });
+      let data = {
+        taskname: reqName,
+      };
+
+      if(props.edit){
+        axios.post(host + apiUrl, data)
+        .then(function (response) {
+          console.log(response);
+          setModal("Success", "success", response.data);
+          toggleModal();
+        })
+        .catch(function (error) {
+          console.log(error.response);
+          setModal("Error", "error", error.response.data);
+          toggleModal();
+        });
+      }
     }
-
 
   }
 

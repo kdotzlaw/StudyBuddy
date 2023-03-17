@@ -5,6 +5,7 @@
 -->
 
 <script setup>
+    import { default as axios } from 'axios';
     import Accordion from "../components/Accordion.vue";
     import ClassCards from "../components/ClassCards.vue";
     import RequirementCards from "../components/RequirementCards.vue";
@@ -18,7 +19,6 @@
     const { userId } = storeToRefs(store);
     const { updateSkin, setPageName } = store;
 
-    // Stub data compensates for unintegrated(future sprint) features
     let classes = [
         { name: "COMP2080", timeStudied: 2.5 },
         { name: "COMP4350", timeStudied: 6.2 },
@@ -38,92 +38,70 @@
             return "grey";
         return mapping;
     }
-    let reqs = filter.getReqs([
+    let reqsFiltered = filter.getReqs([
         { classKey: "COMP4620", tagColor: getTagColor("COMP4620"), name: "Assignment 4", due: new Date("March 12, 2023"), goal: "C" },
         { classKey: "COMP2080", tagColor: getTagColor("COMP2080"), name: "Catch up", due: new Date("March 13, 2023"), goal: "C" },
         { classKey: "COMP4350", tagColor: getTagColor("COMP4350"), name: "Final Exam", due: new Date("April 20, 2023"), goal: "A+" },
     ]);
-    let chats = filter.getChats([
+    let chatsFiltered = filter.getChats([
         { classKey: "COMP4620", tagColor: getTagColor("COMP4620"), name: "Assignment 4", due: new Date("March 12, 2023"), goal: "C" },
         { classKey: "COMP2080", tagColor: getTagColor("COMP2080"), name: "Catch up", due: new Date("March 13, 2023"), goal: "C" },
         { classKey: "COMP4350", tagColor: getTagColor("COMP4350"), name: "Final Exam", due: new Date("April 20, 2023"), goal: "A+" },
     ]);
-    /*
-    let reqs = [
-        { classKey: "COMP4620", tagColor: getTagColor("COMP4620"), name: "Assignment 4", due: new Date("March 12, 2023"), goal: "C" },
-        { classKey: "COMP2080", tagColor: getTagColor("COMP2080"), name: "Catch up", due: new Date("March 13, 2023"), goal: "C" },
-        { classKey: "COMP4350", tagColor: getTagColor("COMP4350"), name: "Final Exam", due: new Date("April 20, 2023"), goal: "A+" },
-    ] 
-    let chats = [
-        "Press on the Play ▶ button on a class to start studying!",
-        "You have no upcoming deadlines.",
-        "Good hooman!"
-    ] */
-    let chatIndex = 0;
-    const chat = ref(chats[0]);
+    const reqs = ref(reqsFiltered);
+    const chats = ref(chatsFiltered);
 
+    let chatIndex = 0;
+    const chat = ref(chats.value[0]);
+    
     // Cycle through Buddy chat balloon conversations
     setInterval(()=>{
-        chatIndex = (chatIndex + 1) % chats.length;
-        chat.value = chats[chatIndex];
+        chatIndex = (chatIndex + 1) % chats.value.length;
+        chat.value = chats.value[chatIndex];
     },4000)
 
     onMounted(() => {
         setPageName("Dashboard");
-        
+        if(userId.value)
+            getData();  
+    })
+
+    const triggerGet = computed(() => {
+        if(userId.value){
+            getData();
+            return 1;
+        }
+        return 0;
+    });
+
+    function getData(){
         // Get classes
         const host = 'http://127.0.0.1:5000'; 
         let apiUrlClass = '/api/class';
-        fetch(host + apiUrlClass, {
-            method: 'GET',
-            mode: 'no-cors',
-            credentials: 'include'
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log(`GET fetch location: Dashboard, URL: ${apiUrlClass}`)
-                console.log(data)
-                /******************************************* 
-                 * TODO: Replace classes with fetched data
-                 *******************************************/
-
+        axios.get(host + apiUrlClass)
+            .then(function (response) {
+                console.log(response);
+                
                 // Get requirements from classes
-                let classList = []
+                let classList = Object.keys(response.json());
                 for (let classKey of classList){
                     const apiUrlTask = `/api/class/${classKey}/task`;
-                    fetch(host + apiUrlTask, {
-                        method: 'GET',
-                        mode: 'no-cors',
-                        credentials: 'include'
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            console.log(`GET fetch location: Dashboard, URL: ${apiUrlTask}`)
-                            console.log(data)
-                            /******************************************* 
-                             * TODO: Process impeding tasks from fetched data
-                             *******************************************/
-                            /******************************************* 
-                             * TODO: Generate buddy conversations from processed data
-                             *******************************************/
-                            /******************************************* 
-                             * TODO: Replace reqs with processed data
-                             *******************************************/
-                            /******************************************* 
-                             * TODO: Replace chats with new conversation data
-                             *******************************************/
+                    axios.get(host + apiUrlTask)
+                        .then(function (response) {
+                            console.log(response);
+                            let tasks = response.json();
+                            reqs.value = filter.getReqs(tasks);
+                            chats.value = filter.getChats(tasks);
                         })
-                    .catch(error => {
-                        console.log(`GET fetch location: Dashboard, URL: ${apiUrlTask}`)
-                        console.log(error);
-                    });
+                        .catch(function (error) {
+                            console.log(error.response);
+                        })
                 }
             })
-        .catch(error => {
-            console.log(`GET fetch location: Dashboard, URL: ${apiUrlClass}`)
-            console.log(error);
-        });
-    });
+            .catch(function (error) {
+                console.log(error.response);
+            })
+    }
 </script>
 
 <template>

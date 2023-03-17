@@ -462,9 +462,6 @@ def complete_task(classname, taskname):
         grade = 0
     else:
         grade = req['grade']
-        # negative values are invalid
-        if grade < 0:
-            grade = 0
 
     cls = db.getClassID(username, classname)
     task = db.getTaskID(username, classname, taskname)

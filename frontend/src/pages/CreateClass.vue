@@ -1,14 +1,16 @@
 <template>
-  <!-- <div class="gradeCalcPage"> -->
 
-    <div id="back-items" v-motion-slide-right>
-        <button id="back" @click="$router.back(-1)">
-            <img :src="ArrowBack" alt="Go back to Dashboard" />
-            <span> Back </span>
-        </button>
-    </div>
+  <!-- Back button -->
+  <div id="back-items" v-motion-slide-right>
+      <button id="back" @click="$router.back(-1)">
+          <img :src="ArrowBack" alt="Go back to Dashboard" />
+          <span> Back </span>
+      </button>
+  </div>
     
   <div id="create-class-container">
+
+    <!-- Class details input forms -->
     <div id="class-details-container">
       <h2>Class Details</h2>
       <div id="class-details-input">
@@ -31,6 +33,7 @@
       </div>
     </div>
     
+    <!-- Professor details input forms -->
     <div id="professor-container">
       <h2>Professor Details</h2>
       <div id="professor-input">
@@ -47,6 +50,7 @@
       </div>
     </div>
 
+    <!-- Submit button -->
     <div v-if="classRoute" id="add-button">
       <button class="button bar" id="add-button" @click="createClass">Update Class</button>
     </div>
@@ -66,7 +70,6 @@
   import { storeToRefs } from "pinia";
   import { useStore } from "../stores";
 
-
   const store = useStore();
   const { sessionTimer, userId, studyClass } = storeToRefs(store);
   const { updateSkin, setPageName, setStudyClass, setModal, toggleModal } = store;
@@ -78,6 +81,7 @@
       setPageName("Create New Class");
   });
 
+  // Get classRoute from URL
   let classRoute = useRoute().params.slug;
   let className, sectionName, classCode, room, classTime, profName, profEmail, profOffice;
 
@@ -91,6 +95,10 @@
     profEmail = document.getElementById("professor-email-input").value;
     profOffice = document.getElementById("professor-office-input").value;
 
+
+    /*
+    Send data to backend. Can either be a NEW class or an UPDATE to an existing class.
+    */
     const host = 'http://127.0.0.1:5000'; 
     const apiUrlNew = `/api/newclass`;
     const apiUrlUpdate = `/api/class/${classRoute}/update_meta`;
@@ -317,6 +325,11 @@
     color: var(--black);
   }
 
+  /*  
+  Styling for the professor container. 
+  Uses grids to displau them
+  */
+
   #professor-name-container{
     grid-column: 1/3;
     grid-row: 4;
@@ -359,23 +372,4 @@
     color: var(--black);
   }
 
-/*
-  #min-input, #max-input{
-    background-color: var(--box);
-    color: var(--white);
-    text-align: center;
-  }
-
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-
-  #letter-table ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ 
-    color: var(--white);
-    opacity: 1; /* Firefox 
-  }
-
-  */
 </style>

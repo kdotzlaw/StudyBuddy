@@ -1,5 +1,6 @@
 <template>
   <div id="add-req-container">
+    
     <div id="name-req">
       <h3>Requirement Name</h3>
       <input type="text" id="name-req-input" placeholder="Enter requirement name" v-model="reqName" @keydown="checkEnter">
@@ -27,6 +28,7 @@
     <div v-else id="add-button-outer">
       <button class="button bar" id="add-button" @click="addToCalendar()">Add to calendar</button>
     </div>
+
   </div>
 
 
@@ -56,7 +58,6 @@
     event.stopImmediatePropagation();
   }
 
-  // Add requirement to calendar
   function addToCalendar(){
     reqName = document.getElementById("name-req-input").value;
 
@@ -74,7 +75,6 @@
         deadline: reqDate,
       };
       
-      // Checks to see if they are editting the requirement
       let complete = false;
       if(props.edit){
         finishReq = document.getElementById("finish-req-input").value;
@@ -130,7 +130,6 @@
     
   }
 
-  // Delete requirement from calendar
   function deleteReq(){
     reqName = document.getElementById("name-req-input").value;
 
@@ -156,7 +155,9 @@
         });
       }
     }
+
   }
+
 
 </script>
 

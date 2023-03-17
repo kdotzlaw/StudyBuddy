@@ -159,7 +159,7 @@ This feature will allow for users to level up their buddy.
 |Katrina Dotzlaw| Backend, Database| Python, C#, SQL, Java|
 |Ryan Dotzlaw| Backend, API Designer | Python, Java, C, SQL |
 |Millan David| Frontend, Presenter | HTML/CSS, Vue.Js, Java, JavaScript |
-|Elieser Capillar| Frontend, Graphic Designer | React Native, Java, JavaScript |
+|Elieser Capillar| Frontend, Graphic Designer, CI/CD | React Native, Java, JavaScript |
 
 <p align="center">
 <br>

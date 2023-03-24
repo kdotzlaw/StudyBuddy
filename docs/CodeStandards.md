@@ -1,30 +1,57 @@
 # Code Standards
+
 ## Frontend
-### Vue Components, CSS, HTML, Javascript, Node.js
-- Reference https://component-party.dev/ for syntax on Vue Props
-- Semicolons at the end of lines.
-- Use `let` for variables, `const` for constants/refs.
-- Brackets `{` on the same line as declaration.   
-  For example: `function toggleTime() {...`
-- Brackets can be skipped if encapsulating only one line.    
-  For example: `if(file)`   
-                   `console.log(file.name)`
-- **Avoid** one line functions or conditionals unless significantly improving readability.       
-For example: **Dont do:** `if(file){console.log(file.name)}`
-- Can compact or distribute nested HTML or JS code in any way.
-- Can space your lines of code.
-- Both inline and seperate line comments are acceptable.
-- CSS that structures or layouts of components will be written inside the component file itself within `<style scoped> </style>`
-- Route or page components (eg. home, login, accountCreate) will go to `frontend/src` 
-- Modular components (eg. header, button, card) will go to `frontend/src/components`
-- Logic layer Node.js classes will be housed in `frontend/src/logic`
-- Images will go in the `frontend/public` folder for easy linking
-- Raw text files, .json files and .yml files will be in `frontend/public`
+### Vue Practices
+The standard Vue composition for StudyBuddy will be based on [Vue3's SFC Syntax](https://vuejs.org/api/sfc-spec.html).
+Orders of the HTML and Javascript block may be interchanged. CSS must always be affixed at the bottom of the document.
+
+- **Body of any `.vue` file**  
+	```
+	<script setup>
+		//  Javascript code
+	</script>
+
+	<template>
+		<!--  HTML code  -->
+	</template>
+
+	<styles scoped>
+		/*  CSS code  */
+	</styles>
+	```
+- **Component props** will use the [defineProps](https://vuejs.org/api/sfc-script-setup.html#defineprops-defineemits) convention.  
+	```
+	const props = defineProps({
+		propValue: {type: Array, required: false, default: []}
+	})
+	```
+### Javascript Practices
+- Semi-colons are mandatory at the end of single lines.  
+	- **Exemption:** Cypress command chains for tests.
+- Use  `let`  for variables,  `const`  for constants and refs.
+- Brackets should be written on the same line as declaration.  
+	```
+	function toggleTime() {
+		// ...
+	}
+	```
+- Brackets may be skipped if encapsulating only one line.  
+	```
+	if(file)
+		console.log(file.name)
+	```
+### Readability-First Approach
+- Nested HTML or Javascript command chains may be compacted in the same line or distributed between lines, using a design choice that will maximize readability. Minimize very long or very sparse lines.
+- Lines between code may be spaced to ensure sufficient readability.
+### Filesystem Structure and Resource Location
+- Routed page components (e.g. Dashboard, Class): `frontend/src/pages`
+- Modular components (e.g. Accordion, Buddy): `frontend/src/components`
+- Business logic functions and classes: `frontend/src/logic`
+- Images and static files: `frontend/public`
+- Test files and utils: `frontend/test`
 ### Testing
-- Frontend testing done using **jest** on application level **Pinia** store functions
-- Unit tests should only test **one** method/component
-- Tests for components should be collected in `describe("<desc>", ()=>{<tests>})`
-- Each feature should have its own seperate test suite
+- See [StudyBuddy test plan](https://github.com/kdotzlaw/StudyBuddy/blob/main/docs/SE2%20Test%20Plan.pdf) for development prerequisites and standards.
+
 ## Backend
 ### Python
 - All SQL queries in python will be done using **Prepared Statements** to avoid SQL Injection. A valid SQL query using a prepared statement is: `cursor.execute("SELECT * FROM <tableName> WHERE <colName> = ?", username)`

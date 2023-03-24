@@ -59,14 +59,14 @@ Orders of the HTML and Javascript block may be interchanged. CSS must always be 
 - Use **single line or inline comments** to provide context of use, breakdown complex commands, or briefly describe sections of code.  
 	`private pauseTotal: number = 0;  // Total of all intervals of paused times to deduct from study time`
 - Use **multiline comments** to describe large functions with multiple tasks, or with purpose not immediately discerned from function name. `@params` and `@returns` may be indicated optionally.  
-	```  
+  ```  
   /* manageTimer
    *   Starts new Timer instance if no Timer running
    *   Pauses current Timer if provided class or user params are current
    *   Create new Timer instance if provided class or user params are new
    *   @params - userId: string , classId: string
    */
-	```
+  ```  
 ### Filesystem Structure and Resource Location
 - Routed page components (e.g. Dashboard, Class): `frontend/src/pages`
 - Modular components (e.g. Accordion, Buddy): `frontend/src/components`

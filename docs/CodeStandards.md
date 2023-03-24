@@ -27,7 +27,7 @@ Orders of the HTML and Javascript block may be interchanged. CSS must always be 
 	```
 ### Javascript Practices
 - Semi-colons are mandatory at the end of single lines.  
-	- **Exemption:** Cypress command chains for tests.
+	- **Exemption:** Cypress command chains in tests
 - Use  `let`  for variables,  `const`  for constants and refs.
 - Brackets should be written on the same line as declaration.  
 	```
@@ -41,8 +41,32 @@ Orders of the HTML and Javascript block may be interchanged. CSS must always be 
 		console.log(file.name)
 	```
 ### Readability-First Approach
+- Affix an **introductory header** on the top of all component, page, logic, and test files to describe the purpose of the file.  
+  ```  
+  /*
+   * validate.ts
+   *    Form input validation functions to identify empty fields and enforce security checks.
+   */
+  ```    
+  ```  
+  <!-- 
+    Login.vue 
+      Renders form fields and controls, and runs validation checks for logging in an existing account.
+  -->
+  ```  
 - Nested HTML or Javascript command chains may be compacted in the same line or distributed between lines, using a design choice that will maximize readability. Minimize very long or very sparse lines.
 - Lines between code may be spaced to ensure sufficient readability.
+- Use single line or inline comments to provide context of use, breakdown complex commands, or briefly describe sections of code.  
+	`private pauseTotal: number = 0;  // Total of all intervals of paused times to deduct from study time`
+- Use multiline comments to describe large functions with multiple tasks, or with purpose not immediately discerned from function name. `@params` and `@returns` may be indicated optionally.  
+	```
+  /* manageTimer
+   *   Starts new Timer instance if no Timer running
+   *   Pauses current Timer if provided class or user params are current
+   *   Create new Timer instance if provided class or user params are new
+   *   @params - userId: string , classId: string
+   */
+	```
 ### Filesystem Structure and Resource Location
 - Routed page components (e.g. Dashboard, Class): `frontend/src/pages`
 - Modular components (e.g. Accordion, Buddy): `frontend/src/components`

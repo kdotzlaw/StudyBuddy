@@ -28,7 +28,7 @@ BEGIN
 	CONSTRAINT ck_testbool_ischk CHECK (is_complete IN (1,0)),
 	studyTime FLOAT DEFAULT 0.0,
 	/* Metadata */
-	breakdown VARCHAR(255),
+	breakdown VARCHAR(255) DEFAULT '{"A+":"(90,100)", "A":"(80,89)", "B+":"(75,79)", "B":"(70,74)", "C+":"(65,69)", "C":"(56,64)", "D":"(50,55)", "F":"(0, 49)"}',
 	courseCode varchar(50),
 	section VARCHAR(8),
 	classroom VARCHAR(50), /* room number, building*/
@@ -50,6 +50,7 @@ BEGIN
 	deadline DATETIME,
 	task_Weight INT NOT NULL,
 	task_grade INT DEFAULT 0,
+	task_goal VARCHAR(50) DEFAULT 'A',
 	task_xp FLOAT, /* would be determined by system not user, might drop this*/
 	FK_uID INT,
 	FK_cID INT,
@@ -75,7 +76,7 @@ INSERT INTO Users(username,password)
 
 /* ADD CLASSES STUB DATA */
 INSERT INTO Classes(class_Name, timeslot, is_Complete, studyTime,breakdown,FK_uID )
-	VALUES ('COMP 2080', '10:00:00',0,0,'{"A+":"(90,100)", "A":"(80,89)", "B+":"(75,79)", "B":"(70,74)", "C+":"(65,69)", "C":"(56,64)", "D":"(50,55)", "F":"(0, 49)"}',3);
+	VALUES ('COMP 2080', '10:00:00',0,0,'{"A+":"(95,100)", "A":"(80,94)", "B+":"(75,79)", "B":"(70,74)", "C+":"(65,69)", "C":"(56,64)", "D":"(50,55)", "F":"(0, 49)"}',3);
 INSERT INTO Classes(class_Name, timeslot, is_Complete, studyTime,FK_uID )
 	VALUES ('COMP 4350', '11:30:00',0,0,1);
 INSERT INTO Classes(class_Name, timeslot, is_Complete, studyTime,FK_uID )
@@ -91,7 +92,7 @@ INSERT INTO Classes(class_Name, timeslot, is_Complete, studyTime,FK_uID )
 
 INSERT INTO Tasks (task_Name, deadline,task_Weight,task_grade,task_xp, FK_uID,FK_cID)
 	VALUES('A1','2023-02-09 14:00:00',10,0,0,2,7)
-INSERT INTO Tasks (task_Name, deadline,task_Weight,task_grade,task_xp, FK_uID,FK_cID)
-	VALUES('Exam','2023-02-16 10:00:00',20,0,0,3,1)
+INSERT INTO Tasks (task_Name, deadline,task_Weight,task_grade,task_goal,task_xp, FK_uID,FK_cID)
+	VALUES('Exam','2023-02-16 10:00:00',20,0,'A+',0,3,1)
 INSERT INTO Tasks (task_Name, deadline,task_Weight,task_grade,task_xp, FK_uID,FK_cID)
 	VALUES('A1','2023-01-30 23:59:59',10,96,0,3,1)

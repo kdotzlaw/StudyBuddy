@@ -111,6 +111,7 @@ def login():
         # check db for username and password
         # selection is a list of rows (SHOULD BE LENGTH 1)
         selection = db.getUser(username)
+        print(selection)
 
         if selection is None:
             # username not in database
@@ -508,9 +509,10 @@ def grade(classname):
                 "D": "You can do better than that, I believe in you!",
                 "F": "Uh oh."}
     username = flask_login.current_user.get_id()
-
+    print(username)
     # get <classname> class, process grade breakdown
     res = db.getSingleClass(username, classname)
+    print(res)
     if res is not None and res.breakdown is not None:
         breakdown = json.loads(res.breakdown)
     else:

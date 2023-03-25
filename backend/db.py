@@ -456,7 +456,7 @@ POSTCONDITION:
 - If user and class both present in db, task with given information added to db for specified user and class
 - Otherwise, None is returned
 '''
-def addTask(username, className, taskName, weight, deadline):
+def addTask(username, className, taskName, weight, deadline,goal):
     user = getUser(username)
     if not user:
         return None
@@ -464,8 +464,12 @@ def addTask(username, className, taskName, weight, deadline):
     classID = getClassID(username, className)
     if not userID or not classID:
         return None
-    prep_stmt = "INSERT INTO Tasks (task_Name, deadline, task_Weight, FK_uID, FK_cID) VALUES (?,?,?,?,?);"
-    return cursor.execute(prep_stmt, taskName, deadline, weight, userID, classID)
+    if goal is None:
+        prep_stmt = "INSERT INTO Tasks (task_Name, deadline, task_Weight, FK_uID, FK_cID) VALUES (?,?,?,?,?);"
+        return cursor.execute(prep_stmt, taskName, deadline, weight, userID, classID)
+    else:
+        prep_stmt = "INSERT INTO Tasks (task_Name, deadline, task_Weight,task_goal, FK_uID, FK_cID) VALUES (?,?,?,?,?,?);"
+        return cursor.execute(prep_stmt, taskName, deadline, weight,goal, userID, classID)
 
 '''
 METHOD: removeTask()
@@ -494,7 +498,7 @@ POSTCONDITION:
 - Otherwise, None is returned and task remains unchanged
 - ** make sure that eDate is passed in as a datetime object or converted
 '''
-def editTask (username, className, taskName, eName, eDate, eWeight):
+def editTask (username, className, taskName, eName, eDate, eWeight,eGoal):
     user = getUser(username)
     if not user:
         return None
@@ -516,6 +520,9 @@ def editTask (username, className, taskName, eName, eDate, eWeight):
                        userID, classID)
     if eWeight != 0:
         cursor.execute("UPDATE Tasks SET task_Weight = ? WHERE tID = ? AND FK_uID = ? AND FK_cID = ?;", eWeight, taskID,
+                       userID, classID)
+    if eGoal !='' or eGoal is not None:
+        cursor.execute("UPDATE Tasks SET task_goal = ? WHERE tID = ? AND FK_uID = ? AND FK_cID = ?;", eGoal, taskID,
                        userID, classID)
 
 

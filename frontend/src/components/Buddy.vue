@@ -5,9 +5,15 @@
 
 <script setup>
     import TitleSq from "/artifacts/buddytemp.svg";
-    import Corgi from "./Corgi.vue";
+    import { storeToRefs } from "pinia";
     import { ref } from "vue";
     import { useMotion } from "@vueuse/motion";
+    import { useStore } from "../stores";
+    import Corgi from "./Corgi.vue";
+    import Bunny from "./Bunny.vue";
+    
+    const store = useStore();
+    const { buddyChoice } = storeToRefs(store);
 
     const props = defineProps({ 
         showLevel: {type: Boolean, required: false, default: false},
@@ -47,7 +53,12 @@
 
     <!-- Buddy container -->
     <div id="buddy">
-        <Corgi />
+        <div v-if="buddyChoice == 'corgi'" >
+            <Corgi />
+        </div>
+        <div v-else>
+            <Bunny />
+        </div>
 
         <!-- Chat balloon -->
         <div class="chat">
@@ -92,13 +103,14 @@
 
     #chat-balloon{
         position: absolute;
-        z-index: 4;
+        z-index: 5;
         top: -2em;
-        height: 8em;
+        min-height: 8em;
+        height: max-content;
         width: 9em;
         background: var(--black);
         border-radius: 50%;
-        padding: 0 1.5em 0 1.5em;
+        padding: 0.5em 1.7em 0.5em 1.7em;
         display: grid;
         justify-items: center;
         align-items: center;
@@ -110,7 +122,7 @@
         position: absolute;
         z-index: 4;
         left: 0;
-        top: 4em;
+        top: 5em;
         height: 4em;
         width: 6em;
         background: radial-gradient(circle at top left, transparent 60%, var(--black) 61%);

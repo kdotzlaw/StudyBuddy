@@ -1,6 +1,13 @@
+<!-- 
+  AddRequirement.vue
+    route: /class/${classRoute}/newtask
+           /class/${classRoute}/task/${reqName}/edit
+           /class/${classRoute}/task/${reqName}/complete
+
+    Modal for adding a new requirement
+-->
 <template>
   <div id="add-req-container">
-    
     <div id="name-req">
       <h3>Requirement Name</h3>
       <input type="text" id="name-req-input" placeholder="Enter requirement name" v-model="reqName" @keydown="checkEnter">
@@ -18,10 +25,16 @@
       <input type="number" id="finish-req-input" placeholder="90" v-model="finishReq" @keydown="checkEnter">
     </div>
 
-    <div id="add-button-outer">
-      <button class="button bar" id="add-button" @click="addToCalendar()">Add to calendar</button>
+    <div v-if="edit" id="delete-req">
+      <button class="button bar" id="delete-button" @click="deleteReq()"> Delete</button>
     </div>
 
+    <div v-if="edit" id="add-button-outer">
+      <button class="button bar" id="add-button" @click="addToCalendar()">Save changes</button>
+    </div>
+    <div v-else id="add-button-outer">
+      <button class="button bar" id="add-button" @click="addToCalendar()">Add to calendar</button>
+    </div>
   </div>
 
 
@@ -44,59 +57,118 @@
   let classRoute = useRoute().params.slug;
   let reqName, gradeReq, reqDate, finishReq;
 
-  // Detect when ENTER key pressed to submit form
+  /*  checkEnter
+   *    Detect when ENTER key pressed to submit form
+   */
   function checkEnter(event){
     if(event.key == "Enter")
         addToCalendar();
     event.stopImmediatePropagation();
   }
 
+  /*  addToCalendar
+   *    Add requirement to calendar
+   */
   function addToCalendar(){
     reqName = document.getElementById("name-req-input").value;
-    gradeReq = document.getElementById("grade-req-input").value;
-    reqDate = document.getElementById("date-req-input").value;
 
-    const host = 'http://127.0.0.1:5000'; 
-    const apiUrlNew = `/api/class/${classRoute}/newtask`;
-    const apiUrlUpdate = `/api/class/${classRoute}/newtask`;
-    let data = {
-      taskname: reqName,
-      weight: gradeReq, // TODO: Sync reqs with backend
-      deadline: reqDate,
-    };
+    if(reqName){
+      gradeReq = document.getElementById("grade-req-input").value;
+      reqDate = document.getElementById("date-req-input").value;
 
-    if(props.edit){
-      finishReq = document.getElementById("finish-req-input").value;
-      data.grade = finishReq;
+      const host = 'http://127.0.0.1:5000'; 
+      const apiUrlNew = `/api/class/${classRoute}/newtask`;
+      const apiUrlUpdate = `/api/class/${classRoute}/task/${reqName}/edit`;
+      const apiUrlComplete = `/api/class/${classRoute}/task/${reqName}/complete`;
+      let data = {
+        taskname: reqName,
+        weight: gradeReq,
+        deadline: reqDate,
+      };
+      
+      // Checks to see if they are editting the requirement
+      let complete = false;
+      if(props.edit){
+        finishReq = document.getElementById("finish-req-input").value;
+        if(finishReq.length > 0){
+          data.grade = finishReq;
+          complete = true;
+        }
+      }
+
+      // Mark current task as finished
+      if(props.edit && complete){
+        axios.post(host + apiUrlComplete, data)
+          .then(function (response) {
+            console.log(response);
+            setModal("Success", "success", response.data);
+            toggleModal();
+          })
+          .catch(function (error) {
+            console.log(error.response);
+            setModal("Error", "error", error.response.data);
+            toggleModal();
+          });
+      }
+      // Update current task information
+      else if (props.edit && !complete){
+        axios.post(host + apiUrlUpdate, data)
+          .then(function (response) {
+            console.log(response);
+            setModal("Success", "success", response.data);
+            toggleModal();
+          })
+          .catch(function (error) {
+            console.log(error.response);
+            setModal("Error", "error", error.response.data);
+            toggleModal();
+          });
+      }
+      // Create new task
+      else{
+        axios.post(host + apiUrlNew, data)
+        .then(function (response) {
+          console.log(response);
+          setModal("Success", "success", response.data);
+          toggleModal();
+        })
+        .catch(function (error) {
+          console.log(error.response);
+          setModal("Error", "error", error.response.data);
+          toggleModal();
+        });
+      }
     }
+    
+  }
 
-    // Update current task information
-    if(props.edit){
-      axios.post(host + apiUrlUpdate, data)
-      .then(function (response) {
-        console.log(response);
-        setModal("Success", "success", response.data);
-        toggleModal();
-      })
-      .catch(function (error) {
-        console.log(error.response);
-        setModal("Error", "error", error.response.data);
-        toggleModal();
-      });
-    }
-    // Create new task
-    else{
-      axios.post(host + apiUrlNew, data)
-      .then(function (response) {
-        console.log(response);
-        setModal("Success", "success", response.data);
-        toggleModal();
-      })
-      .catch(function (error) {
-        console.log(error.response);
-        setModal("Error", "error", error.response.data);
-        toggleModal();
-      });
+  /*  deleteReq
+   *    Delete requirement from calendar
+   */
+  function deleteReq(){
+    reqName = document.getElementById("name-req-input").value;
+
+    if(reqName){
+      const host = 'http://127.0.0.1:5000'; 
+      const apiUrl = `/api/class/${classRoute}/task/${reqName}/delete`;
+
+      let data = {
+        taskname: reqName,
+      };
+
+      if(props.edit){
+        axios.post(host + apiUrl, data)
+        .then(function (response) {
+          console.log(response);
+          setModal("Success", "success", response.data);
+          toggleModal();
+        })
+        .catch(function (error) {
+          console.log(error.response);
+          setModal("Error", "error", error.response.data);
+          toggleModal();
+        });
+      }
     }
   }
 
@@ -189,6 +261,16 @@
   right: 5em;
   width: max-content;
   transform: scale(1.15);
+}
+
+#delete-button{
+  margin-left: 0; 
+  margin-right: 60%;
+  position: absolute;
+  bottom: -1em;
+  left: 6em;
+  width: max-content;
+  transform: scale(1.2);
 }
 
 .button{

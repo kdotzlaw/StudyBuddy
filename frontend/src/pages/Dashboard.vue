@@ -13,18 +13,18 @@
     import { ref, computed, onMounted } from "vue";
     import { storeToRefs } from "pinia";
     import { useStore } from "../stores";
+    import filter from "../logic/filter";
     
     const store = useStore();
     const { userId } = storeToRefs(store);
     const { updateSkin, setPageName } = store;
 
-    // Stub data compensates for unintegrated(future sprint) features
-    const classes = ref([
+    let classes = [
         { name: "COMP2080", timeStudied: 2.5 },
         { name: "COMP4350", timeStudied: 6.2 },
         { name: "COMP4620", timeStudied: 0.0 },
         { name: "COMP4380", timeStudied: 10.0 },
-    ]);
+    ]
     // Return color tag by class key
     function getTagColor(key) {
         let map = {
@@ -38,19 +38,22 @@
             return "grey";
         return mapping;
     }
-    const reqs = ref([
+    let reqsFiltered = filter.getReqs([
         { classKey: "COMP4620", tagColor: getTagColor("COMP4620"), name: "Assignment 4", due: new Date("March 12, 2023"), goal: "C" },
         { classKey: "COMP2080", tagColor: getTagColor("COMP2080"), name: "Catch up", due: new Date("March 13, 2023"), goal: "C" },
         { classKey: "COMP4350", tagColor: getTagColor("COMP4350"), name: "Final Exam", due: new Date("April 20, 2023"), goal: "A+" },
     ]);
-    const chats = ref([
-        "Press on the Play ▶ button on a class to start studying!",
-        "You have no upcoming deadlines.",
-        "Good hooman!"
+    let chatsFiltered = filter.getChats([
+        { classKey: "COMP4620", tagColor: getTagColor("COMP4620"), name: "Assignment 4", due: new Date("March 12, 2023"), goal: "C" },
+        { classKey: "COMP2080", tagColor: getTagColor("COMP2080"), name: "Catch up", due: new Date("March 13, 2023"), goal: "C" },
+        { classKey: "COMP4350", tagColor: getTagColor("COMP4350"), name: "Final Exam", due: new Date("April 20, 2023"), goal: "A+" },
     ]);
+    const reqs = ref(reqsFiltered);
+    const chats = ref(chatsFiltered);
+
     let chatIndex = 0;
     const chat = ref(chats.value[0]);
-
+    
     // Cycle through Buddy chat balloon conversations
     setInterval(()=>{
         chatIndex = (chatIndex + 1) % chats.value.length;
@@ -59,10 +62,9 @@
 
     onMounted(() => {
         setPageName("Dashboard");
-        
         if(userId.value)
-            getData();
-    });
+            getData();  
+    })
 
     const triggerGet = computed(() => {
         if(userId.value){
@@ -76,34 +78,20 @@
         // Get classes
         const host = 'http://127.0.0.1:5000'; 
         let apiUrlClass = '/api/class';
-
         axios.get(host + apiUrlClass)
             .then(function (response) {
                 console.log(response);
-                /******************************************* 
-                 * TODO: Replace classes with fetched response.data json
-                 *******************************************/
-
+                
                 // Get requirements from classes
-                let classList = []
+                let classList = Object.keys(response.json());
                 for (let classKey of classList){
                     const apiUrlTask = `/api/class/${classKey}/task`;
-
                     axios.get(host + apiUrlTask)
                         .then(function (response) {
                             console.log(response);
-                            /******************************************* 
-                             * TODO: Process impeding tasks from fetched data
-                             *******************************************/
-                            /******************************************* 
-                             * TODO: Generate buddy conversations from processed data
-                             *******************************************/
-                            /******************************************* 
-                             * TODO: Replace reqs with processed data
-                             *******************************************/
-                            /******************************************* 
-                             * TODO: Replace chats with new conversation data
-                             *******************************************/
+                            let tasks = response.json();
+                            reqs.value = filter.getReqs(tasks);
+                            chats.value = filter.getChats(tasks);
                         })
                         .catch(function (error) {
                             console.log(error.response);

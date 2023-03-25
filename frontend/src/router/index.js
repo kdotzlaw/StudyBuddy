@@ -22,7 +22,7 @@ const routes = [
     component: Class
   },
   {
-    path: '/gradeCalculator',
+    path: '/gradeCalculator/:slug',
     name: 'GradeCalculator',
     component: GradeCalculator
   },
@@ -36,7 +36,7 @@ const routes = [
     name: 'EditClass',
     component: CreateClass,
     props: true
-  }
+  },
 
 ]
 

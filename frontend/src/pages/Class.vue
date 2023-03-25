@@ -38,9 +38,7 @@
         axios.get(host + apiUrlMeta)
             .then(function (response) {
                 console.log(response);
-                /******************************************* 
-                 * TODO: Replace classInfo with fetched response.data json
-                 *******************************************/
+                classInfo.value = response.json();
             })
             .catch(function (error) {
                 console.log(error.response);
@@ -52,9 +50,7 @@
         axios.get(host + apiUrlReq)
             .then(function (response) {
                 console.log(response);
-                /******************************************* 
-                 * TODO: Replace reqs with fetched response.data json
-                 *******************************************/
+                reqs.value = response.json();
             })
             .catch(function (error) {
                 console.log(error.response);
@@ -66,9 +62,8 @@
         axios.get(host + apiUrlGrade)
             .then(function (response) {
                 console.log(response);
-                /******************************************* 
-                 * TODO: Replace grade with fetched response.data json
-                 *******************************************/
+                let received = response.json();
+                grade.value = received.data;
             })
             .catch(function (error) {
                 console.log(error.response);
@@ -272,11 +267,11 @@
                         Wow! <br/>
                         You are doing okay
                     </div>
-                    <router-link to="/gradeCalculator">
+                    <router-link :to="'/gradeCalculator/' + classRoute">
                       <button class="button bar">
                         Grade breakdown
                       </button>
-                  </router-link>
+                    </router-link>
                 </div>
 
                 <!-- Class meta details -->

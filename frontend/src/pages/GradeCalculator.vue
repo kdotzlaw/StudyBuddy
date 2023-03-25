@@ -1,18 +1,26 @@
-<template>
-  <!-- <div class="gradeCalcPage"> -->
+<!-- 
+  GradeCalculator.vue
+    route: /class/${classRoute}/update_meta
 
-    <div id="back-items" v-motion-slide-right>
-        <button id="back" @click="$router.back(-1)">
-            <img :src="ArrowBack" alt="Go back to Dashboard" />
-            <span> Back </span>
-        </button>
-    </div>
+    Full-page class to set task weights and set letter grade cutoffs
+-->
+<template>
+
+  <!-- Back button -->
+  <div id="back-items" v-motion-slide-right>
+    <button id="back" @click="$router.back(-1)">
+      <img :src="ArrowBack" alt="Go back to Dashboard" />
+      <span> Back </span>
+    </button>
+  </div>
     
+
   <div id="grade-container">
     <div id="breakdown-container">
       <h2>Breakdown and Weights</h2>
       <button id="add-row" @click="createRow()"> + </button>
 
+      <!-- Breakdown table -->
       <div id="breakdown-table">
         <table> 
           <thead id="breakdown-table-header">
@@ -34,9 +42,9 @@
         </table>
 
       </div>
-      
     </div>
     
+    <!-- Letter grade -->
     <div id="letter-grade-container">
       <h2>Letter Grade Breakdown</h2>
       <div id="letter-table">
@@ -96,6 +104,7 @@
   import { default as axios } from 'axios';
   import ArrowBack from "/artifacts/arrowback.svg";
   import { ref, computed, onMounted } from "vue";
+  import { useRoute } from 'vue-router';
   import { storeToRefs } from "pinia";
   import { useStore } from "../stores";
 
@@ -108,10 +117,17 @@
       setPageName("Grade Calculator");
   });
 
+  let classRoute = useRoute().params.slug;
 
+  /*  createRow
+   *    This function creates a new row in the table by manually creating
+   *    the elements to insert. It allows us to dynamically add rows to the table
+   */
   function createRow(){
+    // Create the new row
     let newRow = document.createElement("tr");
 
+    // Create the new elements
     let name = document.createElement("td");
     let qty = document.createElement("td");
     let percent = document.createElement("td");
@@ -122,29 +138,35 @@
     let percentInput = document.createElement("input");
     let deleteButtonInput = document.createElement("button");
 
+    // Set the attributes for the new elements
     newRow.classList.add("grid-one");
 
+    // Set the attributes for the name input
     nameInput.setAttribute("type", "text");
     nameInput.setAttribute("placeholder", "Quiz");
 
+    // Set the attributes for the qty inputs
     qtyInput.setAttribute("type", "number");
     qtyInput.setAttribute("placeholder", "0");
     qtyInput.setAttribute("min", "0");
 
+    // Set the attributes for the percent input
     percentInput.setAttribute("type", "number");
     percentInput.setAttribute("placeholder", "0");
     percentInput.setAttribute("min", "0");
     percentInput.setAttribute("max", "100")
 
+    // Set the attributes for the delete button
     deleteButtonInput.setAttribute("type", "button");
     deleteButtonInput.innerHTML = "Delete";
     
-
+    // Add the new elements to the row
     name.appendChild(nameInput);
     qty.appendChild(qtyInput);
     percent.appendChild(percentInput);
     deleteButton.appendChild(deleteButtonInput);
 
+    // Add the row to the table
     newRow.appendChild(name);
     newRow.appendChild(qty);
     newRow.appendChild(percent);
@@ -155,6 +177,9 @@
     document.getElementById("table-buddy").appendChild(newRow);
   }
 
+  /*  getDataOne
+   *    This function sends the data from the table to the server
+   */
   function getDataOne(){
     let table = document.getElementById("table-buddy");
     let rows = table.getElementsByTagName("tr");
@@ -173,13 +198,14 @@
         percent: percent
       });
     }
-
-    console.log(data)
-
     return data;
   }
 
-  function getDataTwo() {
+  /*  getDataTwo
+   *    This function sends the grade breakdown data from the table to the server.
+   *    It has default values
+  */
+  function getDataTwo(aPlus=100, a=90, bPlus=85, b=80, cPlus=75, c=70) {
     aPlus = document.getElementById("max-input-A+").value;
     a = document.getElementById("max-input-A").value;
     bPlus = document.getElementById("max-input-B+").value;
@@ -187,33 +213,43 @@
     cPlus = document.getElementById("max-input-C+").value;
     c = document.getElementById("max-input-C").value;
 
-    data = {
-      aPlus: aPlus,
-      a: a,
-      bPlus: bPlus,
-      b: b,
-      cPlus: cPlus,
-      c: c
+    let vals = [aPlus, a, bPlus, b, cPlus, c];
+    for(let i=0; i<vals.length; i++){
+      // If field not empty, convert to int; Else, use preset
+      if(vals[i].length>0) 
+        vals[i] = parseInt(vals[i]);
+      else
+        vals[i] = 100 - i*5;
     }
 
-    console.log(data)
+    let data = {
+      "A+": [vals[0], vals[1]+1],
+      "A": [vals[1], vals[2]+1],
+      "B+": [vals[2], vals[3]+1],
+      "B": [vals[3], vals[4]+1],
+      "C+": [vals[4], vals[5]+1],
+      "C": [vals[5], 65]
+    }
+    return data;
   }
 
+  /*  update
+   *    This function updates the grade calculator data in the database
+  */
   function update(){
-    /******************************************* 
-     * TODO: Update POST endpoint
-     *******************************************/
-
     const host = 'http://127.0.0.1:5000'; 
-    const apiUrl = '/api/';
-    const data = getData();
-    /*axios.post(host + apiUrl, data)
+    const apiUrlMeta = `/api/class/${classRoute}/update_meta`;
+    const gradeBreakdown = JSON.stringify(getDataTwo());
+    let data = {
+      breakdown: gradeBreakdown
+    }
+    axios.post(host + apiUrlMeta, data)
       .then(function (response) {
         console.log(response);
       })
       .catch(function (error) {
         console.log(error.response);
-      });*/
+      });
   }
 
 </script>

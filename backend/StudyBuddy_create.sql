@@ -29,7 +29,7 @@ BEGIN
 	studyTime FLOAT DEFAULT 0.0,
 	/* Metadata */
 	breakdown VARCHAR(255) DEFAULT '{"A+":"(90,100)", "A":"(80,89)", "B+":"(75,79)", "B":"(70,74)", "C+":"(65,69)", "C":"(56,64)", "D":"(50,55)", "F":"(0, 49)"}',
-	courseCode varchar(50),
+	courseCode varchar(50) DEFAULT '',
 	section VARCHAR(8),
 	classroom VARCHAR(50), /* room number, building*/
 	prof_Name VARCHAR(50),

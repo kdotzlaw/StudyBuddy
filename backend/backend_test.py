@@ -173,12 +173,23 @@ class dbTests(unittest.TestCase):
         username = 'katDot'
         className = "COMP 2080"
         timeslot = "16:00:00.0000000"
-        db.addClass(username, className, timeslot)
+        db.addClass(username, className, timeslot,None)
         result = db.getSingleClass(username, className)
         self.assertIn(className, result)
         # remove class once done
         db.removeClass(username, className)
 
+    def test_addClassCode(self):
+        username = 'katDot'
+        className = "COMP 2080"
+        timeslot = "16:00:00.0000000"
+        code = "12345"
+        db.addClass(username, className, timeslot,code)
+        result = db.getSingleClass(username, className)
+        self.assertIn(className, result)
+        self.assertIn(code,result)
+        # remove class once done
+        db.removeClass(username, className)
     '''
     TEST: test_removeClass()
     Test passes if the added class is successfully removed from the db (no longer appears in class list)
@@ -187,7 +198,7 @@ class dbTests(unittest.TestCase):
         username = 'katDot'
         className = "COMP 2080"
         timeslot = "9:00:00.0000000"
-        db.addClass(username, className, timeslot)
+        db.addClass(username, className, timeslot,None)
         # remove it
         db.removeClass(username, className)
         record = db.getClasses(username)
@@ -203,7 +214,7 @@ class dbTests(unittest.TestCase):
         className = "COMP 2150"
         timeslot = "9:00:00.0000000"
         # add new class to complete
-        db.addClass(username, className, timeslot)
+        db.addClass(username, className, timeslot,None)
         db.completeClass(username, className)
         record = db.getSingleClass(username, "COMP 2150")
         self.assertEqual(1, record.is_complete)
@@ -218,7 +229,7 @@ class dbTests(unittest.TestCase):
         username = "katDot"
         className = "COMP 2150"
         timeslot = "9:00:00.0000000"
-        db.addClass(username, className, timeslot)
+        db.addClass(username, className, timeslot,None)
         db.addStudyTime(username, className, 1.30)
         record = db.getSingleClass(username, className)
         self.assertEqual(record.studyTime, 1.30)
@@ -233,7 +244,7 @@ class dbTests(unittest.TestCase):
         username = "katDot"
         className = "COMP 2150"
         timeslot = "9:00:00.0000000"
-        db.addClass(username, className, timeslot)
+        db.addClass(username, className, timeslot,None)
         db.editClassMeta(username, className, "", "", "", "", "",
                          "", "")
         db.editClassMeta(username, className, "A01", "320 Machray", "Steve Stevenson", "Steve@steve.com", "999-9999",
@@ -260,7 +271,7 @@ class dbTests(unittest.TestCase):
     def test_addClassBreakdown(self):
         username = 'katDot'
         className = 'COMP 3820'
-        breakdown = '{"A+":"(90,100)", "A":"(80,89)", "B+":"(75,79)", "B":"(70,74)", "C+":"(65,69)", "C":"(56,64)", "D":"(50,55)", "F":"(0, 49)"}'
+        breakdown = '{"A+":"(95,100)", "A":"(80,94)", "B+":"(75,79)", "B":"(70,74)", "C+":"(65,69)", "C":"(56,64)", "D":"(50,55)", "F":"(0, 49)"}'
         db.addClassBreakdown(username, className, breakdown)
         record = db.getSingleClass(username, className)
         self.assertNotEqual(record, None)
@@ -425,7 +436,7 @@ class dbTests(unittest.TestCase):
     def test_removeTask(self):
         username = "katDot"
         className = "COMP 3820"
-        record = db.addTask(username, className, "Final Exam", 50, "2023-04-20 23:59:00")
+        record = db.addTask(username, className, "Final Exam", 50, "2023-04-20 23:59:00",None)
         self.assertNotEqual(record, None)
         db.removeTask(username, className, "Final Exam")
         task = db.getSingleTask(username, className, "Final Exam")
@@ -438,7 +449,7 @@ class dbTests(unittest.TestCase):
     def test_addTask(self):
         username = "katDot"
         className = "COMP 3820"
-        record = db.addTask(username, className, "Final Exam", 50, "2023-04-20 23:59:00")
+        record = db.addTask(username, className, "Final Exam", 50, "2023-04-20 23:59:00",None)
         self.assertNotEqual(record, None)
         task = db.getSingleTask(username, className, "Final Exam")
         self.assertIn("Final Exam", task)
@@ -453,7 +464,7 @@ class dbTests(unittest.TestCase):
         className = "COMP 3820"
         record = db.getSingleTask(username, className, "A1")
         self.assertNotEqual(record, None)
-        db.editTask(username, className, "A1", "", "2023-04-20 23:59:00", 0)
+        db.editTask(username, className, "A1", "", "2023-04-20 23:59:00", 0,"B")
         # get edited record
         nRecord = db.getSingleTask(username, className, "A1")
         self.assertNotEqual(record, nRecord)
@@ -461,7 +472,7 @@ class dbTests(unittest.TestCase):
         d2 = datetime.datetime(year=2023, month=4, day=20, hour=23, minute=59, second=0)
         self.assertEqual(nRecord.deadline, d2)
         # return record to default state
-        db.editTask(username, className, "A1", '', '2023-02-09 14:00:00', 0)
+        db.editTask(username, className, "A1", '', '2023-02-09 14:00:00', 0,"A")
         record = db.getSingleTask(username, className, "A1")
         self.assertEqual(record.deadline, d1)
 
@@ -480,7 +491,7 @@ class dbTests(unittest.TestCase):
 
 creds = {'username': 'ryan2023', 'password': 'password'}
 creds2 = {'username': 'newuser', 'password': 'pass'}
-
+creds3 = {'username': 'andrea22', 'password': '2222'}
 
 class apiTest(flask_unittest.ClientTestCase):
     # assign flask app
@@ -498,6 +509,8 @@ class apiTest(flask_unittest.ClientTestCase):
         # send post request to login api
         resp = client.post("/api/login", json=creds)
         # check the status
+        self.assertStatus(resp, 200)
+        resp = client.post("/api/login",json=creds3)
         self.assertStatus(resp, 200)
 
     def test_login_nouser(self, client: FlaskClient):
@@ -636,7 +649,7 @@ class apiTest(flask_unittest.ClientTestCase):
         self.assertStatus(resp, 200)
         resp = client.get('/api/class/COMP 2080/task')
         print(resp.get_data())
-        resp = client.post('/api/class/COMP 2080/task/Exam/complete', json={"grade": "0.97"})
+        resp = client.post('/api/class/COMP 2080/task/Exam/complete', json={"grade": "97"})
         print(resp.get_data())
         self.assertStatus(resp, 200)
         resp = client.get('/api/class/COMP 2080/task')
@@ -656,6 +669,7 @@ class apiTest(flask_unittest.ClientTestCase):
         resp = client.post('/api/login', json={'username': 'andrea22', 'password': '2222'})
         # check valid login
         self.assertStatus(resp, 200)
+        print(resp.get_json())
         # get grade for class
         resp = client.get('/api/class/COMP 2080/grade')
         self.assertStatus(resp, 200)
@@ -666,8 +680,10 @@ class apiTest(flask_unittest.ClientTestCase):
         resp = client.post('/api/login', json={'username': 'andrea22', 'password': '2222'})
         # check valid login
         self.assertStatus(resp, 200)
+        print(resp.get_json())
         # get grade for class
         resp = client.get('/api/class/COMP 4350/grade')
+        print(resp.get_json())
         self.assertStatus(resp, 400)
 
     def test_newclass(self, client):
@@ -676,7 +692,7 @@ class apiTest(flask_unittest.ClientTestCase):
         # check valid login
         self.assertStatus(resp, 200)
         # create new class
-        resp = client.post('/api/newclass', json={"classname": "COMP 9999", "timeslot": "11:30:00"})
+        resp = client.post('/api/newclass', json={"classname": "COMP 9999", "timeslot": "11:30:00","courseCode":""})
         self.assertStatus(resp, 200)
         # double check class exists
         resp = client.get('/api/class/COMP 9999')
@@ -707,7 +723,7 @@ class apiTest(flask_unittest.ClientTestCase):
         # check valid login
         self.assertStatus(resp, 200)
         # create class
-        resp = client.post('/api/newclass', json={"classname": "COMP 123", "timeslot": "11:30:00"})
+        resp = client.post('/api/newclass', json={"classname": "COMP 123", "timeslot": "11:30:00","courseCode":None})
         self.assertStatus(resp, 200)
         # print(resp.get_data())
         # edit class
@@ -735,11 +751,11 @@ class apiTest(flask_unittest.ClientTestCase):
         self.assertStatus(resp, 200)
         # new task
         resp = client.post('/api/class/COMP 4350/newtask',
-                           json={'taskname': 'Not Final', "weight": 0.1, "deadline": "2023-02-16 10:00:00"})
+                           json={'taskname': 'Not Final', "weight": 10, "deadline": "2023-02-16 10:00:00"})
         self.assertStatus(resp, 200)
         # edit task
         resp = client.post('/api/class/COMP 4350/task/Not Final/edit',
-                           json={"newname": "Final Exam", "newweight": 0.40})
+                           json={"newname": "Final Exam", "newweight": 40})
         self.assertStatus(resp, 200)
         # ensure only desired changes were made
         resp = client.get('/api/class/COMP 4350/task/Final Exam')
@@ -748,7 +764,7 @@ class apiTest(flask_unittest.ClientTestCase):
         # deadline didn't change
         self.assertEqual(resp.get_json(force=True)['result']['deadline'], '2023-02-16 10:00:00')
         # weight did change
-        self.assertEqual(resp.get_json(force=True)['result']['task_Weight'], 0.40)
+        self.assertEqual(resp.get_json(force=True)['result']['task_Weight'], 40)
         resp = client.post('/api/class/COMP 4350/task/Final Exam/delete')
 
     def test_deleteclass(self, client):
@@ -770,7 +786,7 @@ class apiTest(flask_unittest.ClientTestCase):
         self.assertStatus(resp, 200)
         # new task
         resp = client.post('/api/class/COMP 4350/newtask',
-                           json={'taskname': 'Final', 'weight': 0.7, 'deadline': '2023-02-16 10:00'})
+                           json={'taskname': 'Final', 'weight': 70, 'deadline': '2023-02-16 10:00','task_goal':None})
         self.assertStatus(resp, 200)
         # delete task
         resp = client.post('/api/class/COMP 4350/task/Final/delete')

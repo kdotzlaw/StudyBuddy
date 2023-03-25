@@ -333,9 +333,13 @@ def newtask(classname):
         deadline = None
     else:
         deadline = req['deadline']
-
+    if 'task_goal' not in req.keys():
+        #use default
+        task_goal = 'A'
+    else:
+        task_goal = req['task_goal']
     # add task to class
-    res = db.addTask(username, classname, req['taskname'], weight, deadline)
+    res = db.addTask(username, classname, req['taskname'], weight, deadline,task_goal)
     if res is None:
         return "Bad Request: No class found", 400
     else:
@@ -349,10 +353,10 @@ def newclass():
     req = flask.request.get_json(force=True)
     username = flask_login.current_user.get_id()
     # classname and timeslot are required
-    if 'classname' not in req.keys() or 'timeslot' not in req.keys():
+    if 'classname' not in req.keys() or 'timeslot' not in req.keys() or 'courseCode' not in req.keys():
         return "Bad Request: JSON missing required value(s)", 400
     else:
-        res = db.addClass(username, req['classname'], req['timeslot'])
+        res = db.addClass(username, req['classname'], req['timeslot'],req['courseCode'])
         if res is None:
             return "Error", 400
         return "Added Class", 200
@@ -407,8 +411,12 @@ def edit_task(classname, taskname):
         newweight = ""
     else:
         newweight = req['newweight']
+    if 'eGoal' not in req.keys():
+        eGoal = 'A'
+    else:
+        eGoal = req['eGoal']
 
-    db.editTask(username, classname, taskname, newname, newdeadline, newweight)
+    db.editTask(username, classname, taskname, newname, newdeadline, newweight,eGoal)
     return "Task edited", 200
 
 
@@ -531,7 +539,7 @@ def grade(classname):
         # print(eval(breakdown[k])[0] / 100, " < ", str(class_grade), " <= ", eval(breakdown[k])[1] / 100)
         if eval(breakdown[k])[0] / 100 < class_grade <= eval(breakdown[k])[1] / 100:
             return {"result": k, "message": messages[k]}, 200
-    # print(username, "didn't find grade range for", classname)
+    #print(username, "didn't find grade range for", classname)
     return "Server Error: Grade range wasn't found", 500
 
 

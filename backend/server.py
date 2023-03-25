@@ -509,16 +509,17 @@ def grade(classname):
                 "D": "You can do better than that, I believe in you!",
                 "F": "Uh oh."}
     username = flask_login.current_user.get_id()
-    print(username)
+    # print(username)
     # get <classname> class, process grade breakdown
     res = db.getSingleClass(username, classname)
-    print(res)
+    # print(res)
     if res is not None and res.breakdown is not None:
         breakdown = json.loads(res.breakdown)
     else:
         return "Bad Request: Class not found, or class has no grade breakdown", 400
     # get <classname> completed tasks, process their grades
     comp_tasks = db.getCompleteTasksForClass(username, classname)
+    # print(comp_tasks)
     if comp_tasks is None:
         return {"result": "-", "message": "You haven't got any grades yet."}, 200
     total_weight = 0
@@ -526,10 +527,11 @@ def grade(classname):
     for t in comp_tasks:
         # task is gradable
         if t.task_Weight != -1:
+            # print('----', t.task_Weight)
             total_weight = total_weight + t.task_Weight
             total_grade = total_grade + t.task_grade * t.task_Weight
-    if total_weight > 1:
-        # print(username, classname, "has a total task weight > 100!")
+    if total_weight > 100:
+        print(username, classname, "has a total task weight > 100%!")
         return "Server Error", 500
     if total_weight == 0:
         # realistically, should never occur, b/c 'comp_tasks is None' check, but I've been wrong before so...
@@ -539,9 +541,9 @@ def grade(classname):
     # print(classname, "has a grade of: ", class_grade)
     for k in breakdown.keys():
         # print(eval(breakdown[k])[0] / 100, " < ", str(class_grade), " <= ", eval(breakdown[k])[1] / 100)
-        if eval(breakdown[k])[0] / 100 < class_grade <= eval(breakdown[k])[1] / 100:
+        if eval(breakdown[k])[0] < class_grade <= eval(breakdown[k])[1]:
             return {"result": k, "message": messages[k]}, 200
-    #print(username, "didn't find grade range for", classname)
+    print(username, "didn't find grade range for", classname)
     return "Server Error: Grade range wasn't found", 500
 
 

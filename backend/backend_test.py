@@ -684,7 +684,7 @@ class apiTest(flask_unittest.ClientTestCase):
         # get grade for class
         resp = client.get('/api/class/COMP 4350/grade')
         print(resp.get_json())
-        self.assertStatus(resp, 400)
+        self.assertStatus(resp, 200)
 
     def test_newclass(self, client):
         # log in

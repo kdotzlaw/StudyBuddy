@@ -3,7 +3,7 @@ Defines helper functions used in API calls using pyodbc (for database connection
 and SQL prepared statements
 '''
 import datetime
-
+# //TODO: 1. add courseCode update/set 2. refactor tests to use ints instead of floats
 import pyodbc
 
 # connection information can change as we include security
@@ -176,15 +176,15 @@ POSTCONDITION:
 '''
 
 
-def addClass(username, className, timeslot):
-    prep_stmt = "INSERT INTO Classes (class_Name, timeslot, FK_uID, is_complete) VALUES (?,?,?,?);"
+def addClass(username, className, timeslot,cc):
+    prep_stmt = "INSERT INTO Classes (class_Name, timeslot,courseCode, FK_uID, is_complete) VALUES (?,?,?,?,?);"
     user = getUser(username)
     if not user:
         return None
     id = user.uID
     if not id:
         return None
-    return cursor.execute(prep_stmt, className, timeslot, id, 0)
+    return cursor.execute(prep_stmt, className, timeslot,cc, id, 0)
 
 
 '''

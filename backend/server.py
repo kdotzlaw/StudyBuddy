@@ -10,7 +10,8 @@ import db
 from werkzeug.security import check_password_hash, generate_password_hash
 import uuid
 import flask_cors
-
+from flask_caching import Cache
+import db2
 
 class customJSON(flask.json.provider.JSONProvider):
 
@@ -23,7 +24,8 @@ class customJSON(flask.json.provider.JSONProvider):
 
 app = flask.Flask(__name__)
 app.json = customJSON(app)
-app.secret_key = uuid.uuid4().hex  # reset secret key each time the server starts
+app.config["SECRET_KEY"] = uuid.uuid4().hex  # reset secret key each time the server starts
+app.config["CACHE_TYPE"] = "SimpleCache"
 
 # instantiate flask login manager
 login_manager = flask_login.LoginManager()
@@ -32,13 +34,7 @@ login_manager.login_view = 'login'
 
 flask_cors.CORS(app)
 
-# mock persistence layer
-users = {"testuser": {"username": "testuser", "password": "123"}}
-
-
-# for debug
-def setTest(boo):
-    app.config["TESTING"] = boo
+cache = Cache(app)
 
 
 # tell flask how to load a user from a flask request and from its session
@@ -46,23 +42,12 @@ class User(flask_login.UserMixin):
     pass
 
 
-def user_check(username):
-    if app.testing:
-        selection = users[username]
-    else:
-        selection = db.getUser(username)
-    return selection
-
-
 # loads user from session
 @login_manager.user_loader
 def user_loader(username):
     # print("u loader")
-    selection = db.getUser(username)
-    if app.testing:
-        uname = selection['username']
-    else:
-        uname = selection.username
+    selection = db2.getUser(username)
+    uname = selection.username
     if uname == username:
         user = User()
         user.id = username
@@ -77,11 +62,8 @@ def request_loader(request):
     # print("req loader")
     username = request.get_json(force=True)['username']
     # check database for username
-    selection = db.getUser(username)
-    if app.testing:
-        uname = selection['username']
-    else:
-        uname = selection.username
+    selection = db2.getUser(username)
+    uname = selection.username
     if uname == username:
         user = User()
         user.id = username
@@ -111,7 +93,7 @@ def login():
         # check db for username and password
         # selection is a list of rows (SHOULD BE LENGTH 1)
         selection = db.getUser(username)
-        print(selection)
+        # print(selection)
 
         if selection is None:
             # username not in database
@@ -148,7 +130,56 @@ def login():
         response = "Bad Request: Missing required JSON", 400
         return response
 
+@app.route("/api/login2", methods=["POST"])
+def login2():
+    # print("attempting login")
+    # grab the username from the header
+    # print(flask.request.get_json())
+    if flask.request.get_json(force=True) is not None:
+        # username header exists
+        username = flask.request.get_json(force=True)['username']
+        password = flask.request.get_json(force=True)['password']
+        # print(username)
+        # print(password)
+        # check db for username and password
+        # selection is a list of rows (SHOULD BE LENGTH 1)
+        selection = db2.getUser(username)
+        # print(selection)
 
+        if selection is None:
+            # username not in database
+            # be ambiguous for security reasons
+            response = "Bad Request: Invalid Username or Password", 401
+            # print("no user")
+            return response
+        else:
+            # selection returned
+            # grab values for username and password from db
+            # print("yes user")
+            uname = selection.username
+            pword = selection.password
+
+            if uname == username and pword == password:
+                user = User()
+                user.id = username
+                flask_login.login_user(user)
+                # print("logged in: ", username)
+                # redirect to homepage
+                # flask.redirect("../../frontend/index.html", 200)
+                return "Logged In", 200
+            else:
+                # invalid password
+                # send 401 bad request response
+                # print("failed login: ", username)
+                # print("Incorrect password")
+                # be ambiguous for security reasons
+                response = "Bad Request: Invalid Username or Password", 401
+                return response
+    else:
+        # send 400 bad request response
+        # print("login missing json")
+        response = "Bad Request: Missing required JSON", 400
+        return response
 # logout api request
 @app.route("/api/logout", methods=["POST"])
 @flask_login.login_required
@@ -157,11 +188,25 @@ def logout():
     # and log out the user
     flask_login.logout_user()
     resp = flask.make_response()
-    resp.delete_cookie('SessionID')
+    resp.delete_cookie('session')
     resp.data = "Logged Out"
     resp.status_code = 200
     return resp
 
+# returns a list of classes associated with logged-in user
+@app.route("/api/class2", methods=["GET"])
+@flask_login.login_required
+def all_classes2():
+    username = flask_login.current_user.get_id()
+    res = db2.getClasses(username)
+    # converts Row/Rows objects into jsonify parsable dictionaries
+    if type(res) is list:
+        return {"result": parse_rows(res)}, 200
+    elif type(res) is Row:
+        return {"result": parse_row(res)}, 200
+    elif res is None:
+        # no classes found
+        return {"result": []}, 200
 
 # create a new user
 @app.route("/api/newuser", methods=["POST"])
@@ -335,12 +380,12 @@ def newtask(classname):
     else:
         deadline = req['deadline']
     if 'task_goal' not in req.keys():
-        #use default
+        # use default
         task_goal = 'A'
     else:
         task_goal = req['task_goal']
     # add task to class
-    res = db.addTask(username, classname, req['taskname'], weight, deadline,task_goal)
+    res = db.addTask(username, classname, req['taskname'], weight, deadline, task_goal)
     if res is None:
         return "Bad Request: No class found", 400
     else:
@@ -357,7 +402,7 @@ def newclass():
     if 'classname' not in req.keys() or 'timeslot' not in req.keys() or 'courseCode' not in req.keys():
         return "Bad Request: JSON missing required value(s)", 400
     else:
-        res = db.addClass(username, req['classname'], req['timeslot'],req['courseCode'])
+        res = db.addClass(username, req['classname'], req['timeslot'], req['courseCode'])
         if res is None:
             return "Error", 400
         return "Added Class", 200
@@ -417,7 +462,7 @@ def edit_task(classname, taskname):
     else:
         eGoal = req['eGoal']
 
-    db.editTask(username, classname, taskname, newname, newdeadline, newweight,eGoal)
+    db.editTask(username, classname, taskname, newname, newdeadline, newweight, eGoal)
     return "Task edited", 200
 
 

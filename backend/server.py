@@ -10,7 +10,6 @@ import db
 from werkzeug.security import check_password_hash, generate_password_hash
 import uuid
 import flask_cors
-from flask_caching import Cache
 import db2
 
 class customJSON(flask.json.provider.JSONProvider):
@@ -25,7 +24,6 @@ class customJSON(flask.json.provider.JSONProvider):
 app = flask.Flask(__name__)
 app.json = customJSON(app)
 app.config["SECRET_KEY"] = uuid.uuid4().hex  # reset secret key each time the server starts
-app.config["CACHE_TYPE"] = "SimpleCache"
 
 # instantiate flask login manager
 login_manager = flask_login.LoginManager()
@@ -34,7 +32,6 @@ login_manager.login_view = 'login'
 
 flask_cors.CORS(app)
 
-cache = Cache(app)
 
 
 # tell flask how to load a user from a flask request and from its session

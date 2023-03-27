@@ -101,7 +101,7 @@ class dbTests(unittest.TestCase):
     def test_createAccount(self):
         username = "test"
         password = "testing"
-        db.createAccount(username, password)
+        r = db.createAccount(username, password)
         # retrieve the mock user from the db
         result = db.getUser(username)
         self.assertIn(username, result.username)

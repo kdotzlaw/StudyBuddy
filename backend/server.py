@@ -46,7 +46,8 @@ class User(flask_login.UserMixin):
 @login_manager.user_loader
 def user_loader(username):
     # print("u loader")
-    selection = db2.getUser(username)
+    '''selection = db2.getUser(username)'''
+    selection = db.getUser(username)
     uname = selection.username
     if uname == username:
         user = User()
@@ -62,7 +63,8 @@ def request_loader(request):
     # print("req loader")
     username = request.get_json(force=True)['username']
     # check database for username
-    selection = db2.getUser(username)
+    '''selection = db2.getUser(username)'''
+    selection = db.getUser(username)
     uname = selection.username
     if uname == username:
         user = User()
@@ -143,7 +145,8 @@ def login2():
         # print(password)
         # check db for username and password
         # selection is a list of rows (SHOULD BE LENGTH 1)
-        selection = db2.getUser(username)
+        '''selection = db2.getUser(username)'''
+        selection = db.getUser(username)
         # print(selection)
 
         if selection is None:
@@ -198,7 +201,8 @@ def logout():
 @flask_login.login_required
 def all_classes2():
     username = flask_login.current_user.get_id()
-    res = db2.getClasses(username)
+    '''res = db2.getClasses(username)'''
+    res = db.getClasses(username)
     # converts Row/Rows objects into jsonify parsable dictionaries
     if type(res) is list:
         return {"result": parse_rows(res)}, 200

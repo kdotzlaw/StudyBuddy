@@ -14,7 +14,7 @@ def getUserData():
             r'UID=sa;'
             r'PWD=dbtools.IO'
             )
-    cnxn = pyodbc.connect(conn)
+    cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     result = cursor.execute("SELECT * FROM Users;").fetchall()
     if not result:
@@ -32,7 +32,7 @@ def getClassesData():
             r'UID=sa;'
             r'PWD=dbtools.IO'
             )
-    cnxn = pyodbc.connect(conn)
+    cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     result = cursor.execute("SELECT * FROM Classes;").fetchall()
     if not result:
@@ -55,7 +55,7 @@ def getUser(name):
             r'Database=StudyBuddy;'
             r'Trusted_Connection=yes'
             )
-    cnxn = pyodbc.connect(conn)
+    cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     result = cursor.execute("SELECT * FROM Users WHERE username = ?", name).fetchall()
     if not result:
@@ -79,18 +79,12 @@ def createAccount(username, password):
             r'Database=StudyBuddy;'
             r'Trusted_Connection=yes'
             )
-    cnxn = pyodbc.connect(conn)
+    cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     prep_stmt = "INSERT INTO Users (username, password) VALUES (?,?);"
-    result = cursor.execute(prep_stmt, username, password)
-    if result is None:
-        cnxn.close()
-        return None
+    cursor.execute(prep_stmt, username, password)
     cnxn.close()
-    return result
-
-
-
+    return True
 
 ''' 
 METHODD: removeUser():
@@ -107,7 +101,7 @@ def removeUser(username):
             r'Database=StudyBuddy;'
             r'Trusted_Connection=yes'
             )
-    cnxn = pyodbc.connect(conn)
+    cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     # check that user is in db
     user = getUser(username)
@@ -134,7 +128,7 @@ def getAllUsers():
             r'Database=StudyBuddy;'
             r'Trusted_Connection=yes'
             )
-    cnxn = pyodbc.connect(conn)
+    cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     record = cursor.execute("SELECT * FROM Users;").fetchall()
     if not record:
@@ -160,7 +154,7 @@ def getClasses(username):
             r'Database=StudyBuddy;'
             r'Trusted_Connection=yes'
             )
-    cnxn = pyodbc.connect(conn)
+    cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
     if not user:
@@ -189,7 +183,7 @@ def getClassID(username, className):
             r'Database=StudyBuddy;'
             r'Trusted_Connection=yes'
             )
-    cnxn = pyodbc.connect(conn)
+    cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
     if not user:
@@ -221,7 +215,7 @@ def getSingleClass(username, className):
             r'Database=StudyBuddy;'
             r'Trusted_Connection=yes'
             )
-    cnxn = pyodbc.connect(conn)
+    cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
     if not user:
@@ -255,7 +249,7 @@ def addClass(username, className, timeslot,cc):
             r'Database=StudyBuddy;'
             r'Trusted_Connection=yes'
             )
-    cnxn = pyodbc.connect(conn)
+    cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
     if not user:
@@ -293,7 +287,7 @@ def removeClass(username, className):
             r'Database=StudyBuddy;'
             r'Trusted_Connection=yes'
             )
-    cnxn = pyodbc.connect(conn)
+    cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
     if not user:
@@ -328,7 +322,7 @@ def completeClass(username, className):
             r'Database=StudyBuddy;'
             r'Trusted_Connection=yes'
             )
-    cnxn = pyodbc.connect(conn)
+    cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
     if not user:
@@ -354,7 +348,7 @@ def addClassBreakdown(username, className, breakdown):
             r'Database=StudyBuddy;'
             r'Trusted_Connection=yes'
             )
-    cnxn = pyodbc.connect(conn)
+    cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
     if not user:
@@ -379,7 +373,7 @@ def editClassReqData(username, className_old,className_new, timeslot_new):
             r'Database=StudyBuddy;'
             r'Trusted_Connection=yes'
             )
-    cnxn = pyodbc.connect(conn)
+    cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
     classID = getClassID(username, className_old)
@@ -409,7 +403,7 @@ def editClassMeta(username, className, sectionnum, classroom, prof,
             r'Database=StudyBuddy;'
             r'Trusted_Connection=yes'
             )
-    cnxn = pyodbc.connect(conn)
+    cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
     if not user:
@@ -443,7 +437,7 @@ def addStudyTime(username, className, t):
             r'Database=StudyBuddy;'
             r'Trusted_Connection=yes'
             )
-    cnxn = pyodbc.connect(conn)
+    cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
     if not user:
@@ -480,7 +474,7 @@ def getTaskList(username, className):
             r'Database=StudyBuddy;'
             r'Trusted_Connection=yes'
             )
-    cnxn = pyodbc.connect(conn)
+    cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
     if not user:
@@ -512,7 +506,7 @@ def getSingleTask(username, className, taskName):
             r'Database=StudyBuddy;'
             r'Trusted_Connection=yes'
             )
-    cnxn = pyodbc.connect(conn)
+    cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
     if not user:
@@ -542,7 +536,7 @@ def getTaskID(username, className, taskName):
             r'Database=StudyBuddy;'
             r'Trusted_Connection=yes'
             )
-    cnxn = pyodbc.connect(conn)
+    cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
     if not user:
@@ -575,7 +569,7 @@ def completeTask(username, className, taskName, grade):
             r'Database=StudyBuddy;'
             r'Trusted_Connection=yes'
             )
-    cnxn = pyodbc.connect(conn)
+    cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     task = getSingleTask(username, className, taskName)
     if task is None:
@@ -613,7 +607,7 @@ def uncompleteTask(username, className, taskName):
             r'Database=StudyBuddy;'
             r'Trusted_Connection=yes'
             )
-    cnxn = pyodbc.connect(conn)
+    cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     taskID = getTaskID(username, className, taskName).tID
     user = getUser(username)
@@ -642,7 +636,7 @@ def getCompleteTasksForClass(username, className):
             r'Database=StudyBuddy;'
             r'Trusted_Connection=yes'
             )
-    cnxn = pyodbc.connect(conn)
+    cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
     if not user:
@@ -676,7 +670,7 @@ def addTask(username, className, taskName, weight, deadline,goal):
             r'Database=StudyBuddy;'
             r'Trusted_Connection=yes'
             )
-    cnxn = pyodbc.connect(conn)
+    cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
     if not user:
@@ -709,7 +703,7 @@ def removeTask(username, className, taskName):
             r'Database=StudyBuddy;'
             r'Trusted_Connection=yes'
             )
-    cnxn = pyodbc.connect(conn)
+    cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
     if not user:
@@ -739,7 +733,7 @@ def editTask (username, className, taskName, eName, eDate, eWeight,eGoal):
             r'Database=StudyBuddy;'
             r'Trusted_Connection=yes'
             )
-    cnxn = pyodbc.connect(conn)
+    cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
     if not user:
@@ -786,7 +780,7 @@ def getDeadlines(username):
             r'Database=StudyBuddy;'
             r'Trusted_Connection=yes'
             )
-    cnxn = pyodbc.connect(conn)
+    cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
     if not user:

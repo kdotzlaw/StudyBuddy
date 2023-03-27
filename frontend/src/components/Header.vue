@@ -94,7 +94,8 @@
             .then(function (response) {
                 console.log(response);
                 // Commit timer totals to database
-                Mgmt.commitTimer(userId.value, studyClass.value, studyTime.value);
+                if(studyClass.value)
+                    Mgmt.commitTimer(userId.value, studyClass.value, studyTime.value);
                 
                 // Destroy timer and purge sessional stores
                 setStudyClass(null);

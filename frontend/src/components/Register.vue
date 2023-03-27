@@ -150,13 +150,7 @@
       })
       .catch(function (error) {
         console.log(error.response);
-        // Temporary superuser admission for offline debugging. Removed before final release
-        if(username == "admin" && "admitpls"){
-          loginUser(username);
-          setModal("So be it.", "success", "Welcome StudyBuddy Superuser!");
-        }
-        else
-          setModal("Error", "error", error.response.data);
+        setModal("Error", "error", error.response.data);
         toggleModal();
       });
     }

@@ -37,6 +37,7 @@
   import validate from "../logic/validate";
   import { useStore } from "../stores";
   import { storeToRefs } from "pinia";
+  import CryptoJS from "crypto-js";
 
   let username, password;
   const usernameErrorMsg = ref('');
@@ -106,9 +107,11 @@
     if (!userNameCheck && !passwordErrorCheck) {
       const host = 'http://127.0.0.1:5000'; 
       const apiUrl = '/api/login';
+      // Encrypt password from plaintext
+      const cipher = CryptoJS.SHA256(password)
       const data = {
         username: username,
-        password: password
+        password: cipher.toString()
       };
       axios.post(host + apiUrl, data)
       .then(function (response) {

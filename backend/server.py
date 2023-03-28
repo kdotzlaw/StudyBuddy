@@ -157,7 +157,7 @@ def logout():
     # and log out the user
     flask_login.logout_user()
     resp = flask.make_response()
-    resp.delete_cookie('SessionID')
+    resp.delete_cookie('session')
     resp.data = "Logged Out"
     resp.status_code = 200
     return resp

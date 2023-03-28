@@ -79,30 +79,23 @@ def unauthorized_handler():
 # login api request
 @app.route("/api/login", methods=["POST"])
 def login():
-    # print("attempting login")
     # grab the username from the header
-    # print(flask.request.get_json())
     if flask.request.get_json(force=True) is not None:
         # username header exists
         username = flask.request.get_json(force=True)['username']
         password = flask.request.get_json(force=True)['password']
-        # print(username)
-        # print(password)
         # check db for username and password
         # selection is a list of rows (SHOULD BE LENGTH 1)
         selection = db.getUser(username)
-        # print(selection)
 
         if selection is None:
             # username not in database
             # be ambiguous for security reasons
             response = "Bad Request: Invalid Username or Password", 401
-            # print("no user")
             return response
         else:
             # selection returned
             # grab values for username and password from db
-            # print("yes user")
             uname = selection.username
             pword = selection.password
 
@@ -110,21 +103,16 @@ def login():
                 user = User()
                 user.id = username
                 flask_login.login_user(user)
-                # print("logged in: ", username)
                 # redirect to homepage
-                # flask.redirect("../../frontend/index.html", 200)
                 return "Logged In", 200
             else:
                 # invalid password
                 # send 401 bad request response
-                # print("failed login: ", username)
-                # print("Incorrect password")
                 # be ambiguous for security reasons
                 response = "Bad Request: Invalid Username or Password", 401
                 return response
     else:
         # send 400 bad request response
-        # print("login missing json")
         response = "Bad Request: Missing required JSON", 400
         return response
 
@@ -181,7 +169,6 @@ def update_time(classname):
 def getClass(classname):
     username = flask_login.current_user.get_id()
     res = db.getSingleClass(username, classname)
-    # print("the class is: ", res, ' and logic says: ', res is None)
     if res is None:
         # no class found
         return "Bad Request: No class found", 400

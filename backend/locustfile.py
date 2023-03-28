@@ -11,10 +11,10 @@ Perfoms a load test for login user, get all classes, logout user
 '''
 class WebsiteTestUser(HttpUser):
     wait_time = between(0.5,3)
-    creds = {'username': 'ryan2023', 'password': '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'}
+    creds = {'username': 'andrea22', 'password': 'edee29f882543b956620b26d0ee0e7e950399b1c4222f5de05e06425b4c995e9'}
 
     def on_start(self):
-        creds = {'username': 'ryan2023', 'password': '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'}
+        creds = {'username': 'andrea22', 'password': 'edee29f882543b956620b26d0ee0e7e950399b1c4222f5de05e06425b4c995e9'}
         self.client.post("http://localhost:5000/api/login", json=creds)
     def on_stop(self):
         self.client.post("http://localhost:5000/api/logout")
@@ -22,3 +22,19 @@ class WebsiteTestUser(HttpUser):
     def getClasses(self):
         self.client.get("http://localhost:5000/api/class")
 
+    @task
+    def getTasks(self):
+        self.client.get("http://localhost:5000/api/COMP 2080/task")
+
+    @task
+    def updateMeta(self):
+        self.client.post("http://localhost:5000/api/class/COMP 2080/update_meta", json={"sectionnum": 1203})
+    @task
+    def editTask(self):
+        self.client.post("http://localhost:5000/api/class/COMP 2080/task/Exam/edit",json={"newname":"Midterm"})
+    @task
+    def editClass(self):
+        self.client.post("http://localhost:5000/api/class/COMP 2080/edit",json={"newname":"COMP 2080"})
+    @task
+    def getCompleteTasks(self):
+        self.client.get("http://localhost:5000/api/class/COMP 2080/done_tasks")

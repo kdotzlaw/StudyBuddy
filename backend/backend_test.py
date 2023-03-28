@@ -489,9 +489,10 @@ class dbTests(unittest.TestCase):
         self.assertEqual(record[0].deadline, d1)
 
 
-creds = {'username': 'ryan2023', 'password': 'password'}
-creds2 = {'username': 'newuser', 'password': 'pass'}
-creds3 = {'username': 'andrea22', 'password': '2222'}
+creds = {'username': 'ryan2023', 'password': '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'}
+creds2 = {'username': 'newuser', 'password': 'd74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1'}
+# ^ password = pass
+creds3 = {'username': 'andrea22', 'password': 'edee29f882543b956620b26d0ee0e7e950399b1c4222f5de05e06425b4c995e9'}
 
 class apiTest(flask_unittest.ClientTestCase):
     # assign flask app
@@ -503,7 +504,7 @@ class apiTest(flask_unittest.ClientTestCase):
         pass
 
     def tearDown(self, client: FlaskClient):
-        client.delete_cookie('127.0.0.1:5000', 'SessionID')
+        client.delete_cookie('127.0.0.1:5000', 'session')
 
     def test_login(self, client: FlaskClient):
         # send post request to login api

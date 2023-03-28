@@ -45,10 +45,8 @@ class dbTests(unittest.TestCase):
     def testData(self):
         users = db.getUserData()
         self.assertNotEqual(users, None)
-        print(users)
         classes = db.getClassesData()
         self.assertNotEqual(classes, None)
-        print(classes)
 
     '''
     TEST: getUser()
@@ -58,7 +56,6 @@ class dbTests(unittest.TestCase):
     def test_getUser(self):
         username = "katDot"
         result = db.getUser(username)
-        print(result)
         self.assertIn(username, result.username)
 
     '''
@@ -76,7 +73,6 @@ class dbTests(unittest.TestCase):
     '''
     def test_removeUser(self):
         username = "test"
-        # db.removeUser(username)
         password = "testing"
         db.createAccount(username, password)
         # remove user
@@ -288,11 +284,9 @@ class dbTests(unittest.TestCase):
         className_new = "Bioinformatics"
         orig = db.getSingleClass(username, className_old)
         self.assertNotEqual(orig, None)
-        print(orig)
         db.editClassReqData(username, className_old, className_new, "")
         record = db.getSingleClass(username, className_new)
         self.assertNotEqual(record, orig)
-        print(record)
         # reset
         db.editClassReqData(username, className_new, className_old, "")
         record = db.getSingleClass(username, className_old)
@@ -485,7 +479,6 @@ class dbTests(unittest.TestCase):
         username = 'katDot'
         d1 = datetime.datetime(year=2023, month=2, day=9, hour=14, minute=0, second=0)
         record = db.getDeadlines(username)
-        print(record)
         self.assertNotEqual(record, None)
         self.assertEqual(record[0].deadline, d1)
 
@@ -607,7 +600,6 @@ class apiTest(flask_unittest.ClientTestCase):
         # check valid login
         self.assertStatus(resp, 200)
         resp = client.get('/api/class/COMP 2080/task/Exam')
-        print(resp.get_json())
         self.assertStatus(resp, 200)
 
     def test_task_fail1(self, client):
@@ -632,7 +624,6 @@ class apiTest(flask_unittest.ClientTestCase):
         # check valid login
         self.assertStatus(resp, 200)
         resp = client.get('/api/class/COMP 2080/task')
-        print(resp.get_json())
         self.assertStatus(resp, 200)
 
     def test_newtask(self, client):
@@ -649,12 +640,9 @@ class apiTest(flask_unittest.ClientTestCase):
         # check valid login
         self.assertStatus(resp, 200)
         resp = client.get('/api/class/COMP 2080/task')
-        print(resp.get_data())
         resp = client.post('/api/class/COMP 2080/task/Exam/complete', json={"grade": "97"})
-        print(resp.get_data())
         self.assertStatus(resp, 200)
         resp = client.get('/api/class/COMP 2080/task')
-        print(resp.get_data())
 
     def test_complete_task_fail(self, client):
         # log in
@@ -670,21 +658,17 @@ class apiTest(flask_unittest.ClientTestCase):
         resp = client.post('/api/login', json={'username': 'andrea22', 'password': '2222'})
         # check valid login
         self.assertStatus(resp, 200)
-        print(resp.get_json())
         # get grade for class
         resp = client.get('/api/class/COMP 2080/grade')
         self.assertStatus(resp, 200)
-        print(resp.get_json())
 
     def test_grade_notasks(self, client):
         # log in
         resp = client.post('/api/login', json={'username': 'andrea22', 'password': '2222'})
         # check valid login
         self.assertStatus(resp, 200)
-        print(resp.get_json())
         # get grade for class
         resp = client.get('/api/class/COMP 4350/grade')
-        print(resp.get_json())
         self.assertStatus(resp, 200)
 
     def test_newclass(self, client):
@@ -697,11 +681,8 @@ class apiTest(flask_unittest.ClientTestCase):
         self.assertStatus(resp, 200)
         # double check class exists
         resp = client.get('/api/class/COMP 9999')
-        print(resp.get_data())
         self.assertStatus(resp, 200)
-
         resp = client.get('/api/class')
-        print(resp.get_data())
 
     def test_updatemeta(self, client):
         # log in
@@ -726,22 +707,16 @@ class apiTest(flask_unittest.ClientTestCase):
         # create class
         resp = client.post('/api/newclass', json={"classname": "COMP 123", "timeslot": "11:30:00","courseCode":None})
         self.assertStatus(resp, 200)
-        # print(resp.get_data())
         # edit class
         resp = client.get('/api/class/COMP 123')
-        # print(resp.get_json(force=True, silent=True))
         resp = client.post('/api/class/COMP 123/edit', json={"newname": "COMP 8888"})
-        # print(resp.get_data())
         self.assertStatus(resp, 200)
         resp = client.get('/api/class')
-        # print(resp.get_data())
         # double check
         resp = client.get('/api/class/COMP 8888')
         # name changed
-        # print(resp.get_data())
         self.assertStatus(resp, 200)
         # timeslot didn't change
-
         self.assertEqual(resp.get_json(force=True)['result']['timeslot'], "11:30:00")
 
 

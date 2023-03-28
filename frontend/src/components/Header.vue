@@ -90,7 +90,7 @@
         const host = 'http://127.0.0.1:5000'; 
         const apiUrl = '/api/logout';
 
-        axios.post(host + apiUrl)
+        axios.post(host + apiUrl, {withCredentials: true, username: userId.value})
             .then(function (response) {
                 console.log(response);
                 // Commit timer totals to database
@@ -110,13 +110,13 @@
             .catch(function (error) {
                 console.log(error.response);
                 setModal("Error", "error", error.response.data);
-                toggleModal();
+                //toggleModal();
 
                 // Temp: Destroy timer and purge sessional stores
                 setStudyClass(null);
                 setStudyTime(0);
                 setTimer(null);
-                logoutUser();
+                //logoutUser();
             });
     }
 

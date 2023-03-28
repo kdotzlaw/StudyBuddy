@@ -61,8 +61,14 @@ function initTimer(userId: String, classId: String){
  *=====================================*/
 function commitTimer(userId: String, classId: String, total: number){
     const host = 'http://127.0.0.1:5000';
-    const apiUrl = '/api/' + classId + '/update_time';
-    axios.post(host + apiUrl, total.toString())
+    const apiUrl = '/api/class/' + classId + '/update_time';
+    const data = {
+        withCredentials: true,
+        username: userId,
+        classname: classId,
+        added: total.toString()
+    }
+    axios.post(host + apiUrl, data)
       .then(function (response) {
         console.log(response);
       })

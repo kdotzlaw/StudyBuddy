@@ -128,57 +128,6 @@ def login():
         response = "Bad Request: Missing required JSON", 400
         return response
 
-@app.route("/api/login2", methods=["POST"])
-def login2():
-    # print("attempting login")
-    # grab the username from the header
-    # print(flask.request.get_json())
-    if flask.request.get_json(force=True) is not None:
-        # username header exists
-        username = flask.request.get_json(force=True)['username']
-        password = flask.request.get_json(force=True)['password']
-        # print(username)
-        # print(password)
-        # check db for username and password
-        # selection is a list of rows (SHOULD BE LENGTH 1)
-        '''selection = db2.getUser(username)'''
-        selection = db.getUser(username)
-        # print(selection)
-
-        if selection is None:
-            # username not in database
-            # be ambiguous for security reasons
-            response = "Bad Request: Invalid Username or Password", 401
-            # print("no user")
-            return response
-        else:
-            # selection returned
-            # grab values for username and password from db
-            # print("yes user")
-            uname = selection.username
-            pword = selection.password
-
-            if uname == username and pword == password:
-                user = User()
-                user.id = username
-                flask_login.login_user(user)
-                # print("logged in: ", username)
-                # redirect to homepage
-                # flask.redirect("../../frontend/index.html", 200)
-                return "Logged In", 200
-            else:
-                # invalid password
-                # send 401 bad request response
-                # print("failed login: ", username)
-                # print("Incorrect password")
-                # be ambiguous for security reasons
-                response = "Bad Request: Invalid Username or Password", 401
-                return response
-    else:
-        # send 400 bad request response
-        # print("login missing json")
-        response = "Bad Request: Missing required JSON", 400
-        return response
 # logout api request
 @app.route("/api/logout", methods=["POST"])
 @flask_login.login_required
@@ -191,22 +140,6 @@ def logout():
     resp.data = "Logged Out"
     resp.status_code = 200
     return resp
-
-# returns a list of classes associated with logged-in user
-@app.route("/api/class2", methods=["GET"])
-@flask_login.login_required
-def all_classes2():
-    username = flask_login.current_user.get_id()
-    '''res = db2.getClasses(username)'''
-    res = db.getClasses(username)
-    # converts Row/Rows objects into jsonify parsable dictionaries
-    if type(res) is list:
-        return {"result": parse_rows(res)}, 200
-    elif type(res) is Row:
-        return {"result": parse_row(res)}, 200
-    elif res is None:
-        # no classes found
-        return {"result": []}, 200
 
 # create a new user
 @app.route("/api/newuser", methods=["POST"])

@@ -10,7 +10,6 @@ import db
 from werkzeug.security import check_password_hash, generate_password_hash
 import uuid
 import flask_cors
-import db2
 
 class customJSON(flask.json.provider.JSONProvider):
 

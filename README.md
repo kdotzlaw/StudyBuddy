@@ -52,18 +52,22 @@ This feature will allow for users to level up their buddy.
 <img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/flask.png" alt="Flask logo" align="center">
 <img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/python.png" alt="Python logo" align="center">
 <img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/sql.png" alt="SQL logo" align="center">
+<img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/locust.png" alt="Locust logo" align="center">
+<img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/jest.png" alt="Jest logo" align="center">
+<img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/cypress.png" alt="Cypress logo" align="center">
+<img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/sonarqube.png" alt="SonarQube logo" align="center">
 </p>
 
 ### CI/CD
 
-- **GitHub Actions**
-- **Docker**
+- Workflows: **GitHub Actions**
+- Containerization and Deployment: **Docker**
 
 ### Frontend Technologies
 
 - Frontend framework: **Vue.js**
 - Application logic: **JavaScript** and **Typescript**
-- Environment: **Node.js**
+- Testing: **Jest** and **Cypress**
 
 ### Backend
 
@@ -72,6 +76,11 @@ This feature will allow for users to level up their buddy.
 - **Microsoft SQL Server Management Studio** to manage a database written in **SQL**
 - Testing: **Unittest**
 - [Backend API](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/backend/api.yaml)
+
+### Other Utilities
+
+- Security scanning: **SonarQube**
+- Load Testing: **Locust**
 
 ## Software Architecture
 

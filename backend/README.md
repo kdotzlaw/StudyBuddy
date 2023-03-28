@@ -17,4 +17,5 @@
 4. Visit `http://localhost:8089/`
 5. Enter **100 users**, **20 users started/second**, and **localhost:5000**
 6. Start Swarm
+Report: http://localhost:8089/stats/report
  

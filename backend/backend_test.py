@@ -602,7 +602,7 @@ class apiTest(flask_unittest.ClientTestCase):
 
     def test_task(self, client):
         # log in
-        resp = client.post('/api/login', json={'username': 'andrea22', 'password': '2222'})
+        resp = client.post('/api/login', json={'username': 'andrea22', 'password': 'edee29f882543b956620b26d0ee0e7e950399b1c4222f5de05e06425b4c995e9'})
         # check valid login
         self.assertStatus(resp, 200)
         resp = client.get('/api/class/COMP 2080/task/Exam')
@@ -627,7 +627,7 @@ class apiTest(flask_unittest.ClientTestCase):
 
     def test_alltasks(self, client):
         # log in
-        resp = client.post('/api/login', json={'username': 'andrea22', 'password': '2222'})
+        resp = client.post('/api/login', json={'username': 'andrea22', 'password': 'edee29f882543b956620b26d0ee0e7e950399b1c4222f5de05e06425b4c995e9'})
         # check valid login
         self.assertStatus(resp, 200)
         resp = client.get('/api/class/COMP 2080/task')
@@ -636,7 +636,7 @@ class apiTest(flask_unittest.ClientTestCase):
 
     def test_newtask(self, client):
         # log in
-        resp = client.post('/api/login', json={'username': 'andrea22', 'password': '2222'})
+        resp = client.post('/api/login', json={'username': 'andrea22', 'password': 'edee29f882543b956620b26d0ee0e7e950399b1c4222f5de05e06425b4c995e9'})
         # check valid login
         self.assertStatus(resp, 200)
         resp = client.post('/api/class/COMP 4350/newtask', json={'taskname': 'Study some stuff'})
@@ -644,7 +644,7 @@ class apiTest(flask_unittest.ClientTestCase):
 
     def test_complete_task(self, client):
         # log in
-        resp = client.post('/api/login', json={'username': 'andrea22', 'password': '2222'})
+        resp = client.post('/api/login', json={'username': 'andrea22', 'password': 'edee29f882543b956620b26d0ee0e7e950399b1c4222f5de05e06425b4c995e9'})
         # check valid login
         self.assertStatus(resp, 200)
         resp = client.get('/api/class/COMP 2080/task')
@@ -657,7 +657,7 @@ class apiTest(flask_unittest.ClientTestCase):
 
     def test_complete_task_fail(self, client):
         # log in
-        resp = client.post('/api/login', json={'username': 'andrea22', 'password': '2222'})
+        resp = client.post('/api/login', json={'username': 'andrea22', 'password': 'edee29f882543b956620b26d0ee0e7e950399b1c4222f5de05e06425b4c995e9'})
         # check valid login
         self.assertStatus(resp, 200)
         resp = client.post('/api/class/COMP 2080/task/task1/complete')
@@ -666,7 +666,7 @@ class apiTest(flask_unittest.ClientTestCase):
 
     def test_grade(self, client):
         # log in
-        resp = client.post('/api/login', json={'username': 'andrea22', 'password': '2222'})
+        resp = client.post('/api/login', json={'username': 'andrea22', 'password': 'edee29f882543b956620b26d0ee0e7e950399b1c4222f5de05e06425b4c995e9'})
         # check valid login
         self.assertStatus(resp, 200)
         print(resp.get_json())
@@ -677,7 +677,7 @@ class apiTest(flask_unittest.ClientTestCase):
 
     def test_grade_notasks(self, client):
         # log in
-        resp = client.post('/api/login', json={'username': 'andrea22', 'password': '2222'})
+        resp = client.post('/api/login', json={'username': 'andrea22', 'password': 'edee29f882543b956620b26d0ee0e7e950399b1c4222f5de05e06425b4c995e9'})
         # check valid login
         self.assertStatus(resp, 200)
         print(resp.get_json())
@@ -704,7 +704,7 @@ class apiTest(flask_unittest.ClientTestCase):
 
     def test_updatemeta(self, client):
         # log in
-        resp = client.post('/api/login', json={'username': 'katDot', 'password': '1234'})
+        resp = client.post('/api/login', json={'username': 'katDot', 'password': '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4'})
         # check valid login
         self.assertStatus(resp, 200)
         # update metadata
@@ -769,7 +769,7 @@ class apiTest(flask_unittest.ClientTestCase):
 
     def test_deleteclass(self, client):
         # log in
-        resp = client.post('/api/login', json={"username": "EliStudy", "password": "2#!6A"})
+        resp = client.post('/api/login', json={"username": "EliStudy", "password": '3459d4e034fb958e5f6c836ac00558ee7a614c0234a55f4df16535845a6cb186'})
         # check valid login
         self.assertStatus(resp, 200)
         # delete class
@@ -797,7 +797,7 @@ class apiTest(flask_unittest.ClientTestCase):
 
     def test_donetasks(self, client):
         # log in
-        resp = client.post('/api/login', json={'username': 'andrea22', 'password': '2222'})
+        resp = client.post('/api/login', json={'username': 'andrea22', 'password': 'edee29f882543b956620b26d0ee0e7e950399b1c4222f5de05e06425b4c995e9'})
         # check valid login
         self.assertStatus(resp, 200)
         # grab graded tasks
@@ -808,7 +808,7 @@ class apiTest(flask_unittest.ClientTestCase):
 
     def test_completeclass(self, client):
         # log in
-        resp = client.post('/api/login', json={"username": "sneakerbot101", "password": "Shoes!"})
+        resp = client.post('/api/login', json={"username": "sneakerbot101", "password": '73b2e90162bdd5ff6151294bee6fa72d602680e29b0bcb6702f952262ffb7055'})
         # check valid login
         self.assertStatus(resp, 200)
         # complete class

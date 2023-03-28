@@ -7,15 +7,13 @@ from locust import HttpUser, task, between
 '''
 class WebsiteTestUser(HttpUser):
     wait_time = between(0.5,3)
-    creds = {'username': 'ryan2023', 'password': 'password'}
+    creds = {'username': 'ryan2023', 'password': '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'}
 
     def on_start(self):
-        #authentication done here -- login
-        creds = {'username': 'ryan2023', 'password': 'password'}
+        creds = {'username': 'ryan2023', 'password': '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'}
         self.client.post("http://localhost:5000/api/login", json=creds)
         #pass
     def on_stop(self):
-        #logout done here??
         self.client.post("http://localhost:5000/api/logout")
         #pass
     @task

@@ -10,7 +10,17 @@ import db
 from werkzeug.security import check_password_hash, generate_password_hash
 import uuid
 import flask_cors
-
+'''
+---SUGGESTIONS---
+1. Set cors header: app.config['CORS_HEADERS'] = 'Content-Type'
+2. Add CORS(app, resources={r"/*": {"origins": "*"}})
+3. To allow cookies to be sent cross-origin: CORS(app, supports_credentials=True)
+4. https://stackoverflow.com/questions/71109384/cookies-not-being-sent-with-axios
+5. Cors Options: https://stackoverflow.com/questions/52549079/does-axios-support-set-cookie-is-it-possible-to-authenticate-through-axios-http
+---FRONTEND ----
+- timer unit test failing --> could need to reset timer to 0 after doing acceptance tests
+- acceptance test could  be failing because passwords hashed/new security
+'''
 class customJSON(flask.json.provider.JSONProvider):
 
     def dumps(self, obj, **kwargs):

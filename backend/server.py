@@ -31,6 +31,7 @@ login_manager.login_view = 'login'
 
 flask_cors.CORS(app)
 
+# Handlers and Helpers
 '''
 METHOD: User(): Tell flask how to load a user from a flask request and from its session
 '''
@@ -74,7 +75,23 @@ METHOD: unauthorized_handler(): deals with unauthorized access attempts
 @login_manager.unauthorized_handler
 def unauthorized_handler():
     return "Unauthorized", 401
+'''
+METHOD: parse_rows(): converts a list of rows into a list of dictionaries (for db results processing)
+'''
+def parse_rows(rows):
+    res = []
+    if rows is not None:
+        for row in rows:
+            res.append(dict(zip([t[0] for t in row.cursor_description], row)))
+    return res
 
+'''
+METHOD: parse_row(): converts a single row into a dictionary (for db results processing)
+'''
+def parse_row(row):
+    return dict(zip([t[0] for t in row.cursor_description], row))
+
+# User Methods
 '''
 METHOD: login(): preforms login api request by checking validity of username and password
 '''
@@ -138,7 +155,7 @@ def logout():
 METHOD: newuser(): creates a new user as long as the username provided doesnt have an existing account
 '''
 @app.route("/api/newuser", methods=["POST"])
-def newuser():
+def new_user():
     username = flask.request.get_json(force=True)['username']
     password = flask.request.get_json(force=True)['password']
     # check database for already existing user with the same name
@@ -153,30 +170,14 @@ def newuser():
         return "Account created", 200
     else:
         return "Account already exists with username", 400
-
-'''
-METHOD: update_time(): increases the study_time attribute for 'classname' by 'added' seconds
---> login required for this endpoint
-'''
-@app.route("/api/class/<classname>/update_time", methods=["POST"])
-@flask_login.login_required
-def update_time(classname):
-    # updates the time studied for a class
-    username = flask_login.current_user.get_id()
-    t = flask.request.get_json(force=True)['added']
-    res = db.addStudyTime(username, classname, t)
-    if res is not None:
-        return "Time for class updated successfully", 200
-    else:
-        return "Bad Request: No class found", 400
-
+# Class Methods
 '''
 METHOD: getClass(): returns the data for a single class of classname: 'classname'
 --> login required for this endpoint
 '''
 @app.route("/api/class/<classname>", methods=["GET"])
 @flask_login.login_required
-def getClass(classname):
+def get_class(classname):
     username = flask_login.current_user.get_id()
     res = db.getSingleClass(username, classname)
     if res is None:
@@ -186,45 +187,12 @@ def getClass(classname):
         return {"result": parse_row(res)}, 200
 
 '''
-METHOD: parse_rows(): converts a list of rows into a list of dictionaries (for db results processing)
-'''
-def parse_rows(rows):
-    res = []
-    if rows is not None:
-        for row in rows:
-            res.append(dict(zip([t[0] for t in row.cursor_description], row)))
-    return res
-
-'''
-METHOD: parse_row(): converts a single row into a dictionary (for db results processing)
-'''
-def parse_row(row):
-    return dict(zip([t[0] for t in row.cursor_description], row))
-
-'''
-METHOD: all_tasks(): returns a list of tasks associated with 'classname'
---> login required for this endpoint
-'''
-@app.route("/api/class/<classname>/task", methods=["GET"])
-@flask_login.login_required
-def all_tasks(classname):
-    username = flask_login.current_user.get_id()
-    res = db.getSingleClass(username, classname)
-    if res is None:
-        # no class found
-        return "Bad Request: No class found", 400
-    else:
-        res = db.getTaskList(username, classname)
-        # need to parse
-        return {"result": parse_rows(res)}, 200
-
-'''
 METHOD: completeClass(): sets the is_complete attribute of 'classname' to true
 --> login required for this endpoint
 '''
 @app.route("/api/class/<classname>/complete", methods=["POST"])
 @flask_login.login_required
-def completeClass(classname):
+def complete_class(classname):
     username = flask_login.current_user.get_id()
     res = db.getSingleClass(username, classname)
     if res is not None and res.is_complete == 0:
@@ -241,7 +209,7 @@ METHOD: classMeta(): updates the metadata for class: 'classname', any missing me
 '''
 @app.route("/api/class/<classname>/update_meta", methods=["POST"])
 @flask_login.login_required
-def classMeta(classname):
+def class_meta(classname):
     username = flask_login.current_user.get_id()
     req = flask.request.get_json(force=True)
     res = db.getSingleClass(username, classname)
@@ -294,48 +262,13 @@ def classMeta(classname):
     # update breakdown
     res = db.addClassBreakdown(username, classname, breakdown)
     return 'Class Meta updated successfully', 200
-
-'''
-METHOD: newtask(): creates a new task for the current user for the class: 'classname'
---> login required for this endpoint
-'''
-@app.route("/api/class/<classname>/newtask", methods=["POST"])
-@flask_login.login_required
-def newtask(classname):
-    req = flask.request.get_json(force=True)
-    username = flask_login.current_user.get_id()
-
-    # since json attributes are optional, only update if they're given
-    if 'weight' not in req.keys():
-        # use undef weight
-        weight = -1
-    else:
-        weight = req['weight']
-
-    if 'deadline' not in req.keys():
-        # use undef deadline
-        deadline = None
-    else:
-        deadline = req['deadline']
-    if 'task_goal' not in req.keys():
-        # use default
-        task_goal = 'A'
-    else:
-        task_goal = req['task_goal']
-    # add task to class
-    res = db.addTask(username, classname, req['taskname'], weight, deadline, task_goal)
-    if res is None:
-        return "Bad Request: No class found", 400
-    else:
-        return "Successfully added task", 200
-
 '''
 METHOD: newclass(): creates a new class associated with the current user
 --> login required for this endpoint
 '''
 @app.route('/api/newclass', methods=["POST"])
 @flask_login.login_required
-def newclass():
+def new_class():
     req = flask.request.get_json(force=True)
     username = flask_login.current_user.get_id()
     # classname and timeslot are required
@@ -364,6 +297,112 @@ def all_classes():
     elif res is None:
         # no classes found
         return {"result": []}, 200
+'''
+METHOD: edit_class(): modify required class information (classname and/or timeslot) for current user with 'classname'
+--> login required for this endpoint
+'''
+@app.route('/api/class/<classname>/edit', methods=["POST"])
+@flask_login.login_required
+def edit_class(classname):
+    username = flask_login.current_user.get_id()
+    req = flask.request.get_json(force=True)
+
+    # attributes are optional, so keep the same if not given
+    if 'newname' not in req.keys():
+        newname = ""
+    else:
+        newname = req['newname']
+    if 'newtime' not in req.keys():
+        newtime = ""
+    else:
+        newtime = req['newtime']
+
+    db.editClassReqData(username, classname, newname, newtime)
+    return "Class edited", 200
+
+'''
+METHOD: delete_class(): deletes 'classname' for current user
+--> login required for this endpoint
+'''
+# deletes a class
+@app.route('/api/class/<classname>/delete', methods=["POST"])
+@flask_login.login_required
+def delete_class(classname):
+    username = flask_login.current_user.get_id()
+    res = db.removeClass(username, classname)
+    return "Class removed", 200
+
+'''
+METHOD: update_time(): increases the study_time attribute for 'classname' by 'added' seconds
+--> login required for this endpoint
+'''
+@app.route("/api/class/<classname>/update_time", methods=["POST"])
+@flask_login.login_required
+def update_time(classname):
+    # updates the time studied for a class
+    username = flask_login.current_user.get_id()
+    t = flask.request.get_json(force=True)['added']
+    res = db.addStudyTime(username, classname, t)
+    if res is not None:
+        return "Time for class updated successfully", 200
+    else:
+        return "Bad Request: No class found", 400
+
+
+
+# Task Methods
+'''
+METHOD: all_tasks(): returns a list of tasks associated with 'classname'
+--> login required for this endpoint
+'''
+@app.route("/api/class/<classname>/task", methods=["GET"])
+@flask_login.login_required
+def all_tasks(classname):
+    username = flask_login.current_user.get_id()
+    res = db.getSingleClass(username, classname)
+    if res is None:
+        # no class found
+        return "Bad Request: No class found", 400
+    else:
+        res = db.getTaskList(username, classname)
+        # need to parse
+        return {"result": parse_rows(res)}, 200
+
+
+'''
+METHOD: newtask(): creates a new task for the current user for the class: 'classname'
+--> login required for this endpoint
+'''
+@app.route("/api/class/<classname>/newtask", methods=["POST"])
+@flask_login.login_required
+def new_task(classname):
+    req = flask.request.get_json(force=True)
+    username = flask_login.current_user.get_id()
+
+    # since json attributes are optional, only update if they're given
+    if 'weight' not in req.keys():
+        # use undef weight
+        weight = -1
+    else:
+        weight = req['weight']
+
+    if 'deadline' not in req.keys():
+        # use undef deadline
+        deadline = None
+    else:
+        deadline = req['deadline']
+    if 'task_goal' not in req.keys():
+        # use default
+        task_goal = 'A'
+    else:
+        task_goal = req['task_goal']
+    # add task to class
+    res = db.addTask(username, classname, req['taskname'], weight, deadline, task_goal)
+    if res is None:
+        return "Bad Request: No class found", 400
+    else:
+        return "Successfully added task", 200
+
 
 '''
 METHOD: get_task(): returns a specific task with 'taskname' for the current user and 'classname'
@@ -425,41 +464,6 @@ def delete_task(classname, taskname):
     res = db.removeTask(username, classname, taskname)
     return "Task removed", 200
 
-'''
-METHOD: edit_class(): modify required class information (classname and/or timeslot) for current user with 'classname'
---> login required for this endpoint
-'''
-# edit a class's name, and/or timeslot
-@app.route('/api/class/<classname>/edit', methods=["POST"])
-@flask_login.login_required
-def edit_class(classname):
-    username = flask_login.current_user.get_id()
-    req = flask.request.get_json(force=True)
-
-    # attributes are optional, so keep the same if not given
-    if 'newname' not in req.keys():
-        newname = ""
-    else:
-        newname = req['newname']
-    if 'newtime' not in req.keys():
-        newtime = ""
-    else:
-        newtime = req['newtime']
-
-    db.editClassReqData(username, classname, newname, newtime)
-    return "Class edited", 200
-
-'''
-METHOD: delete_class(): deletes 'classname' for current user
---> login required for this endpoint
-'''
-# deletes a class
-@app.route('/api/class/<classname>/delete', methods=["POST"])
-@flask_login.login_required
-def delete_class(classname):
-    username = flask_login.current_user.get_id()
-    res = db.removeClass(username, classname)
-    return "Class removed", 200
 
 '''
 METHOD: complete_task(): marks a task as complete by setting grade value for current user and 'classname'

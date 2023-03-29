@@ -570,7 +570,7 @@ class apiUsersTest(flask_unittest.ClientTestCase):
         # expect session no longer set
         self.assertStatus(resp, 200)
 
-    def test_newuser(self, client):
+    def test_newUser(self, client):
         db.removeUser("newuser")
         # send invalid login to ensure user doesn't exist
         resp = client.post('/api/login', json=creds2)

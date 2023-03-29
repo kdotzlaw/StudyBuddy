@@ -39,14 +39,17 @@ app.json = customJSON(app)
 app.config["SECRET_KEY"] = uuid.uuid4().hex  # reset secret key each time the server starts
 app.config['SESSION_COOKIE_HTTPONLY'] = False
 
-print(app.config)
 # instantiate flask login manager
+
 flask_login.config.COOKIE_HTTPONLY = False
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 flask_cors.CORS(app, supports_credentials=True)
+
+# session storage
+sessions = {}
 
 
 # tell flask how to load a user from a flask request and from its session
@@ -70,15 +73,22 @@ def user_loader(username):
 # loads user from flask request
 @login_manager.request_loader
 def request_loader(request):
-    session = request.headers['session']
-    username = flask_login.login_manager.session.get(session)
-    # check database for username
-    selection = db.getUser(username)
-    uname = selection.username
-    if uname == username:
-        user = User()
-        user.id = username
-        return user
+    # grab session from request
+    session = request.headers.get('session')
+    # if there's a session header
+    if session in sessions.keys():
+        # grab the username from the sessions dictionary
+        username = sessions[session]
+        # check database for username
+        selection = db.getUser(username)
+        uname = selection.username
+        # the same values, and neither are None
+        if uname == username and uname and username:
+            user = User()
+            user.id = username
+            return user
+        else:
+            return None
     else:
         return None
 
@@ -113,21 +123,23 @@ def login():
             pword = selection.password
 
             if uname == username and pword == password:
-                user = User()
-                user.id = username
-                flask_login.login_user(user)
-                print(flask.session)
+                session = str(uuid.uuid4())
+                sessions[session] = username
 
                 resp = flask.make_response()
                 resp.status_code = 200
                 resp.data = 'Logged In'
-                resp.headers.add_header('key', 'val')
-                resp.headers.add_header('key2', 'val2')
-                resp.access_control_allow_headers = ['key', 'key2', 'Set-Cookie']
-                resp.headers.set('Access-Control-Expose-Headers', 'key, key2, Set-Cookie')
+
+                resp.headers.add_header('session', session)
+                resp.access_control_allow_headers = ['session']
+                resp.headers.set('Access-Control-Expose-Headers', 'session')
                 resp.headers.set("Access-Control-Allow-Credentials", True)
 
-                # redirect to homepage
+                # tell flask_login to log in user
+                user = User()
+                user.id = username
+                flask_login.login_user(user)
+
                 return resp
             else:
                 # invalid password
@@ -145,11 +157,13 @@ def login():
 @app.route("/api/logout", methods=["POST"])
 @flask_login.login_required
 def logout():
-    # just delete the cookie from the users browser
-    # and log out the user
+    # delete session
+    sessions.pop(flask.request.headers['session'])
+
+    # log out
     flask_login.logout_user()
+
     resp = flask.make_response()
-    resp.delete_cookie('session')
     resp.data = "Logged Out"
     resp.status_code = 200
     return resp
@@ -166,10 +180,25 @@ def newuser():
         # if there are no existing users with that username in the db...
         # create a new account with the username and password
         db.createAccount(username, password)
+        # create session
+        session = str(uuid.uuid4())
+        sessions[session] = username
+
+        resp = flask.make_response()
+        resp.status_code = 200
+        resp.data = 'Account Created'
+
+        resp.headers.add_header('session', session)
+        resp.access_control_allow_headers = ['session']
+        resp.headers.set('Access-Control-Expose-Headers', 'session')
+        resp.headers.set("Access-Control-Allow-Credentials", True)
+
+        # tell flask_login to log in user
         user = User()
         user.id = username
         flask_login.login_user(user)
-        return "Account created", 200
+
+        return resp
     else:
         return "Account already exists with username", 400
 

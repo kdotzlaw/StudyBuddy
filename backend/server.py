@@ -10,6 +10,7 @@ import db
 from werkzeug.security import check_password_hash, generate_password_hash
 import uuid
 import flask_cors
+
 '''
 ---SUGGESTIONS---
 1. Set cors header: app.config['CORS_HEADERS'] = 'Content-Type'
@@ -21,6 +22,8 @@ import flask_cors
 - timer unit test failing --> could need to reset timer to 0 after doing acceptance tests
 - acceptance test could  be failing because passwords hashed/new security
 '''
+
+
 class customJSON(flask.json.provider.JSONProvider):
 
     def dumps(self, obj, **kwargs):
@@ -32,15 +35,18 @@ class customJSON(flask.json.provider.JSONProvider):
 
 app = flask.Flask(__name__)
 app.json = customJSON(app)
-app.config["SECRET_KEY"] = uuid.uuid4().hex  # reset secret key each time the server starts
 
+app.config["SECRET_KEY"] = uuid.uuid4().hex  # reset secret key each time the server starts
+app.config['SESSION_COOKIE_HTTPONLY'] = False
+
+print(app.config)
 # instantiate flask login manager
+flask_login.config.COOKIE_HTTPONLY = False
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-flask_cors.CORS(app)
-
+flask_cors.CORS(app, supports_credentials=True)
 
 
 # tell flask how to load a user from a flask request and from its session
@@ -64,7 +70,8 @@ def user_loader(username):
 # loads user from flask request
 @login_manager.request_loader
 def request_loader(request):
-    username = request.get_json(force=True)['username']
+    session = request.headers['session']
+    username = flask_login.login_manager.session.get(session)
     # check database for username
     selection = db.getUser(username)
     uname = selection.username
@@ -109,8 +116,19 @@ def login():
                 user = User()
                 user.id = username
                 flask_login.login_user(user)
+                print(flask.session)
+
+                resp = flask.make_response()
+                resp.status_code = 200
+                resp.data = 'Logged In'
+                resp.headers.add_header('key', 'val')
+                resp.headers.add_header('key2', 'val2')
+                resp.access_control_allow_headers = ['key', 'key2', 'Set-Cookie']
+                resp.headers.set('Access-Control-Expose-Headers', 'key, key2, Set-Cookie')
+                resp.headers.set("Access-Control-Allow-Credentials", True)
+
                 # redirect to homepage
-                return "Logged In", 200
+                return resp
             else:
                 # invalid password
                 # send 401 bad request response
@@ -121,6 +139,7 @@ def login():
         # send 400 bad request response
         response = "Bad Request: Missing required JSON", 400
         return response
+
 
 # logout api request
 @app.route("/api/logout", methods=["POST"])
@@ -134,6 +153,7 @@ def logout():
     resp.data = "Logged Out"
     resp.status_code = 200
     return resp
+
 
 # create a new user
 @app.route("/api/newuser", methods=["POST"])

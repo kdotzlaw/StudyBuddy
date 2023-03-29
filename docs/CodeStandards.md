@@ -79,11 +79,14 @@ Orders of the HTML and Javascript block may be interchanged. CSS must always be 
 ## Backend
 ### Python
 - All SQL queries in python will be done using **Prepared Statements** to avoid SQL Injection. A valid SQL query using a prepared statement is: `cursor.execute("SELECT * FROM <tableName> WHERE <colName> = ?", username)`
+
 ### SQL
 - Comments will be done using `/*  */`
 - All SQL keywords will be capitalized
-- Table names, row names, column names, and variable names will be camel case. For example, `userGrades`
-- All SQL files will be pushed to `backend/`
+- Table names and function names will be camel case. For example, `userGrades`.
+- Names of rows and columns with multiple words will be seperated with a `_`. For example, `task_goal`.
+- All SQL files will be pushed to `develop/backend/` 
+- 
 ### Testing
 - Database is tested using **UnitTest**, API tested using **flask_unittest**
 - Tests for database and API in seperate classes
@@ -91,3 +94,4 @@ Orders of the HTML and Javascript block may be interchanged. CSS must always be 
 - All tests should be prefaced with pass conditions and description of what test is testing
 - Tests should include Negative Testing (ie test that ensure incorrect input fails correctly)
 - Unit tests should be orderd by component (ie all User tests should be next to eachother in test suite)
+- See [StudyBuddy test plan](https://github.com/kdotzlaw/StudyBuddy/blob/main/docs/SE2%20Test%20Plan.pdf) for development prerequisites and standards.

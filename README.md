@@ -4,11 +4,6 @@
 
 # Project Summary and Vision
 
-
-### Test Plan and Sequence Diagrams
-The project test plan and sequence diagrams are located: https://github.com/kdotzlaw/StudyBuddy/wiki/Sprint-2
-The changlog is located: https://github.com/kdotzlaw/StudyBuddy/wiki/Changelog
-
 ### About
 The Study Buddy is an application that allows students to keep track of their study progress with an incentive through a buddy that can be leveled up as they progress with their studies.  Being called “The Procrastinators,” as a team we felt this would be a great way to help students with their studies.
 
@@ -46,24 +41,30 @@ This feature will allow for users to level up their buddy.
 
 <p align="center">
 <img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/docker.png" alt="Vue logo" align="center">
+<img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/pinia.png" alt="Pinia logo" align="center">
 <img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/nodejs.png" alt="NodeJS logo" align="center">
 <img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/vue.png" alt="Docker logo" align="center">
 <img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/ghactions.png" alt="Github Actions logo" align="center">
 <img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/flask.png" alt="Flask logo" align="center">
 <img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/python.png" alt="Python logo" align="center">
 <img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/sql.png" alt="SQL logo" align="center">
+<img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/locust.png" alt="Locust logo" align="center">
+<img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/jest.png" alt="Jest logo" align="center">
+<img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/cypress.png" alt="Cypress logo" align="center">
+<img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/sonarqube.png" alt="SonarQube logo" align="center">
 </p>
 
 ### CI/CD
 
-- **GitHub Actions**
-- **Docker**
+- Workflows: **GitHub Actions**
+- Containerization and Deployment: **Docker**
 
 ### Frontend Technologies
 
 - Frontend framework: **Vue.js**
+- State management: **Pinia**
 - Application logic: **JavaScript** and **Typescript**
-- Environment: **Node.js**
+- Testing: **Jest** and **Cypress**
 
 ### Backend
 
@@ -73,9 +74,14 @@ This feature will allow for users to level up their buddy.
 - Testing: **Unittest**
 - [Backend API](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/backend/api.yaml)
 
+### Other Utilities
+
+- Security scanning: **SonarQube**
+- Load Testing: **Locust**
+
 ## Software Architecture
 
-![Study Buddy architecture diagram](/docs/architecture_v1.png)
+![Study Buddy architecture diagram](/docs/architecture_v2.png)
 
 # User Stories
 
@@ -150,16 +156,22 @@ This feature will allow for users to level up their buddy.
 - When I click on the customization button and select an unlocked customizable option for my companion.
 - The system changes the appearance of my companion to reflect the selected customizable.
 
+# Documentation
+The following documentation were prepared as part of StudyBuddy deliverables.
+- [Test Plan](/docs/SE2%20Test%20Plan.pdf)
+- [Sequence Diagrams](https://github.com/kdotzlaw/StudyBuddy/wiki/Sprint-2)
+- [Changelog](https://github.com/kdotzlaw/StudyBuddy/wiki/Changelog)
+- [Coding Standards](/docs/CodeStandards.md)
 
 # Team Members
 
 | Name | Role | Skills |
 |---|---|---|
 |Andrea Abellera| Team Leader, Frontend, Graphic Designer | Vue.Js, Node.Js, UI/UX, Accessibility|
-|Katrina Dotzlaw| Backend, Database| Python, C#, SQL, Java|
+|Katrina Dotzlaw| Backend, Database | Python, C#, SQL, Java|
 |Ryan Dotzlaw| Backend, API Designer | Python, Java, C, SQL |
 |Millan David| Frontend, Presenter | HTML/CSS, Vue.Js, Java, JavaScript |
-|Elieser Capillar| Frontend, Graphic Designer, CI/CD | React Native, Java, JavaScript |
+|Elieser Capillar| Frontend, CI/CD, Security | React Native, Java, JavaScript |
 
 <p align="center">
 <br>

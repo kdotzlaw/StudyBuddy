@@ -45,10 +45,10 @@ class dbTests(unittest.TestCase):
     def testData(self):
         users = db.getUserData()
         self.assertNotEqual(users, None)
-        print(users)
         classes = db.getClassesData()
         self.assertNotEqual(classes, None)
-        print(classes)
+        #reset data from load test
+        db.editTask("andrea22","COMP 2080","Midterm","Exam","","","")
 
     '''
     TEST: getUser()
@@ -58,7 +58,6 @@ class dbTests(unittest.TestCase):
     def test_getUser(self):
         username = "katDot"
         result = db.getUser(username)
-        print(result)
         self.assertIn(username, result.username)
 
     '''
@@ -76,7 +75,6 @@ class dbTests(unittest.TestCase):
     '''
     def test_removeUser(self):
         username = "test"
-        # db.removeUser(username)
         password = "testing"
         db.createAccount(username, password)
         # remove user
@@ -101,7 +99,8 @@ class dbTests(unittest.TestCase):
     def test_createAccount(self):
         username = "test"
         password = "testing"
-        db.createAccount(username, password)
+        result = db.createAccount(username, password)
+        self.assertEqual(result, True)
         # retrieve the mock user from the db
         result = db.getUser(username)
         self.assertIn(username, result.username)
@@ -178,7 +177,10 @@ class dbTests(unittest.TestCase):
         self.assertIn(className, result)
         # remove class once done
         db.removeClass(username, className)
-
+    '''
+    TEST test_addClassCode()
+    Test passes if a classCode was sucessfully added to the specified class for the specfied user.
+    '''
     def test_addClassCode(self):
         username = 'katDot'
         className = "COMP 2080"
@@ -237,8 +239,8 @@ class dbTests(unittest.TestCase):
     '''
     TEST: test_editClassMeta
     Test passes if each column in specified class was successfully updated with new metadata
-    NOTE: can fails in the local backend suite, but will pass in the github test suite
-    --> has to do with asserting the datetime obj locally
+    NOTE: can fail in the local backend suite, but will pass in the github test suite
+    --> has to do with asserting the datetime obj locally (environment issues)
     '''
     def test_editClassMeta(self):
         username = "katDot"
@@ -287,11 +289,9 @@ class dbTests(unittest.TestCase):
         className_new = "Bioinformatics"
         orig = db.getSingleClass(username, className_old)
         self.assertNotEqual(orig, None)
-        print(orig)
         db.editClassReqData(username, className_old, className_new, "")
         record = db.getSingleClass(username, className_new)
         self.assertNotEqual(record, orig)
-        print(record)
         # reset
         db.editClassReqData(username, className_new, className_old, "")
         record = db.getSingleClass(username, className_old)
@@ -484,7 +484,6 @@ class dbTests(unittest.TestCase):
         username = 'katDot'
         d1 = datetime.datetime(year=2023, month=2, day=9, hour=14, minute=0, second=0)
         record = db.getDeadlines(username)
-        print(record)
         self.assertNotEqual(record, None)
         self.assertEqual(record[0].deadline, d1)
 
@@ -497,8 +496,6 @@ creds3 = {'username': 'andrea22', 'password': 'edee29f882543b956620b26d0ee0e7e95
 class apiTest(flask_unittest.ClientTestCase):
     # assign flask app
     app = server.app
-
-    # server.setTest(True)
 
     def setUp(self, client: FlaskClient):
         pass
@@ -541,6 +538,7 @@ class apiTest(flask_unittest.ClientTestCase):
         self.assertStatus(resp, 200)
 
     def test_newuser(self, client):
+        db.removeUser("newuser")
         # send invalid login to ensure user doesn't exist
         resp = client.post('/api/login', json=creds2)
         self.assertStatus(resp, 401)
@@ -550,6 +548,11 @@ class apiTest(flask_unittest.ClientTestCase):
         # log in as user
         resp = client.post('/api/login', json=creds2)
         self.assertStatus(resp, 200)
+        #remove user after test is done
+        db.removeUser("newuser")
+
+
+
 
     def test_allclasses(self, client):
         # log in
@@ -568,7 +571,6 @@ class apiTest(flask_unittest.ClientTestCase):
         self.assertStatus(resp, 200)
         # send request for one class
         resp = client.get('/api/class/COMP 4350')
-        # print(resp.get_data())
         self.assertStatus(resp, 200)
 
     def test_class_fail(self, client):
@@ -578,7 +580,6 @@ class apiTest(flask_unittest.ClientTestCase):
         self.assertStatus(resp, 200)
         # send request for one class
         resp = client.get('/api/class/notaclass')
-        # print(resp.get_data())
         self.assertStatus(resp, 400)
 
     def test_update_time(self, client):
@@ -607,7 +608,6 @@ class apiTest(flask_unittest.ClientTestCase):
         # check valid login
         self.assertStatus(resp, 200)
         resp = client.get('/api/class/COMP 2080/task/Exam')
-        print(resp.get_json())
         self.assertStatus(resp, 200)
 
     def test_task_fail1(self, client):
@@ -632,7 +632,6 @@ class apiTest(flask_unittest.ClientTestCase):
         # check valid login
         self.assertStatus(resp, 200)
         resp = client.get('/api/class/COMP 2080/task')
-        print(resp.get_json())
         self.assertStatus(resp, 200)
 
     def test_newtask(self, client):
@@ -649,12 +648,9 @@ class apiTest(flask_unittest.ClientTestCase):
         # check valid login
         self.assertStatus(resp, 200)
         resp = client.get('/api/class/COMP 2080/task')
-        print(resp.get_data())
         resp = client.post('/api/class/COMP 2080/task/Exam/complete', json={"grade": "97"})
-        print(resp.get_data())
         self.assertStatus(resp, 200)
         resp = client.get('/api/class/COMP 2080/task')
-        print(resp.get_data())
 
     def test_complete_task_fail(self, client):
         # log in
@@ -662,7 +658,6 @@ class apiTest(flask_unittest.ClientTestCase):
         # check valid login
         self.assertStatus(resp, 200)
         resp = client.post('/api/class/COMP 2080/task/task1/complete')
-        # print(resp.get_data())
         self.assertStatus(resp, 400)
 
     def test_grade(self, client):
@@ -670,21 +665,17 @@ class apiTest(flask_unittest.ClientTestCase):
         resp = client.post('/api/login', json={'username': 'andrea22', 'password': 'edee29f882543b956620b26d0ee0e7e950399b1c4222f5de05e06425b4c995e9'})
         # check valid login
         self.assertStatus(resp, 200)
-        print(resp.get_json())
         # get grade for class
         resp = client.get('/api/class/COMP 2080/grade')
         self.assertStatus(resp, 200)
-        print(resp.get_json())
 
     def test_grade_notasks(self, client):
         # log in
         resp = client.post('/api/login', json={'username': 'andrea22', 'password': 'edee29f882543b956620b26d0ee0e7e950399b1c4222f5de05e06425b4c995e9'})
         # check valid login
         self.assertStatus(resp, 200)
-        print(resp.get_json())
         # get grade for class
         resp = client.get('/api/class/COMP 4350/grade')
-        print(resp.get_json())
         self.assertStatus(resp, 200)
 
     def test_newclass(self, client):
@@ -697,11 +688,8 @@ class apiTest(flask_unittest.ClientTestCase):
         self.assertStatus(resp, 200)
         # double check class exists
         resp = client.get('/api/class/COMP 9999')
-        print(resp.get_data())
         self.assertStatus(resp, 200)
-
         resp = client.get('/api/class')
-        print(resp.get_data())
 
     def test_updatemeta(self, client):
         # log in
@@ -726,22 +714,16 @@ class apiTest(flask_unittest.ClientTestCase):
         # create class
         resp = client.post('/api/newclass', json={"classname": "COMP 123", "timeslot": "11:30:00","courseCode":None})
         self.assertStatus(resp, 200)
-        # print(resp.get_data())
         # edit class
         resp = client.get('/api/class/COMP 123')
-        # print(resp.get_json(force=True, silent=True))
         resp = client.post('/api/class/COMP 123/edit', json={"newname": "COMP 8888"})
-        # print(resp.get_data())
         self.assertStatus(resp, 200)
         resp = client.get('/api/class')
-        # print(resp.get_data())
         # double check
         resp = client.get('/api/class/COMP 8888')
         # name changed
-        # print(resp.get_data())
         self.assertStatus(resp, 200)
         # timeslot didn't change
-
         self.assertEqual(resp.get_json(force=True)['result']['timeslot'], "11:30:00")
 
 

@@ -82,7 +82,7 @@ Orders of the HTML and Javascript block may be interchanged. CSS must always be 
 - All database methods will go into `db.py`
 - All server methods will go into `server.py`
 - Database and server methods should be organized by functionality (ie all User methods should be next to each other)
-- All database and server methods should be prefaced by a description of the method. Server methods should indicate endpoint requirements. 
+- All database and server methods should be prefaced by preconditions, postconditions and a description of the method. Server methods should indicate endpoint requirements. 
 - All database method names should be in camelCase (ie `getTasks()`)
 - All multi-word server method names should be seperated by `_`. For example, `complete_class`.
 
@@ -98,7 +98,7 @@ Orders of the HTML and Javascript block may be interchanged. CSS must always be 
 - All backend tests should be contained in `backend_test.py`
 - Tests for database and API must be in seperate classes
 - Unit tests should only test **one** component/method
-- All tests should be prefaced with preconditions, postconditions and a description of what test is testing
+- All tests should be prefaced with pass conditions and a description of what test is testing
 - Tests should include Negative Testing (ie test that ensure incorrect input fails correctly)
 - Unit tests should be orderd by component (ie all User tests should be next to each other in test suite)
 - See [StudyBuddy test plan](https://github.com/kdotzlaw/StudyBuddy/blob/main/docs/SE2%20Test%20Plan.pdf) for development prerequisites and standards.

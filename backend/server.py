@@ -10,8 +10,17 @@ import db
 from werkzeug.security import check_password_hash, generate_password_hash
 import uuid
 import flask_cors
-
-
+'''
+---SUGGESTIONS---
+1. Set cors header: app.config['CORS_HEADERS'] = 'Content-Type'
+2. Add CORS(app, resources={r"/*": {"origins": "*"}})
+3. To allow cookies to be sent cross-origin: CORS(app, supports_credentials=True)
+4. https://stackoverflow.com/questions/71109384/cookies-not-being-sent-with-axios
+5. Cors Options: https://stackoverflow.com/questions/52549079/does-axios-support-set-cookie-is-it-possible-to-authenticate-through-axios-http
+---FRONTEND ----
+- timer unit test failing --> could need to reset timer to 0 after doing acceptance tests
+- acceptance test could  be failing because passwords hashed/new security
+'''
 class customJSON(flask.json.provider.JSONProvider):
 
     def dumps(self, obj, **kwargs):
@@ -23,7 +32,7 @@ class customJSON(flask.json.provider.JSONProvider):
 
 app = flask.Flask(__name__)
 app.json = customJSON(app)
-app.secret_key = uuid.uuid4().hex  # reset secret key each time the server starts
+app.config["SECRET_KEY"] = uuid.uuid4().hex  # reset secret key each time the server starts
 
 # instantiate flask login manager
 login_manager = flask_login.LoginManager()
@@ -32,13 +41,6 @@ login_manager.login_view = 'login'
 
 flask_cors.CORS(app)
 
-# mock persistence layer
-users = {"testuser": {"username": "testuser", "password": "123"}}
-
-
-# for debug
-def setTest(boo):
-    app.config["TESTING"] = boo
 
 
 # tell flask how to load a user from a flask request and from its session
@@ -46,23 +48,13 @@ class User(flask_login.UserMixin):
     pass
 
 
-def user_check(username):
-    if app.testing:
-        selection = users[username]
-    else:
-        selection = db.getUser(username)
-    return selection
-
-
 # loads user from session
 @login_manager.user_loader
 def user_loader(username):
     # print("u loader")
+    '''selection = db2.getUser(username)'''
     selection = db.getUser(username)
-    if app.testing:
-        uname = selection['username']
-    else:
-        uname = selection.username
+    uname = selection.username
     if uname == username:
         user = User()
         user.id = username
@@ -77,11 +69,9 @@ def request_loader(request):
     # print("req loader")
     username = request.get_json(force=True)['username']
     # check database for username
+    '''selection = db2.getUser(username)'''
     selection = db.getUser(username)
-    if app.testing:
-        uname = selection['username']
-    else:
-        uname = selection.username
+    uname = selection.username
     if uname == username:
         user = User()
         user.id = username
@@ -99,30 +89,23 @@ def unauthorized_handler():
 # login api request
 @app.route("/api/login", methods=["POST"])
 def login():
-    # print("attempting login")
     # grab the username from the header
-    # print(flask.request.get_json())
     if flask.request.get_json(force=True) is not None:
         # username header exists
         username = flask.request.get_json(force=True)['username']
         password = flask.request.get_json(force=True)['password']
-        # print(username)
-        # print(password)
         # check db for username and password
         # selection is a list of rows (SHOULD BE LENGTH 1)
         selection = db.getUser(username)
-        print(selection)
 
         if selection is None:
             # username not in database
             # be ambiguous for security reasons
             response = "Bad Request: Invalid Username or Password", 401
-            # print("no user")
             return response
         else:
             # selection returned
             # grab values for username and password from db
-            # print("yes user")
             uname = selection.username
             pword = selection.password
 
@@ -130,24 +113,18 @@ def login():
                 user = User()
                 user.id = username
                 flask_login.login_user(user)
-                # print("logged in: ", username)
                 # redirect to homepage
-                # flask.redirect("../../frontend/index.html", 200)
                 return "Logged In", 200
             else:
                 # invalid password
                 # send 401 bad request response
-                # print("failed login: ", username)
-                # print("Incorrect password")
                 # be ambiguous for security reasons
                 response = "Bad Request: Invalid Username or Password", 401
                 return response
     else:
         # send 400 bad request response
-        # print("login missing json")
         response = "Bad Request: Missing required JSON", 400
         return response
-
 
 # logout api request
 @app.route("/api/logout", methods=["POST"])
@@ -161,7 +138,6 @@ def logout():
     resp.data = "Logged Out"
     resp.status_code = 200
     return resp
-
 
 # create a new user
 @app.route("/api/newuser", methods=["POST"])
@@ -203,7 +179,6 @@ def update_time(classname):
 def getClass(classname):
     username = flask_login.current_user.get_id()
     res = db.getSingleClass(username, classname)
-    # print("the class is: ", res, ' and logic says: ', res is None)
     if res is None:
         # no class found
         return "Bad Request: No class found", 400
@@ -335,12 +310,12 @@ def newtask(classname):
     else:
         deadline = req['deadline']
     if 'task_goal' not in req.keys():
-        #use default
+        # use default
         task_goal = 'A'
     else:
         task_goal = req['task_goal']
     # add task to class
-    res = db.addTask(username, classname, req['taskname'], weight, deadline,task_goal)
+    res = db.addTask(username, classname, req['taskname'], weight, deadline, task_goal)
     if res is None:
         return "Bad Request: No class found", 400
     else:
@@ -357,7 +332,7 @@ def newclass():
     if 'classname' not in req.keys() or 'timeslot' not in req.keys() or 'courseCode' not in req.keys():
         return "Bad Request: JSON missing required value(s)", 400
     else:
-        res = db.addClass(username, req['classname'], req['timeslot'],req['courseCode'])
+        res = db.addClass(username, req['classname'], req['timeslot'], req['courseCode'])
         if res is None:
             return "Error", 400
         return "Added Class", 200
@@ -417,7 +392,7 @@ def edit_task(classname, taskname):
     else:
         eGoal = req['eGoal']
 
-    db.editTask(username, classname, taskname, newname, newdeadline, newweight,eGoal)
+    db.editTask(username, classname, taskname, newname, newdeadline, newweight, eGoal)
     return "Task edited", 200
 
 

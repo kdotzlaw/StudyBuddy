@@ -46,6 +46,7 @@ This feature will allow for users to level up their buddy.
 
 <p align="center">
 <img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/docker.png" alt="Vue logo" align="center">
+<img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/pinia.png" alt="Pinia logo" align="center">
 <img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/nodejs.png" alt="NodeJS logo" align="center">
 <img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/vue.png" alt="Docker logo" align="center">
 <img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/ghactions.png" alt="Github Actions logo" align="center">
@@ -66,6 +67,7 @@ This feature will allow for users to level up their buddy.
 ### Frontend Technologies
 
 - Frontend framework: **Vue.js**
+- State management: **Pinia**
 - Application logic: **JavaScript** and **Typescript**
 - Testing: **Jest** and **Cypress**
 
@@ -84,7 +86,7 @@ This feature will allow for users to level up their buddy.
 
 ## Software Architecture
 
-![Study Buddy architecture diagram](/docs/architecture_v1.png)
+![Study Buddy architecture diagram](/docs/architecture_v2.png)
 
 # User Stories
 
@@ -165,10 +167,10 @@ This feature will allow for users to level up their buddy.
 | Name | Role | Skills |
 |---|---|---|
 |Andrea Abellera| Team Leader, Frontend, Graphic Designer | Vue.Js, Node.Js, UI/UX, Accessibility|
-|Katrina Dotzlaw| Backend, Database| Python, C#, SQL, Java|
+|Katrina Dotzlaw| Backend, Database | Python, C#, SQL, Java|
 |Ryan Dotzlaw| Backend, API Designer | Python, Java, C, SQL |
 |Millan David| Frontend, Presenter | HTML/CSS, Vue.Js, Java, JavaScript |
-|Elieser Capillar| Frontend, Graphic Designer | React Native, Java, JavaScript |
+|Elieser Capillar| Frontend, CI/CD, Security | React Native, Java, JavaScript |
 
 <p align="center">
 <br>

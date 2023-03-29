@@ -44,11 +44,14 @@ class dbTests(unittest.TestCase):
     '''
     def testData(self):
         users = db.getUserData()
-        print(users)
+        #print(users)
         self.assertNotEqual(users, None)
         classes = db.getClassesData()
-        print(classes)
+        #print(classes)
         self.assertNotEqual(classes, None)
+
+        #reset data
+        db.editTask("andrea22","COMP 2080","Midterm","Exam","","","")
 
     '''
     TEST: getUser()
@@ -537,15 +540,22 @@ class apiTest(flask_unittest.ClientTestCase):
         self.assertStatus(resp, 200)
 
     def test_newuser(self, client):
+        db.removeUser("newuser")
         # send invalid login to ensure user doesn't exist
         resp = client.post('/api/login', json=creds2)
         self.assertStatus(resp, 401)
         # create user
         resp = client.post('/api/newuser', json=creds2)
+        print(resp.get_json())
         self.assertStatus(resp, 200)
         # log in as user
         resp = client.post('/api/login', json=creds2)
         self.assertStatus(resp, 200)
+        #remove user after test is done
+        db.removeUser("newuser")
+
+
+
 
     def test_allclasses(self, client):
         # log in
@@ -645,6 +655,7 @@ class apiTest(flask_unittest.ClientTestCase):
         self.assertStatus(resp, 200)
         resp = client.get('/api/class/COMP 2080/task')
         resp = client.post('/api/class/COMP 2080/task/Exam/complete', json={"grade": "97"})
+        print(resp.get_json())
         self.assertStatus(resp, 200)
         resp = client.get('/api/class/COMP 2080/task')
 

@@ -31,7 +31,9 @@ class WebsiteTestUser(HttpUser):
         self.client.post("http://localhost:5000/api/class/COMP 2080/update_meta", json={"sectionnum": 1203})
     @task
     def editTask(self):
-        self.client.post("http://localhost:5000/api/class/COMP 2080/task/Exam/edit",json={"newname":"Midterm"})
+        self.client.post("http://localhost:5000/api/class/COMP 2080/task/Exam/edit",json={"newname":"Exam"})
+        #self.client.post("http://localhost:5000/api/class/COMP 2080/task/Midterm/edit", json={"newname": "Exam"})
+
     @task
     def editClass(self):
         self.client.post("http://localhost:5000/api/class/COMP 2080/edit",json={"newname":"COMP 2080"})

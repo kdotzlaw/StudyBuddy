@@ -44,8 +44,10 @@ class dbTests(unittest.TestCase):
     '''
     def testData(self):
         users = db.getUserData()
+        print(users)
         self.assertNotEqual(users, None)
         classes = db.getClassesData()
+        print(classes)
         self.assertNotEqual(classes, None)
 
     '''
@@ -625,6 +627,7 @@ class apiTest(flask_unittest.ClientTestCase):
         # check valid login
         self.assertStatus(resp, 200)
         resp = client.get('/api/class/COMP 2080/task')
+        print(resp.get_json())
         self.assertStatus(resp, 200)
 
     def test_newtask(self, client):
@@ -786,10 +789,12 @@ class apiTest(flask_unittest.ClientTestCase):
     def test_completeclass(self, client):
         # log in
         resp = client.post('/api/login', json={"username": "sneakerbot101", "password": '73b2e90162bdd5ff6151294bee6fa72d602680e29b0bcb6702f952262ffb7055'})
+        print(resp.get_json())
         # check valid login
         self.assertStatus(resp, 200)
         # complete class
         resp = client.post('/api/class/COMP 4350/complete')
+        print(resp.get_json())
         self.assertStatus(resp, 200)
 
 

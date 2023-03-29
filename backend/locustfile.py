@@ -24,15 +24,16 @@ class WebsiteTestUser(HttpUser):
 
     @task
     def getTasks(self):
-        self.client.get("http://localhost:5000/api/COMP 2080/task")
+        self.client.get("http://localhost:5000/api/class/COMP 2080/task")
 
     @task
     def updateMeta(self):
         self.client.post("http://localhost:5000/api/class/COMP 2080/update_meta", json={"sectionnum": 1203})
     @task
     def editTask(self):
-        self.client.post("http://localhost:5000/api/class/COMP 2080/task/Exam/edit",json={"newname":"Exam"})
-        #self.client.post("http://localhost:5000/api/class/COMP 2080/task/Midterm/edit", json={"newname": "Exam"})
+        self.client.post("http://localhost:5000/api/class/COMP 2080/task/Midterm/edit", json={"newname": "Exam"})
+        self.client.post("http://localhost:5000/api/class/COMP 2080/task/Exam/edit",json={"newname":"Midterm"})
+
 
     @task
     def editClass(self):

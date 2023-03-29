@@ -163,7 +163,6 @@ def getClassID(username, className):
     cnxn.close()
     return record.cID
 
-
 '''
 METHOD: getSingleClass():
 PRECONDITION: no classes retrieved

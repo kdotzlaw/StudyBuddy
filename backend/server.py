@@ -51,8 +51,6 @@ class User(flask_login.UserMixin):
 # loads user from session
 @login_manager.user_loader
 def user_loader(username):
-    # print("u loader")
-    '''selection = db2.getUser(username)'''
     selection = db.getUser(username)
     uname = selection.username
     if uname == username:
@@ -66,10 +64,8 @@ def user_loader(username):
 # loads user from flask request
 @login_manager.request_loader
 def request_loader(request):
-    # print("req loader")
     username = request.get_json(force=True)['username']
     # check database for username
-    '''selection = db2.getUser(username)'''
     selection = db.getUser(username)
     uname = selection.username
     if uname == username:
@@ -462,8 +458,10 @@ def get_done_tasks(classname):
     username = flask_login.current_user.get_id()
     res = db.getCompleteTasksForClass(username, classname)
     if type(res) is Row:
+        print(parse_row(res))
         return {"result": parse_row(res)}, 200
     elif type(res) is list:
+        print(parse_rows(res))
         return {"result": parse_rows(res)}, 200
     else:
         # no done tasks

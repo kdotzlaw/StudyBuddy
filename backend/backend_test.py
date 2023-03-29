@@ -44,13 +44,10 @@ class dbTests(unittest.TestCase):
     '''
     def testData(self):
         users = db.getUserData()
-        #print(users)
         self.assertNotEqual(users, None)
         classes = db.getClassesData()
-        #print(classes)
         self.assertNotEqual(classes, None)
-
-        #reset data
+        #reset data from load test
         db.editTask("andrea22","COMP 2080","Midterm","Exam","","","")
 
     '''
@@ -180,7 +177,10 @@ class dbTests(unittest.TestCase):
         self.assertIn(className, result)
         # remove class once done
         db.removeClass(username, className)
-
+    '''
+    TEST test_addClassCode()
+    Test passes if a classCode was sucessfully added to the specified class for the specfied user.
+    '''
     def test_addClassCode(self):
         username = 'katDot'
         className = "COMP 2080"
@@ -239,8 +239,8 @@ class dbTests(unittest.TestCase):
     '''
     TEST: test_editClassMeta
     Test passes if each column in specified class was successfully updated with new metadata
-    NOTE: can fails in the local backend suite, but will pass in the github test suite
-    --> has to do with asserting the datetime obj locally
+    NOTE: can fail in the local backend suite, but will pass in the github test suite
+    --> has to do with asserting the datetime obj locally (environment issues)
     '''
     def test_editClassMeta(self):
         username = "katDot"
@@ -497,8 +497,6 @@ class apiTest(flask_unittest.ClientTestCase):
     # assign flask app
     app = server.app
 
-    # server.setTest(True)
-
     def setUp(self, client: FlaskClient):
         pass
 
@@ -546,7 +544,6 @@ class apiTest(flask_unittest.ClientTestCase):
         self.assertStatus(resp, 401)
         # create user
         resp = client.post('/api/newuser', json=creds2)
-        print(resp.get_json())
         self.assertStatus(resp, 200)
         # log in as user
         resp = client.post('/api/login', json=creds2)
@@ -574,7 +571,6 @@ class apiTest(flask_unittest.ClientTestCase):
         self.assertStatus(resp, 200)
         # send request for one class
         resp = client.get('/api/class/COMP 4350')
-        # print(resp.get_data())
         self.assertStatus(resp, 200)
 
     def test_class_fail(self, client):
@@ -584,7 +580,6 @@ class apiTest(flask_unittest.ClientTestCase):
         self.assertStatus(resp, 200)
         # send request for one class
         resp = client.get('/api/class/notaclass')
-        # print(resp.get_data())
         self.assertStatus(resp, 400)
 
     def test_update_time(self, client):
@@ -637,7 +632,6 @@ class apiTest(flask_unittest.ClientTestCase):
         # check valid login
         self.assertStatus(resp, 200)
         resp = client.get('/api/class/COMP 2080/task')
-        print(resp.get_json())
         self.assertStatus(resp, 200)
 
     def test_newtask(self, client):
@@ -655,7 +649,6 @@ class apiTest(flask_unittest.ClientTestCase):
         self.assertStatus(resp, 200)
         resp = client.get('/api/class/COMP 2080/task')
         resp = client.post('/api/class/COMP 2080/task/Exam/complete', json={"grade": "97"})
-        print(resp.get_json())
         self.assertStatus(resp, 200)
         resp = client.get('/api/class/COMP 2080/task')
 
@@ -665,7 +658,6 @@ class apiTest(flask_unittest.ClientTestCase):
         # check valid login
         self.assertStatus(resp, 200)
         resp = client.post('/api/class/COMP 2080/task/task1/complete')
-        # print(resp.get_data())
         self.assertStatus(resp, 400)
 
     def test_grade(self, client):
@@ -800,12 +792,10 @@ class apiTest(flask_unittest.ClientTestCase):
     def test_completeclass(self, client):
         # log in
         resp = client.post('/api/login', json={"username": "sneakerbot101", "password": '73b2e90162bdd5ff6151294bee6fa72d602680e29b0bcb6702f952262ffb7055'})
-        print(resp.get_json())
         # check valid login
         self.assertStatus(resp, 200)
         # complete class
         resp = client.post('/api/class/COMP 4350/complete')
-        print(resp.get_json())
         self.assertStatus(resp, 200)
 
 

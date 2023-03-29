@@ -4,16 +4,16 @@ and SQL prepared statements
 '''
 import pyodbc
 
+conn = (r'Driver=ODBC Driver 17 for SQL Server;'
+        r'Server=localhost;'
+        r'Database=StudyBuddy;'
+        r'UID=sa;'
+        r'PWD=dbtools.IO'
+        )
 '''
 METHOD: getUserData(): Debugging method used in tests to make sure that database contains the stub user data
 '''
 def getUserData():
-    conn = (r'Driver=ODBC Driver 17 for SQL Server;'
-            r'Server=localhost;'
-            r'Database=StudyBuddy;'
-            r'UID=sa;'
-            r'PWD=dbtools.IO'
-            )
     cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     result = cursor.execute("SELECT * FROM Users;").fetchall()
@@ -26,12 +26,6 @@ def getUserData():
 METHOD: getClassesData(): Debugging method used in tests to make sure that database contains the stub class data
 '''
 def getClassesData():
-    conn = (r'Driver=ODBC Driver 17 for SQL Server;'
-            r'Server=localhost;'
-            r'Database=StudyBuddy;'
-            r'UID=sa;'
-            r'PWD=dbtools.IO'
-            )
     cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     result = cursor.execute("SELECT * FROM Classes;").fetchall()
@@ -50,11 +44,6 @@ POSTCONDITION:
 - Otherwise, None is returned
 '''
 def getUser(name):
-    conn = (r'Driver=SQL Server;'
-            r'Server=(local);'
-            r'Database=StudyBuddy;'
-            r'Trusted_Connection=yes'
-            )
     cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     result = cursor.execute("SELECT * FROM Users WHERE username = ?", name).fetchall()
@@ -74,11 +63,6 @@ POSTCONDITION:
 
 
 def createAccount(username, password):
-    conn = (r'Driver=SQL Server;'
-            r'Server=(local);'
-            r'Database=StudyBuddy;'
-            r'Trusted_Connection=yes'
-            )
     cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     prep_stmt = "INSERT INTO Users (username, password) VALUES (?,?);"
@@ -96,11 +80,6 @@ POSTCONDITION:
 
 
 def removeUser(username):
-    conn = (r'Driver=SQL Server;'
-            r'Server=(local);'
-            r'Database=StudyBuddy;'
-            r'Trusted_Connection=yes'
-            )
     cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     # check that user is in db
@@ -123,11 +102,6 @@ POSTCONDITION:
 
 
 def getAllUsers():
-    conn = (r'Driver=SQL Server;'
-            r'Server=(local);'
-            r'Database=StudyBuddy;'
-            r'Trusted_Connection=yes'
-            )
     cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     record = cursor.execute("SELECT * FROM Users;").fetchall()
@@ -149,11 +123,6 @@ POSTCONDITION:
 
 
 def getClasses(username):
-    conn = (r'Driver=SQL Server;'
-            r'Server=(local);'
-            r'Database=StudyBuddy;'
-            r'Trusted_Connection=yes'
-            )
     cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
@@ -178,11 +147,6 @@ POSTCONDITION: returns classID for specified user and specified class, or None i
 
 
 def getClassID(username, className):
-    conn = (r'Driver=SQL Server;'
-            r'Server=(local);'
-            r'Database=StudyBuddy;'
-            r'Trusted_Connection=yes'
-            )
     cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
@@ -210,11 +174,6 @@ POSTCONDITION:
 
 
 def getSingleClass(username, className):
-    conn = (r'Driver=SQL Server;'
-            r'Server=(local);'
-            r'Database=StudyBuddy;'
-            r'Trusted_Connection=yes'
-            )
     cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
@@ -244,11 +203,6 @@ POSTCONDITION:
 
 
 def addClass(username, className, timeslot,cc):
-    conn = (r'Driver=SQL Server;'
-            r'Server=(local);'
-            r'Database=StudyBuddy;'
-            r'Trusted_Connection=yes'
-            )
     cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
@@ -282,11 +236,6 @@ POSTCONDITION:
 
 
 def removeClass(username, className):
-    conn = (r'Driver=SQL Server;'
-            r'Server=(local);'
-            r'Database=StudyBuddy;'
-            r'Trusted_Connection=yes'
-            )
     cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
@@ -317,11 +266,6 @@ POSTCONDITION:
 
 
 def completeClass(username, className):
-    conn = (r'Driver=SQL Server;'
-            r'Server=(local);'
-            r'Database=StudyBuddy;'
-            r'Trusted_Connection=yes'
-            )
     cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
@@ -343,11 +287,6 @@ PRECONDITION: specified class with specified user either has no breakdown or bre
 POSTCONDITION: breakdown for specified class is updated using breakdown value
 '''
 def addClassBreakdown(username, className, breakdown):
-    conn = (r'Driver=SQL Server;'
-            r'Server=(local);'
-            r'Database=StudyBuddy;'
-            r'Trusted_Connection=yes'
-            )
     cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
@@ -368,11 +307,6 @@ PRECONDITION: required class data 'className' and 'timeslot' are unchanged
 POSTCONDITION: 'className' and/or 'timeslot' changed for given class and user
 '''
 def editClassReqData(username, className_old,className_new, timeslot_new):
-    conn = (r'Driver=SQL Server;'
-            r'Server=(local);'
-            r'Database=StudyBuddy;'
-            r'Trusted_Connection=yes'
-            )
     cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
@@ -398,11 +332,6 @@ POSTCONDITION:
 '''
 def editClassMeta(username, className, sectionnum, classroom, prof,
                   prof_email, prof_phone, prof_office, prof_hours):
-    conn = (r'Driver=SQL Server;'
-            r'Server=(local);'
-            r'Database=StudyBuddy;'
-            r'Trusted_Connection=yes'
-            )
     cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
@@ -432,11 +361,6 @@ POSTCONDITION:
 - Otherwise, None returned
 '''
 def addStudyTime(username, className, t):
-    conn = (r'Driver=SQL Server;'
-            r'Server=(local);'
-            r'Database=StudyBuddy;'
-            r'Trusted_Connection=yes'
-            )
     cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
@@ -469,11 +393,6 @@ POSTCONDITION:
 -Otherwise, either user or class or both isnt present in db and None is returned
 '''
 def getTaskList(username, className):
-    conn = (r'Driver=SQL Server;'
-            r'Server=(local);'
-            r'Database=StudyBuddy;'
-            r'Trusted_Connection=yes'
-            )
     cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
@@ -501,11 +420,6 @@ POSTCONDITION:
 - Otherwise, task is not in db and None is returned
 '''
 def getSingleTask(username, className, taskName):
-    conn = (r'Driver=SQL Server;'
-            r'Server=(local);'
-            r'Database=StudyBuddy;'
-            r'Trusted_Connection=yes'
-            )
     cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
@@ -531,11 +445,6 @@ POSTCONDITION:
 - Otherwise, None returned
 '''
 def getTaskID(username, className, taskName):
-    conn = (r'Driver=SQL Server;'
-            r'Server=(local);'
-            r'Database=StudyBuddy;'
-            r'Trusted_Connection=yes'
-            )
     cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
@@ -564,11 +473,6 @@ POSTCONDITION:
 - Otherwise,  no record is present in db and None is returned
 '''
 def completeTask(username, className, taskName, grade):
-    conn = (r'Driver=SQL Server;'
-            r'Server=(local);'
-            r'Database=StudyBuddy;'
-            r'Trusted_Connection=yes'
-            )
     cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     task = getSingleTask(username, className, taskName)
@@ -602,11 +506,6 @@ POSTCONDITION:
 - Otherwise, None is returned
 '''
 def uncompleteTask(username, className, taskName):
-    conn = (r'Driver=SQL Server;'
-            r'Server=(local);'
-            r'Database=StudyBuddy;'
-            r'Trusted_Connection=yes'
-            )
     cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     taskID = getTaskID(username, className, taskName).tID
@@ -631,11 +530,6 @@ POSTCONDITION:
 - Otherwise, None is returned
 '''
 def getCompleteTasksForClass(username, className):
-    conn = (r'Driver=SQL Server;'
-            r'Server=(local);'
-            r'Database=StudyBuddy;'
-            r'Trusted_Connection=yes'
-            )
     cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
@@ -665,11 +559,6 @@ POSTCONDITION:
 - Otherwise, None is returned
 '''
 def addTask(username, className, taskName, weight, deadline,goal):
-    conn = (r'Driver=SQL Server;'
-            r'Server=(local);'
-            r'Database=StudyBuddy;'
-            r'Trusted_Connection=yes'
-            )
     cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
@@ -698,11 +587,6 @@ POSTCONDITION:
 - Otherwise, None is returned
 '''
 def removeTask(username, className, taskName):
-    conn = (r'Driver=SQL Server;'
-            r'Server=(local);'
-            r'Database=StudyBuddy;'
-            r'Trusted_Connection=yes'
-            )
     cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
@@ -728,11 +612,6 @@ POSTCONDITION:
 - ** make sure that eDate is passed in as a datetime object or converted
 '''
 def editTask (username, className, taskName, eName, eDate, eWeight,eGoal):
-    conn = (r'Driver=SQL Server;'
-            r'Server=(local);'
-            r'Database=StudyBuddy;'
-            r'Trusted_Connection=yes'
-            )
     cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)
@@ -775,11 +654,6 @@ POSTCONDITION:
 - else, return None (user doesnt exist)
 '''
 def getDeadlines(username):
-    conn = (r'Driver=SQL Server;'
-            r'Server=(local);'
-            r'Database=StudyBuddy;'
-            r'Trusted_Connection=yes'
-            )
     cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
     user = getUser(username)

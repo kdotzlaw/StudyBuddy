@@ -4,11 +4,6 @@
 
 # Project Summary and Vision
 
-
-### Test Plan and Sequence Diagrams
-The project test plan and sequence diagrams are located: https://github.com/kdotzlaw/StudyBuddy/wiki/Sprint-2
-The changlog is located: https://github.com/kdotzlaw/StudyBuddy/wiki/Changelog
-
 ### About
 The Study Buddy is an application that allows students to keep track of their study progress with an incentive through a buddy that can be leveled up as they progress with their studies.  Being called “The Procrastinators,” as a team we felt this would be a great way to help students with their studies.
 
@@ -161,6 +156,12 @@ This feature will allow for users to level up their buddy.
 - When I click on the customization button and select an unlocked customizable option for my companion.
 - The system changes the appearance of my companion to reflect the selected customizable.
 
+# Documentation
+The following documentation were prepared as part of StudyBuddy deliverables.
+- [Test Plan](/docs/SE2%20Test%20Plan.pdf)
+- [Sequence Diagrams](https://github.com/kdotzlaw/StudyBuddy/wiki/Sprint-2)
+- [Changelog](https://github.com/kdotzlaw/StudyBuddy/wiki/Changelog)
+- [Coding Standards](/docs/CodeStandards.md)
 
 # Team Members
 

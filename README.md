@@ -162,6 +162,7 @@ The following documentation were prepared as part of StudyBuddy deliverables.
 - [Sequence Diagrams](https://github.com/kdotzlaw/StudyBuddy/wiki/Sprint-2)
 - [Changelog](https://github.com/kdotzlaw/StudyBuddy/wiki/Changelog)
 - [Coding Standards](/docs/CodeStandards.md)
+- [Load Test Report](/backend/load-test_report.pdf)
 
 # Team Members
 

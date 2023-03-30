@@ -38,7 +38,7 @@
         axios.get(host + apiUrlMeta)
             .then(function (response) {
                 console.log(response);
-                classInfo.value = response.json();
+                classInfo.value = response.data.result;
             })
             .catch(function (error) {
                 console.log(error.response);
@@ -50,7 +50,7 @@
         axios.get(host + apiUrlReq)
             .then(function (response) {
                 console.log(response);
-                reqs.value = response.json();
+                reqs.value = response.data.result;
             })
             .catch(function (error) {
                 console.log(error.response);
@@ -72,20 +72,16 @@
 
     const grade = ref("C+");
     const classInfo = ref({
-        name: "COMP 2080", // Class primary key
-        timeStudied: 2.3,
-        details: {
-            name: "Analysis of Algorithms",
-            section: "A02",
-            room: "Armes 201"
-        },
-        professor: {
-            name: "Hello surname",
-            email: "hellosur@email.com",
-            phone: "204-505-6060",
-            officeLocation: "Machray 200",
-            officeHours: "5:00-6:00"
-        }
+        class_Name: "Loading...", // Class primary key
+        studyTime: 0,
+        classroom: null,
+        prof_Name: null,
+        prof_Email: null,
+        prof_Phone: null,
+        prof_Office: null,
+        prof_Hours: null,
+        section: null,
+        timeslot: null
     });
     // Smart detect requirement type by checking keywords in title
     function getMatch(title){
@@ -229,7 +225,7 @@
 
                     <!-- Class name and time studied -->
                     <h1 v-motion-pop> {{ classRoute }} </h1>
-                    <h2 v-motion-pop> Studied {{ classInfo.timeStudied }} hours this week </h2>
+                    <h2 v-motion-pop> Studied {{ classInfo.studyTime }} hours this week </h2>
 
                 </div>
                 <div v-motion-pop>
@@ -280,15 +276,19 @@
                     <table>
                         <tr>
                             <td> Name </td>
-                            <td> {{ classInfo.details.name }} </td>
+                            <td> {{ classInfo.class_Name }} </td>
+                        </tr>
+                        <tr>
+                            <td> Timeslot </td>
+                            <td> {{ classInfo.timeslot }} </td>
                         </tr>
                         <tr>
                             <td> Section </td>
-                            <td> {{ classInfo.details.section }} </td>
+                            <td> {{ classInfo.section }} </td>
                         </tr>
                         <tr>
                             <td> Room </td>
-                            <td> {{ classInfo.details.room }} </td>
+                            <td> {{ classInfo.classroom }} </td>
                         </tr>
                     </table>
                     
@@ -296,23 +296,23 @@
                     <table>
                         <tr>
                             <td> Name </td>
-                            <td> {{ classInfo.professor.name }} </td>
+                            <td> {{ classInfo.prof_Name }} </td>
                         </tr>
                         <tr>
                             <td> Email </td>
-                            <td> {{ classInfo.professor.email }} </td>
+                            <td> {{ classInfo.prof_Email }} </td>
                         </tr>
                         <tr>
                             <td> Phone </td>
-                            <td> {{ classInfo.professor.phone }} </td>
+                            <td> {{ classInfo.prof_Phone }} </td>
                         </tr>
                         <tr>
                             <td> Office Location </td>
-                            <td> {{ classInfo.professor.officeLocation }} </td>
+                            <td> {{ classInfo.prof_Office }} </td>
                         </tr>
                         <tr>
                             <td> Office Hours </td>
-                            <td> {{ classInfo.professor.officeHours }} </td>
+                            <td> {{ classInfo.prof_Hours }} </td>
                         </tr>
                     </table>
                 </div>

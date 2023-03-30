@@ -20,10 +20,10 @@
     const { updateSkin, setPageName } = store;
 
     let classes = [
-        { name: "COMP2080", timeStudied: 2.5 },
-        { name: "COMP4350", timeStudied: 6.2 },
-        { name: "COMP4620", timeStudied: 0.0 },
-        { name: "COMP4380", timeStudied: 10.0 },
+        { name: "COMP 2080", timeStudied: 2.5 },
+        { name: "COMP 4350", timeStudied: 6.2 },
+        { name: "COMP 4620", timeStudied: 0.0 },
+        { name: "COMP 4380", timeStudied: 10.0 },
     ]
     // Return color tag by class key
     function getTagColor(key) {

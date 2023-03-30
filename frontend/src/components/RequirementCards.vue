@@ -53,9 +53,6 @@
 <template>
     <div id="reqCards" :class="borderClass">
 
-        <!-- Add new card -->
-        <div v-if="reqs.length==0" :class="`reqCard addNew`"> + </div>
-        
         <!-- Requirement card set -->
         <div v-for="req in reqs" :class="`reqCard fullCard`">
 

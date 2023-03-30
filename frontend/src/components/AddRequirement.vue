@@ -13,8 +13,8 @@
       <input type="text" id="name-req-input" placeholder="Enter requirement name" v-model="reqName" @keydown="checkEnter">
     </div>
     <div id="grade-req">
-      <h3>Letter Goal</h3>
-      <input type="text" id="grade-req-input" placeholder="A" v-model="gradeReq" @keydown="checkEnter">
+      <h3>Weight</h3>
+      <input type="text" id="grade-req-input" placeholder="%" v-model="gradeReq" @keydown="checkEnter">
     </div>
     <div id="date-req">
       <h3>Due Date</h3>
@@ -75,15 +75,26 @@
     if(reqName){
       gradeReq = document.getElementById("grade-req-input").value;
       reqDate = document.getElementById("date-req-input").value;
+      if(reqDate)
+        reqDate = new Date(reqDate).toISOString();
+      else
+        reqDate = new Date(Date.now()).toISOString();
 
       const host = 'http://127.0.0.1:5000'; 
       const apiUrlNew = `/api/class/${classRoute}/newtask`;
       const apiUrlUpdate = `/api/class/${classRoute}/task/${reqName}/edit`;
       const apiUrlComplete = `/api/class/${classRoute}/task/${reqName}/complete`;
       let data = {
+        classname: classRoute,
         taskname: reqName,
         weight: gradeReq,
         deadline: reqDate,
+      };
+      let updateData = {
+        classname: classRoute,
+        newname: reqName,
+        newdeadline: reqDate,
+        newweight: gradeReq
       };
       
       // Checks to see if they are editting the requirement
@@ -112,7 +123,7 @@
       }
       // Update current task information
       else if (props.edit && !complete){
-        axios.post(host + apiUrlUpdate, data)
+        axios.post(host + apiUrlUpdate, updateData)
           .then(function (response) {
             console.log(response);
             setModal("Success", "success", response.data);
@@ -153,7 +164,7 @@
       const apiUrl = `/api/class/${classRoute}/task/${reqName}/delete`;
 
       let data = {
-        taskname: reqName,
+        classname: classRoute,
       };
 
       if(props.edit){

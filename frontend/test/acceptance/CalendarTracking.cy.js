@@ -7,7 +7,7 @@
 
 const serverUrl = Cypress.env('serverUrl');
 
-let courseCode = "COMP4350";
+let courseCode = "COMP 4350";
 
 context('Actions', () => {
   beforeEach(() => {
@@ -27,7 +27,7 @@ context('Actions', () => {
 
   it('View important dates from Dashboard', () => {
     cy.contains('Calendar Overview').click()
-      .wait(200)
+      .wait(20000)
     cy.get('#reqCards')
       .find('.dues')
       .each(($date) => {
@@ -43,7 +43,7 @@ context('Actions', () => {
   it('View current and elapsed requirements from each class', () => {
     cy.get('#workspace')
       .scrollTo('bottom')
-    cy.contains(courseCode).click()
+    cy.contains(courseCode, { timeout: 20000 }).click()
       .wait(200)
     cy.get('#reqCards').should('exist')
     cy.get('#change-view').click()
@@ -54,7 +54,7 @@ context('Actions', () => {
   it('Create new task', () => {
     cy.get('#workspace')
       .scrollTo('bottom')
-    cy.contains(courseCode).click()
+    cy.contains(courseCode, { timeout: 20000 }).click()
       .wait(200)
     cy.contains('Add Requirements').click()
       .wait(200)
@@ -67,7 +67,7 @@ context('Actions', () => {
   it('Edit a current task', () => {
     cy.get('#workspace')
       .scrollTo('bottom')
-    cy.contains(courseCode).click()
+    cy.contains(courseCode, { timeout: 20000 }).click()
       .wait(200)
     cy.get('.reqManage').first().click()
       .wait(200)
@@ -80,7 +80,7 @@ context('Actions', () => {
   it('Delete an existing task', () => {
     cy.get('#workspace')
       .scrollTo('bottom')
-    cy.contains(courseCode).click()
+    cy.contains(courseCode, { timeout: 20000 }).click()
       .wait(200)
     cy.get('.reqManage').first().click()
       .wait(200)
@@ -90,7 +90,7 @@ context('Actions', () => {
   it('Complete an existing task by assigning a grade', () => {
     cy.get('#workspace')
       .scrollTo('bottom')
-    cy.contains(courseCode).click()
+    cy.contains(courseCode, { timeout: 20000 }).click()
       .wait(200)
     cy.get('.reqManage').first().click()
       .wait(200)

@@ -33,7 +33,7 @@
         return mapping;
     }
     const reqs = ref([]);
-    const chats = ref([]);
+    const chats = ref(["Press on the Play ▶ button on a class to start studying!"]);
 
     let chatIndex = 0;
     const chat = ref(chats.value[0]);

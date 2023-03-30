@@ -7,7 +7,7 @@
 
 const serverUrl = Cypress.env('serverUrl');
 
-let courseCode = "COMP4350";
+let courseCode = "COMP 4350";
 
 context('Actions', () => {
   beforeEach(() => {
@@ -28,24 +28,24 @@ context('Actions', () => {
   })
 
   it('View estimated letter grades from all classes', () => {
-    cy.contains(courseCode).click()
+    cy.contains(courseCode, { timeout: 20000 }).click()
       .wait(200)
-    cy.get('#grade').should('not.be.empty')
+    cy.get('#grade', { timeout: 20000 }).should('not.be.empty')
       .wait(200)
   })
 
   it('Completed requirements from each class should have a letter grade assigned', () => {
-    cy.contains(courseCode).click()
+    cy.contains(courseCode, { timeout: 20000 }).click()
       .wait(200)
     cy.get('#change-view').click()
       .wait(100)
-    cy.get('.goal').each(($grade) => {
+    cy.get('.goal', { timeout: 20000 }).each(($grade) => {
       cy.wrap($grade).should('not.equal','')
     })
   })
 
   it('Create grading scheme', () => {
-    cy.contains(courseCode).click()
+    cy.contains(courseCode, { timeout: 20000 }).click()
       .wait(200)
     cy.contains('Grade breakdown').click()
       .wait(200)

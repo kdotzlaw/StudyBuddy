@@ -2,6 +2,7 @@
  * filter.ts
  *    Filter functions for Accordion and Buddy Chats.
  */
+
 type reqsEntry = {
     classKey: string;
     tagColor: string;
@@ -12,46 +13,39 @@ type reqsEntry = {
     task_goal: string; 
 };
 
-type chatsEntry = {
-    classKey: string;
-    tagColor: string;
-    task_Name: string;
-    due: Date;
-    task_Weight: number; 
-    task_grade: number; 
-    task_goal: string; 
-};
-
+/* getReqs
+ *   Sorts requirements from all user's classes earliest to latest
+ *   @params - entries: Array<reqsEntry>
+ *=====================================*/
 function getReqs(entries: reqsEntry[]): Array<reqsEntry> {
     entries.sort((a, b) => {
         const aDate = a.due.toISOString();
         const bDate = b.due.toISOString();
         
-        if (aDate < bDate) {
+        if (aDate < bDate) 
             return -1;
-        }
-        if (aDate > bDate) {
+        if (aDate > bDate)
             return 1;
-        }
         return 0;
     });
 
     let sortedEntries: reqsEntry[] = [];
-    if (entries.length < 5)
-    {
-        for (let i = 0; i < entries.length; i++) {
+    if (entries.length < 5){
+        for (let i = 0; i < entries.length; i++)
             sortedEntries.push(entries[i]);
-        }
     }
-    else
-    {
-        for (let i = 0; i < 5; i++) {
+    else{
+        for (let i = 0; i < 5; i++)
             sortedEntries.push(entries[i]);
-        }
     }
     return sortedEntries;
 }
 
+/* getChats
+ *   Generates Buddy chats comprised of study goal reminders, 
+ *   impending deadlines, tips, and encouragements.
+ *   @params - entries: Array<reqsEntry>
+ *=====================================*/
 function getChats(entries: reqsEntry[]): Array<Object> {
     // These chats are always present.
     const playButtonString: string = "Press on the Play ▶ button on a class to start studying!";
@@ -73,7 +67,7 @@ function getChats(entries: reqsEntry[]): Array<Object> {
         "July", "August", "September", "October", "November", "December"
     ];
 
-    let chats: string[] = [playButtonString, goodHoomanString, studyMoreString];
+    let chats: string[] = [playButtonString];
     let sortedEntries: reqsEntry[] = getReqs(entries);
     if (sortedEntries.length == 0) {
         chats.push(noUpcomingAssignmentString);
@@ -97,6 +91,8 @@ function getChats(entries: reqsEntry[]): Array<Object> {
             chats.push(assignmentChatString);
         }
     }
+    chats.push(studyMoreString);
+    chats.push(goodHoomanString);
     return chats;
 }
 
@@ -104,4 +100,4 @@ export default{
     getReqs,
     getChats
 }
-export { reqsEntry , chatsEntry };
+export { reqsEntry };

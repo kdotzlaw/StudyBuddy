@@ -6,7 +6,7 @@
 
 import {describe, expect, test} from '@jest/globals';
 import filter from '../../src/logic/filter';
-import type {reqsEntry, chatsEntry} from '../../src/logic/filter';
+import type {reqsEntry} from '../../src/logic/filter';
 
 let assignment1: reqsEntry = {
   classKey: "COMP4620", 

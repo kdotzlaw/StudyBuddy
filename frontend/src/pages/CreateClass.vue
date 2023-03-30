@@ -39,7 +39,7 @@
     </div>
     
     <!-- Professor details input forms -->
-    <div id="professor-container">
+    <div v-if="classRoute" id="professor-container">
       <h2>Professor Details</h2>
       <div id="professor-input">
         <div id="professor-name-container">
@@ -50,6 +50,12 @@
         </div>
         <div id="professor-office-container">
           <input type="text" id="professor-office-input" placeholder="Enter office location" v-model="profOffice">
+        </div>
+        <div id="professor-hours-container">
+          <input type="text" id="professor-hours-input" placeholder="Enter office hours" v-model="profHours">
+        </div>
+        <div id="professor-phone-container">
+          <input type="text" id="professor-phone-input" placeholder="Enter phone number" v-model="profPhone">
         </div>
         
       </div>
@@ -80,15 +86,17 @@
   const { updateSkin, setPageName, setStudyClass, setModal, toggleModal } = store;
 
   onMounted(() => {
-    if(classRoute)
+    if(classRoute){
       setPageName("Manage Class");
+      document.getElementById("class-name-input").value = classRoute;
+    }
     else
       setPageName("Create New Class");
   });
 
   // Get classRoute from URL
   let classRoute = useRoute().params.slug;
-  let className, sectionName, classCode, room, classTime, profName, profEmail, profOffice;
+  let className, sectionName, classCode, room, classTime, profName, profEmail, profOffice, profPhone, profHours;
 
   /*  createClass
    *    Creates a new class or updates an existing class.
@@ -108,20 +116,26 @@
     const host = 'http://127.0.0.1:5000'; 
     const apiUrlNew = `/api/newclass`;
     const apiUrlUpdate = `/api/class/${classRoute}/update_meta`;
-    const data = {
-      className: className,
-      sectionName: sectionName,
-      classCode: classCode,
-      room: room,
-      classTime: classTime,
-      profName: profName,
-      profEmail: profEmail,
-      profOffice: profOffice
+    const createData = {
+      classname: className,
+      timeslot: classTime,
+      courseCode: classCode
+    };
+    const updateData = {
+      classname: className,
+      timeslot: classTime,
+      sectionnum: sectionName,
+      classroom: room,
+      prof: profName,
+      prof_phone: profPhone,
+      prof_email: profEmail,
+      prof_office: profOffice,
+      prof_hours: profHours
     };
 
     // Update current class information
     if(classRoute){
-      axios.post(host + apiUrlUpdate, data)
+      axios.post(host + apiUrlUpdate, updateData)
         .then(function (response) {
           console.log(response);
           setModal("Success", "success", response.data);
@@ -131,11 +145,11 @@
           console.log(error.response);
           setModal("Error", "error", error.response.data);
           toggleModal();
-        });
+        })
     }
     // Create new class
     else{
-      axios.post(host + apiUrlNew, data)
+      axios.post(host + apiUrlNew, createData)
         .then(function (response) {
           console.log(response);
           setModal("Success", "success", response.data);
@@ -145,7 +159,7 @@
           console.log(error.response);
           setModal("Error", "error", error.response.data);
           toggleModal();
-        });
+        })
     }
   };
 
@@ -333,7 +347,7 @@
 
   /*  
   Styling for the professor container. 
-  Uses grids to displau them
+  Uses grids to display them
   */
 
   #professor-name-container{
@@ -370,6 +384,34 @@
   }
   
   #professor-office-input{
+    width: 100%;
+    height: 5vh;
+    font-size: medium;
+    border-radius: 1em;
+    background: var(--white);
+    color: var(--black);
+  }
+
+  #professor-hours-container{
+    grid-column: 1/2;
+    grid-row: 6;
+  }
+  
+  #professor-hours-input{
+    width: 100%;
+    height: 5vh;
+    font-size: medium;
+    border-radius: 1em;
+    background: var(--white);
+    color: var(--black);
+  }
+
+  #professor-phone-container{
+    grid-column: 2/3;
+    grid-row: 6;
+  }
+  
+  #professor-phone-input{
     width: 100%;
     height: 5vh;
     font-size: medium;

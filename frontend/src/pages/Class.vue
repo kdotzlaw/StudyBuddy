@@ -19,8 +19,8 @@
     import { useStore } from "../stores";
     
     const store = useStore();
-    const { sessionTimer, userId, studyClass } = storeToRefs(store);
-    const { updateSkin, setPageName, setStudyClass, setModal } = store;
+    const { sessionTimer, userId, studyClass, reqSignal, gradeSignal } = storeToRefs(store);
+    const { updateSkin, setPageName, setStudyClass, setModal, updateReqSignal, updateGradeSignal } = store;
 
     let classRoute = useRoute().params.slug;
 
@@ -59,46 +59,55 @@
             .catch(function (error) {
                 console.log(error.response);
             })
+        
+        updateReqSignal(true);
+        updateGradeSignal(true);
     })
 
     // Get this class' requirements
     const reqTrigger = computed(() => {
-        const host = 'http://127.0.0.1:5000'; 
-        const apiUrlReq = `/api/class/${classRoute}/task`;
-        axios.get(host + apiUrlReq)
-            .then(function (response) {
-                console.log(response);
-                // Handle null dates; default to today
-                let result = response.data.result;
-                for (let i=0; i<result.length; i++){
-                    if(!result[i].deadline)
-                        result[i].due = new Date(Date.now());
-                    else
-                        result[i].due = new Date(result[i].deadline);
-                    result[i].tagColor = getTagColor(result[i].task_Name);
-                }
-                reqs.value = result;
-            })
-            .catch(function (error) {
-                console.log(error.response);
-                reqs.value = [];
-            })
+        if(reqSignal.value){
+            const host = 'http://127.0.0.1:5000'; 
+            const apiUrlReq = `/api/class/${classRoute}/task`;
+            axios.get(host + apiUrlReq)
+                .then(function (response) {
+                    console.log(response);
+                    // Handle null dates; default to today
+                    let result = response.data.result;
+                    for (let i=0; i<result.length; i++){
+                        if(!result[i].deadline)
+                            result[i].due = new Date(Date.now());
+                        else
+                            result[i].due = new Date(result[i].deadline);
+                        result[i].tagColor = getTagColor(result[i].task_Name);
+                    }
+                    reqs.value = result;
+                })
+                .catch(function (error) {
+                    console.log(error.response);
+                    reqs.value = [];
+                })
+            updateReqSignal(false);
+        }
     })
 
     // Get this class' letter grade
     const gradeTrigger = computed(() => {
-        const host = 'http://127.0.0.1:5000'; 
-        const apiUrlGrade = `/api/class/${classRoute}/grade`;
-        axios.get(host + apiUrlGrade)
-            .then(function (response) {
-                console.log(response);
-                grade.value = response.data.result;
-                comment.value = response.data.message;
-            })
-            .catch(function (error) {
-                console.log(error.response);
-                comment.value = error.response.data;
-            })
+        if(gradeSignal.value){
+            const host = 'http://127.0.0.1:5000'; 
+            const apiUrlGrade = `/api/class/${classRoute}/grade`;
+            axios.get(host + apiUrlGrade)
+                .then(function (response) {
+                    console.log(response);
+                    grade.value = response.data.result;
+                    comment.value = response.data.message;
+                })
+                .catch(function (error) {
+                    console.log(error.response);
+                    comment.value = error.response.data;
+                })
+            updateGradeSignal(false);
+        }
     })
 
     /*===========================

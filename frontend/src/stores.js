@@ -106,6 +106,24 @@ export const useStore = defineStore('store', () => {
         buddyChoice.value = buddy;
     }
 
+    /* reqSignal
+     *   Detect new change in course requirement cards
+     *   setter @params - signal: Boolean
+     *=====================================*/
+    const reqSignal = ref(false);
+    function updateReqSignal(signal=false){
+        reqSignal.value = signal;
+    }
+
+    /* gradeSignal
+     *   Detect new change in course letter grade
+     *   setter @params - signal: Boolean
+     *=====================================*/
+    const gradeSignal = ref(false);
+    function updateGradeSignal(signal=false){
+        gradeSignal.value = signal;
+    }
+
     // Export refs and getter/setter functions
     return {
         sessionTimer, setTimer,
@@ -114,6 +132,7 @@ export const useStore = defineStore('store', () => {
         studyTime, studyClass, setStudyTime, setStudyClass,
         isModalOpen, toggleModal,
         modalTitle, modalContent, modalRender, setModal,
-        uiSkin, updateSkin, buddyChoice, updateBuddy
+        uiSkin, updateSkin, buddyChoice, updateBuddy,
+        reqSignal, updateReqSignal, gradeSignal, updateGradeSignal
     }
 })

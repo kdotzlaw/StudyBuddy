@@ -48,7 +48,7 @@
   import { useStore } from "../stores";
 
   const store = useStore();
-  const {setModal, toggleModal} = store;
+  const {setModal, toggleModal, updateReqSignal, updateGradeSignal} = store;
 
   const props = defineProps({ 
     edit: {type: Boolean, required: false, default: false},
@@ -114,6 +114,8 @@
             console.log(response);
             setModal("Success", "success", response.data);
             toggleModal();
+            updateReqSignal(true);
+            updateGradeSignal(true);
           })
           .catch(function (error) {
             console.log(error.response);
@@ -127,6 +129,7 @@
           .then(function (response) {
             console.log(response);
             setModal("Success", "success", response.data);
+            updateReqSignal(true);
             toggleModal();
           })
           .catch(function (error) {
@@ -141,6 +144,7 @@
         .then(function (response) {
           console.log(response);
           setModal("Success", "success", response.data);
+          updateReqSignal(true);
           toggleModal();
         })
         .catch(function (error) {
@@ -173,6 +177,7 @@
           console.log(response);
           setModal("Success", "success", response.data);
           toggleModal();
+          updateReqSignal(true);
         })
         .catch(function (error) {
           console.log(error.response);

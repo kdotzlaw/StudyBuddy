@@ -5,21 +5,22 @@
 type reqsEntry = {
     classKey: string;
     tagColor: string;
-    name: string;
+    task_Name: string;
     due: Date;
-    goal: string; 
+    task_Weight: number; 
+    task_grade: number; 
+    task_goal: string; 
 };
 
 type chatsEntry = {
     classKey: string;
     tagColor: string;
-    name: string;
+    task_Name: string;
     due: Date;
-    goal: string; 
+    task_Weight: number; 
+    task_grade: number; 
+    task_goal: string; 
 };
-
-
-
 
 function getReqs(entries: reqsEntry[]): Array<reqsEntry> {
     entries.sort((a, b) => {
@@ -55,8 +56,6 @@ function getChats(entries: reqsEntry[]): Array<Object> {
     // These chats are always present.
     const playButtonString: string = "Press on the Play ▶ button on a class to start studying!";
     const goodHoomanString: string = "Good hooman!";
-    //const doingGreatString: string = "Great job!"
-    //const doingBadString: string = "You're not doing so well!"
     const studyMoreString: string = "Let's study some study more!"
 
     // Constant chats that aren't always present
@@ -82,20 +81,20 @@ function getChats(entries: reqsEntry[]): Array<Object> {
     else {
         for (let i = 0; i < sortedEntries.length; i++) {
             let classKey: string  = sortedEntries[i].classKey;
-            let assignmentName: string = sortedEntries[i].name;
-            let classGoal: string = sortedEntries[i].goal;
+            let assignmentName: string = sortedEntries[i].task_Name;
+            let classGoal: string = sortedEntries[i].task_goal;
             let dueDate: string = monthNames[sortedEntries[i].due.getMonth()].concat(' ', sortedEntries[i].due.getDate().toString());
-    
+            
             let assignmentChatString = upcomingAssignmentString.concat(assignmentName, '\" ', forClassString, classKey, '. ', dueDateString, dueDate, '!');
-            let classGoalChatString;
-            if (classGoal.includes('a') || classGoal.includes('A') || classGoal.includes('e') || classGoal.includes('F') ||classGoal.includes('f') || classGoal.includes('F')) {
-                classGoalChatString = classGoalVowelString.concat(classGoal, ' ', forClassString, classKey, '!');
-            }
-            else {
-                classGoalChatString = classGoalConsonantString.concat(classGoal, ' ', forClassString, classKey, '!');
+            let classGoalChatString: string;
+            if(classGoal){
+                if (classGoal.includes('a') || classGoal.includes('A') || classGoal.includes('e') || classGoal.includes('F') ||classGoal.includes('f') || classGoal.includes('F'))
+                    classGoalChatString = classGoalVowelString.concat(classGoal, ' ', forClassString, classKey, '!');
+                else
+                    classGoalChatString = classGoalConsonantString.concat(classGoal, ' ', forClassString, classKey, '!');
+                chats.push(classGoalChatString);
             }
             chats.push(assignmentChatString);
-            chats.push(classGoalChatString);
         }
     }
     return chats;

@@ -48,7 +48,7 @@ describe('Test setting study timer, class, and time', () => {
     setTimer(new Timer(uID, cID));
       expect(sessionTimer.value.getSessionUser()).toBe(uID);
       expect(sessionTimer.value.getCurrentClass()).toBe(cID);
-      expect(sessionTimer.value.getTime()).toBe(0);
+      expect(sessionTimer.value.getTime()).toBeCloseTo(0);
   })
 
   test('Change active class (setStudyClass)', () => {

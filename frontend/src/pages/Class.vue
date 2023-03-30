@@ -28,55 +28,6 @@
        MANAGE CLASS METADATA
      *===========================*/
 
-    onMounted(() => {
-        setPageName("Class View");
-
-        // Get this class' metadata
-        const host = 'http://127.0.0.1:5000'; 
-        const apiUrlMeta = `/api/class/${classRoute}`;
-
-        axios.get(host + apiUrlMeta)
-            .then(function (response) {
-                console.log(response);
-                classInfo.value = response.data.result;
-            })
-            .catch(function (error) {
-                console.log(error.response);
-            })
-
-        // Get this class' requirements
-        const apiUrlReq = `/api/class/${classRoute}/task`;
-
-        axios.get(host + apiUrlReq)
-            .then(function (response) {
-                console.log(response);
-                // Handle null dates; default to today
-                let result = response.data.result;
-                for (let i=0; i<result.length; i++){
-                    result[i].due = result[i].deadline;
-                    if(!result[i].deadline)
-                        result[i].due = new Date(Date.now());
-                }
-                reqs.value = result;
-            })
-            .catch(function (error) {
-                console.log(error.response);
-            })
-
-        // Get this class' letter grade
-        const apiUrlGrade = `/api/class/${classRoute}/grade`;
-
-        axios.get(host + apiUrlGrade)
-            .then(function (response) {
-                console.log(response);
-                grade.value = response.data.result;
-                comment.value = response.data.message;
-            })
-            .catch(function (error) {
-                console.log(error.response);
-            })
-    });
-
     // Page data placeholders
     const grade = ref(null);
     const comment = ref("Calculating grade..");
@@ -91,8 +42,64 @@
         prof_Hours: null,
         section: null,
         timeslot: "Loading..."
-    });
+    })
     const reqs = ref([]);
+    
+    onMounted(() => {
+        setPageName("Class View");
+
+        // Get this class' metadata
+        const host = 'http://127.0.0.1:5000'; 
+        const apiUrlMeta = `/api/class/${classRoute}`;
+        axios.get(host + apiUrlMeta)
+            .then(function (response) {
+                console.log(response);
+                classInfo.value = response.data.result;
+            })
+            .catch(function (error) {
+                console.log(error.response);
+            })
+    })
+
+    // Get this class' requirements
+    const reqTrigger = computed(() => {
+        const host = 'http://127.0.0.1:5000'; 
+        const apiUrlReq = `/api/class/${classRoute}/task`;
+        axios.get(host + apiUrlReq)
+            .then(function (response) {
+                console.log(response);
+                // Handle null dates; default to today
+                let result = response.data.result;
+                for (let i=0; i<result.length; i++){
+                    if(!result[i].deadline)
+                        result[i].due = new Date(Date.now());
+                    else
+                        result[i].due = new Date(result[i].deadline);
+                    result[i].tagColor = getTagColor(result[i].task_Name);
+                }
+                reqs.value = result;
+            })
+            .catch(function (error) {
+                console.log(error.response);
+                reqs.value = [];
+            })
+    })
+
+    // Get this class' letter grade
+    const gradeTrigger = computed(() => {
+        const host = 'http://127.0.0.1:5000'; 
+        const apiUrlGrade = `/api/class/${classRoute}/grade`;
+        axios.get(host + apiUrlGrade)
+            .then(function (response) {
+                console.log(response);
+                grade.value = response.data.result;
+                comment.value = response.data.message;
+            })
+            .catch(function (error) {
+                console.log(error.response);
+                comment.value = error.response.data;
+            })
+    })
 
     /*===========================
        ASSIGN TAG COLOR
@@ -149,12 +156,12 @@
         if(studyClass.value == classRoute && !sessionTimer.value.isPaused())
             return "Pause session";
         return "Study now";
-    });
+    })
     const studyIcon = computed(() => {
         if(studyClass.value == classRoute && !sessionTimer.value.isPaused())
             return Pause;
         return Play;
-    });
+    })
 
 
     /*===========================
@@ -173,7 +180,7 @@
             if(diffDays > -1)
                 return req;
         })
-    });
+    })
     const expiredReqs = computed(() => {
         return reqs.value.filter(req => {
             let diffTime = req.due - today;
@@ -181,19 +188,19 @@
             if(diffDays < 0)
                 return req;
         })
-    });
+    })
 
     // Change displayed requirements based on active filter
     const reqSet = computed(() => {
         if(current.value)
             return currentReqs.value;
         return expiredReqs.value;
-    });
+    })
     const viewNote = computed(() => {
         if(current.value)
             return "View expired requirements";
         return "View current requirements";
-    });
+    })
 
     // Toggle between current/expired filter states
     function changeView(){
@@ -322,6 +329,7 @@
             </div>
         </section>
     </div>
+    <span>{{ reqTrigger }}{{ gradeTrigger }}</span>
 </template>
 
 <style scoped>

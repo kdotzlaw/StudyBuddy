@@ -11,51 +11,62 @@ import type {reqsEntry, chatsEntry} from '../../src/logic/filter';
 let assignment1: reqsEntry = {
   classKey: "COMP4620", 
   tagColor: "red", 
-  name: "Assignment 1", 
+  task_Name: "Assignment 1", 
   due: new Date("January 1, 2023"), 
-  goal: "C"
+  task_goal: "C",
+  task_Weight: 8,
+  task_grade: null
 };
 let assignment2: reqsEntry = {
   classKey: "COMP4620", 
   tagColor: "red", 
-  name: "Assignment 2", 
+  task_Name: "Assignment 2", 
   due: new Date("January 28, 2023"), 
-  goal: "C"
+  task_goal: "C",
+  task_Weight: 8,
+  task_grade: null
 };
 let assignment3: reqsEntry = {
   classKey: "COMP3030", 
   tagColor: "green", 
-  name: "Assignment 3", 
+  task_Name: "Assignment 3", 
   due: new Date("February 6, 2023"), 
-  goal: "A+"
+  task_goal: "A+",
+  task_Weight: 8,
+  task_grade: null
 };
 let assignment4: reqsEntry = {
   classKey: "COMP3030", 
   tagColor: "green", 
-  name: "Assignment 4", 
+  task_Name: "Assignment 4", 
   due: new Date("March 18, 2023"), 
-  goal: "A+"
+  task_goal: "A+",
+  task_Weight: 8,
+  task_grade: null
 };
 let assignment5: reqsEntry = {
   classKey: "COMP1010", 
   tagColor: "blue", 
-  name: "Final", 
+  task_Name: "Final", 
   due: new Date("April 10, 2023"), 
-  goal: "F"
+  task_goal: "F",
+  task_Weight: 8,
+  task_grade: null
 };
 let assignment6: reqsEntry = {
   classKey: "COMP1020", 
   tagColor: "purple", 
-  name: "Mid Term", 
+  task_Name: "Mid Term", 
   due: new Date("March 1, 2023"), 
-  goal: "D-"
+  task_goal: "D-",
+  task_Weight: 8,
+  task_grade: null
 };
 let assignmentList1: reqsEntry[] = [assignment1, assignment2, assignment3, assignment4, assignment5];
 let assignmentList2: reqsEntry[] = [assignment5, assignment2, assignment4, assignment3, assignment1];
 let assignmentList3: reqsEntry[] = [assignment2, assignment3, assignment4, assignment5, assignment6];
 let assignmentList4: reqsEntry[] = [assignment1, assignment2, assignment3, assignment4, assignment5, assignment6];
 let assignmentList5: reqsEntry[] = [assignment1, assignment2, assignment3];
-let assignmentList6: reqsEntry[] = [assignment1, assignment3];
 
 
 describe('Test Assignment Ordering', () => {

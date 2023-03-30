@@ -3,7 +3,7 @@ Defines helper functions used in API calls using pyodbc (for database connection
 and SQL prepared statements
 '''
 import pyodbc
-
+#define connection string
 conn = (r'Driver=ODBC Driver 17 for SQL Server;'
         r'Server=localhost;'
         r'Database=StudyBuddy;'

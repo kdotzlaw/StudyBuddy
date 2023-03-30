@@ -79,15 +79,31 @@ Orders of the HTML and Javascript block may be interchanged. CSS must always be 
 ## Backend
 ### Python
 - All SQL queries in python will be done using **Prepared Statements** to avoid SQL Injection. A valid SQL query using a prepared statement is: `cursor.execute("SELECT * FROM <tableName> WHERE <colName> = ?", username)`
+- All database methods will go into `db.py`
+- All server methods will go into `server.py`
+- Database and server methods should be organized by functionality (ie all User methods should be next to each other)
+- All database and server methods should be prefaced by preconditions, postconditions and a description of the method. Server methods should indicate endpoint requirements. 
+- All database method names should be in camelCase (ie `getTasks()`)
+- All multi-word server method names should be seperated by `_`. For example, `complete_class`.
+
 ### SQL
 - Comments will be done using `/*  */`
 - All SQL keywords will be capitalized
-- Table names, row names, column names, and variable names will be camel case. For example, `userGrades`
-- All SQL files will be pushed to `backend/`
-### Testing
+- Table names and function names will be camel case. For example, `userGrades`.
+- Names of rows and columns with multiple words will be seperated with a `_`. For example, `task_goal` or `task_Goal`.
+- All SQL files will be pushed to `develop/backend/` 
+
+### Database and Server Testing
 - Database is tested using **UnitTest**, API tested using **flask_unittest**
-- Tests for database and API in seperate classes
+- All backend tests should be contained in `backend_test.py`
+- Tests for database and API must be in seperate classes
 - Unit tests should only test **one** component/method
-- All tests should be prefaced with pass conditions and description of what test is testing
+- All tests should be prefaced with pass conditions and a description of what test is testing
 - Tests should include Negative Testing (ie test that ensure incorrect input fails correctly)
-- Unit tests should be orderd by component (ie all User tests should be next to eachother in test suite)
+- Unit tests should be orderd by component (ie all User tests should be next to each other in test suite)
+- See [StudyBuddy test plan](https://github.com/kdotzlaw/StudyBuddy/blob/main/docs/SE2%20Test%20Plan.pdf) for development prerequisites and standards.
+
+### Locust Testing
+- All load-testing will be done in `locustfile.py`
+- All tasks must be indicated with `@task` tag.
+- All task definitions must be camelCase (ie `getClasses()`

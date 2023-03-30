@@ -71,13 +71,13 @@
             <div>
 
                 <!-- Requirement name -->
-                <h3> {{ req.name }} </h3>
+                <h3> {{ req.task_Name }} </h3>
 
                 <p class="urgent"> {{ getUrgent(req.due) }} </p>
             </div>
 
             <!-- Grade goal -->
-            <h2 class="goal"> {{ req.goal }} </h2>
+            <h2 class="goal"> {{ req.task_grade }} </h2>
 
             <!-- Open Settings control -->
             <img class="reqManage" :src="Gear" alt="Manage requirement" @click="setModal('Edit Requirement', 'editRequirement')" />

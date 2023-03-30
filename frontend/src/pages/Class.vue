@@ -50,7 +50,14 @@
         axios.get(host + apiUrlReq)
             .then(function (response) {
                 console.log(response);
-                reqs.value = response.data.result;
+                // Handle null dates; default to today
+                let result = response.data.result;
+                for (let i=0; i<result.length; i++){
+                    result[i].due = result[i].deadline;
+                    if(!result[i].deadline)
+                        result[i].due = new Date(Date.now());
+                }
+                reqs.value = result;
             })
             .catch(function (error) {
                 console.log(error.response);
@@ -62,15 +69,17 @@
         axios.get(host + apiUrlGrade)
             .then(function (response) {
                 console.log(response);
-                let received = response.json();
-                grade.value = received.data;
+                grade.value = response.data.result;
+                comment.value = response.data.message;
             })
             .catch(function (error) {
                 console.log(error.response);
             })
     });
 
-    const grade = ref("C+");
+    // Page data placeholders
+    const grade = ref(null);
+    const comment = ref("Calculating grade..");
     const classInfo = ref({
         class_Name: "Loading...", // Class primary key
         studyTime: 0,
@@ -81,8 +90,14 @@
         prof_Office: null,
         prof_Hours: null,
         section: null,
-        timeslot: null
+        timeslot: "Loading..."
     });
+    const reqs = ref([]);
+
+    /*===========================
+       ASSIGN TAG COLOR
+     *===========================*/
+
     // Smart detect requirement type by checking keywords in title
     function getMatch(title){
         let matchList = [ 
@@ -117,16 +132,6 @@
             return "grey";
         return mapping;
     }
-    const reqs = ref([
-        { name: "Quiz 5", tagColor: getTagColor("Quiz 5"), due: new Date("February 12, 2023"), goal: "C" },
-        { name: "Homework 4", tagColor: getTagColor("Homework 4"), due: new Date("March 1, 2023"), goal: "C" },
-        { name: "Quiz 6", tagColor: getTagColor("Quiz 6"), due: new Date("March 5, 2023"), goal: "B" },
-        { name: "Assignment 5", tagColor: getTagColor("Assignment 5"), due: new Date("March 8, 2023"), goal: "C" },
-        { name: "Midterm Exam", tagColor: getTagColor("Midterm Exam"), due: new Date("March 13, 2023"), goal: "B" },
-        { name: "Final Project", tagColor: getTagColor("Final Project"), due: new Date("April 16, 2023"), goal: "C" },
-        { name: "Final Exam", tagColor: getTagColor("Final Exam"), due: new Date("April 17, 2023"), goal: "C" },
-        { name: "Become a Bee", tagColor: getTagColor("Become a Bee"), due: new Date("October 10, 2023"), goal: "" },
-    ]);
 
 
     /*===========================
@@ -259,10 +264,7 @@
                 <!-- Class grade projection -->
                 <div id="grade-ctr" v-motion-slide-right>
                     <h1 id="grade"> {{ grade }} </h1>
-                    <div id="grade-note" class="delius">
-                        Wow! <br/>
-                        You are doing okay
-                    </div>
+                    <div id="grade-note" class="delius"> {{ comment }} </div>
                     <router-link :to="'/gradeCalculator/' + classRoute">
                       <button class="button bar">
                         Grade breakdown
@@ -276,7 +278,7 @@
                     <table>
                         <tr>
                             <td> Name </td>
-                            <td> {{ classInfo.class_Name }} </td>
+                            <td> {{ classRoute }} </td>
                         </tr>
                         <tr>
                             <td> Timeslot </td>

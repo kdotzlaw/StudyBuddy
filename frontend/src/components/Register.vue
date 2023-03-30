@@ -149,7 +149,6 @@
       axios.post(host + apiUrl, data)
       .then(function (response) {
         console.log(response);
-        loginUser(username);
         setModal("Success", "success", response.data);
         toggleModal();
       })

@@ -11,6 +11,9 @@ from werkzeug.security import check_password_hash, generate_password_hash
 import uuid
 import flask_cors
 
+'''
+CLASS: customJSON(): Custom json parsing class for flask app
+'''
 class customJSON(flask.json.provider.JSONProvider):
 
     def dumps(self, obj, **kwargs):
@@ -22,14 +25,24 @@ class customJSON(flask.json.provider.JSONProvider):
 
 app = flask.Flask(__name__)
 app.json = customJSON(app)
+
 app.config["SECRET_KEY"] = uuid.uuid4().hex  # reset secret key each time the server starts
+app.config['SESSION_COOKIE_HTTPONLY'] = False
 
 # instantiate flask login manager
+
+flask_login.config.COOKIE_HTTPONLY = False
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-flask_cors.CORS(app)
+flask_cors.CORS(app, supports_credentials=True)
+
+
+# session storage
+sessions = {}
+
+
 
 # Handlers and Helpers
 '''
@@ -58,14 +71,22 @@ METHOD: request_loader(): loads user from flask request
 '''
 @login_manager.request_loader
 def request_loader(request):
-    username = request.get_json(force=True)['username']
-    # check database for username
-    selection = db.getUser(username)
-    uname = selection.username
-    if uname == username:
-        user = User()
-        user.id = username
-        return user
+    # grab session from request
+    session = request.headers.get('session')
+    # if there's a session header
+    if session in sessions.keys():
+        # grab the username from the sessions dictionary
+        username = sessions[session]
+        # check database for username
+        selection = db.getUser(username)
+        uname = selection.username
+        # the same values, and neither are None
+        if uname == username and uname and username:
+            user = User()
+            user.id = username
+            return user
+        else:
+            return None
     else:
         return None
 
@@ -91,7 +112,7 @@ METHOD: parse_row(): converts a single row into a dictionary (for db results pro
 def parse_row(row):
     return dict(zip([t[0] for t in row.cursor_description], row))
 
-# User Methods
+# API Endpoints
 '''
 METHOD: login(): preforms login api request by checking validity of username and password
 '''
@@ -118,11 +139,24 @@ def login():
             pword = selection.password
 
             if uname == username and pword == password:
+                session = str(uuid.uuid4())
+                sessions[session] = username
+
+                resp = flask.make_response()
+                resp.status_code = 200
+                resp.data = 'Logged In'
+
+                resp.headers.add_header('session', session)
+                resp.access_control_allow_headers = ['session']
+                resp.headers.set('Access-Control-Expose-Headers', 'session')
+                resp.headers.set("Access-Control-Allow-Credentials", True)
+
+                # tell flask_login to log in user
                 user = User()
                 user.id = username
                 flask_login.login_user(user)
-                # redirect to homepage
-                return "Logged In", 200
+
+                return resp
             else:
                 # invalid password
                 # send 401 bad request response
@@ -134,22 +168,27 @@ def login():
         response = "Bad Request: Missing required JSON", 400
         return response
 
+
 '''
 METHOD: logout(): removes the session cookie and logs out the user
 --> login is required for this endpoint
 '''
-# logout api request
+
 @app.route("/api/logout", methods=["POST"])
 @flask_login.login_required
 def logout():
-    # just delete the cookie from the users browser
-    # and log out the user
+    # delete session
+    sessions.pop(flask.request.headers['session'])
+
+    # log out
     flask_login.logout_user()
+
     resp = flask.make_response()
-    resp.delete_cookie('session')
     resp.data = "Logged Out"
     resp.status_code = 200
     return resp
+
+
 
 '''
 METHOD: newuser(): creates a new user as long as the username provided doesnt have an existing account
@@ -164,10 +203,25 @@ def new_user():
         # if there are no existing users with that username in the db...
         # create a new account with the username and password
         db.createAccount(username, password)
+        # create session
+        session = str(uuid.uuid4())
+        sessions[session] = username
+
+        resp = flask.make_response()
+        resp.status_code = 200
+        resp.data = 'Account Created'
+
+        resp.headers.add_header('session', session)
+        resp.access_control_allow_headers = ['session']
+        resp.headers.set('Access-Control-Expose-Headers', 'session')
+        resp.headers.set("Access-Control-Allow-Credentials", True)
+
+        # tell flask_login to log in user
         user = User()
         user.id = username
         flask_login.login_user(user)
-        return "Account created", 200
+
+        return resp
     else:
         return "Account already exists with username", 400
 # Class Methods

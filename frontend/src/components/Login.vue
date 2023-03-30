@@ -115,7 +115,8 @@
       };
       axios.post(host + apiUrl, data)
       .then(function (response) {
-        console.log(response.headers['set-cookie']);
+        console.log(response.headers);
+        axios.defaults.headers["session"] = response.headers["session"]
         loginUser(username);
         setModal("Success", "success", response.data);
         toggleModal();

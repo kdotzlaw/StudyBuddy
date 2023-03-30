@@ -10,6 +10,7 @@ conn = (r'Driver=ODBC Driver 17 for SQL Server;'
         r'UID=sa;'
         r'PWD=dbtools.IO'
         )
+
 '''
 METHOD: getUserData(): Debugging method used in tests to make sure that database contains the stub user data
 '''

@@ -4,3 +4,4 @@ flask_cors
 pyodbc
 flask_unittest
 datetime
+waitress

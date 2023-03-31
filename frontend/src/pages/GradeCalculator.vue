@@ -33,9 +33,9 @@
           </thead>
           <tbody id="table-buddy">
             <tr class="grid-one">
-              <td><input type="text" id="name-input" placeholder="Quiz" v-model="username"></td>
-              <td><input type="number" min="0" id="qty-input" placeholder="0" v-model="username"></td>
-              <td><input type="number" min="0" max="100" id="percent-input" placeholder="0" v-model="username"> %</td>
+              <td><input type="text" id="name-input" placeholder="Quiz"></td>
+              <td><input type="number" min="0" id="qty-input" placeholder="0"></td>
+              <td><input type="number" min="0" max="100" id="percent-input" placeholder="0"> %</td>
               <td> <button type="button" value="Delete">Delete</button></td>
             </tr> 
           </tbody>
@@ -59,33 +59,33 @@
           <tbody id="letter-grade-body">
             <tr class="grid-two">
               <td id="letter-grade">A+</td>
-              <td><input type="number" min="0" max="100" id="max-input-A+" placeholder="100" v-model="username"></td>
-              <td><input type="number" min="0" max="100" id="min-input-A+" placeholder="90" v-model="username"> </td>
+              <td><input type="number" min="0" max="100" id="max-input-A+" placeholder="100"></td>
+              <td><input type="number" min="0" max="100" id="min-input-A+" placeholder="90"> </td>
             </tr>
             <tr class="grid-two">
               <td id="letter-grade">A</td>
-              <td><input type="number" min="0" max="100" id="max-input-A" placeholder="89.9" v-model="username"></td>
-              <td><input type="number" min="0" max="100" id="min-input-A" placeholder="80" v-model="username"> </td>
+              <td><input type="number" min="0" max="100" id="max-input-A" placeholder="89.9"></td>
+              <td><input type="number" min="0" max="100" id="min-input-A" placeholder="80"> </td>
             </tr>
             <tr class="grid-two">
               <td id="letter-grade">B+</td>
-              <td><input type="number" min="0" max="100" id="max-input-B+" placeholder="79.9" v-model="username"></td>
-              <td><input type="number" min="0" max="100" id="min-input-B+" placeholder="75" v-model="username"> </td>
+              <td><input type="number" min="0" max="100" id="max-input-B+" placeholder="79.9"></td>
+              <td><input type="number" min="0" max="100" id="min-input-B+" placeholder="75"> </td>
             </tr>
             <tr class="grid-two"> 
               <td id="letter-grade">B</td>
-              <td><input type="number" min="0" max="100" id="max-input-B" placeholder="74.9" v-model="username"></td>
-              <td><input type="number" min="0" max="100" id="min-input-B" placeholder="70" v-model="username"> </td>
+              <td><input type="number" min="0" max="100" id="max-input-B" placeholder="74.9"></td>
+              <td><input type="number" min="0" max="100" id="min-input-B" placeholder="70"> </td>
             </tr>
             <tr class="grid-two">
               <td id="letter-grade">C+</td>
-              <td><input type="number" min="0" max="100" id="max-input-C+" placeholder="69.9" v-model="username"></td>
-              <td><input type="number" min="0" max="100" id="min-input-C+" placeholder="65" v-model="username"> </td>
+              <td><input type="number" min="0" max="100" id="max-input-C+" placeholder="69.9"></td>
+              <td><input type="number" min="0" max="100" id="min-input-C+" placeholder="65"> </td>
             </tr>
             <tr class="grid-two">
               <td id="letter-grade">C</td>
-              <td><input type="number" min="0" max="100" id="max-input-C" placeholder="64.9" v-model="username"></td>
-              <td><input type="number" min="0" max="100" id="min-input-C" placeholder="60" v-model="username"> </td>
+              <td><input type="number" min="0" max="100" id="max-input-C" placeholder="64.9"></td>
+              <td><input type="number" min="0" max="100" id="min-input-C" placeholder="60"> </td>
             </tr>
           </tbody>
         </table>
@@ -177,10 +177,10 @@
     document.getElementById("table-buddy").appendChild(newRow);
   }
 
-  /*  getDataOne
+  /*  getRequirementData
    *    This function sends the data from the table to the server
    */
-  function getDataOne(){
+  function getRequirementData(){
     let table = document.getElementById("table-buddy");
     let rows = table.getElementsByTagName("tr");
     let data = [];
@@ -201,11 +201,11 @@
     return data;
   }
 
-  /*  getDataTwo
+  /*  getBreakdownData
    *    This function sends the grade breakdown data from the table to the server.
    *    It has default values
   */
-  function getDataTwo(aPlus=100, a=90, bPlus=85, b=80, cPlus=75, c=70) {
+  function getBreakdownData(aPlus=100, a=90, bPlus=85, b=80, cPlus=75, c=70) {
     aPlus = document.getElementById("max-input-A+").value;
     a = document.getElementById("max-input-A").value;
     bPlus = document.getElementById("max-input-B+").value;
@@ -223,12 +223,14 @@
     }
 
     let data = {
-      "A+": [vals[0], vals[1]+1],
-      "A": [vals[1], vals[2]+1],
-      "B+": [vals[2], vals[3]+1],
-      "B": [vals[3], vals[4]+1],
-      "C+": [vals[4], vals[5]+1],
-      "C": [vals[5], 65]
+      "A+": `(${vals[1]+1},${vals[0]})`,
+      "A": `(${vals[2]+1},${vals[1]})`,
+      "B+": `(${vals[3]+1},${vals[2]})`,
+      "B": `(${vals[4]+1},${vals[3]})`,
+      "C+": `(${vals[5]+1},${vals[4]})`,
+      "C": `(65,${vals[5]})`,
+      "D": `(50,64)`,
+      "F": `(0,49)`
     }
     return data;
   }
@@ -239,7 +241,7 @@
   function update(){
     const host = 'http://127.0.0.1:5000'; 
     const apiUrlMeta = `/api/class/${classRoute}/update_meta`;
-    const gradeBreakdown = JSON.stringify(getDataTwo());
+    const gradeBreakdown = JSON.stringify(getBreakdownData());
     let data = {
       breakdown: gradeBreakdown
     }

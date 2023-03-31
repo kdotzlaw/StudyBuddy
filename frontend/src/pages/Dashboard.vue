@@ -19,37 +19,21 @@
     const { userId } = storeToRefs(store);
     const { updateSkin, setPageName } = store;
 
-    let classes = [
-        { name: "COMP2080", timeStudied: 2.5 },
-        { name: "COMP4350", timeStudied: 6.2 },
-        { name: "COMP4620", timeStudied: 0.0 },
-        { name: "COMP4380", timeStudied: 10.0 },
-    ]
     // Return color tag by class key
     function getTagColor(key) {
         let map = {
-            "COMP2080": "red",
-            "COMP4350": "blue",
-            "COMP4620": "green",
-            "COMP4380": "yellow",
+            "COMP 2080": "red",
+            "COMP 4350": "blue",
+            "COMP 4620": "green",
+            "COMP 4380": "yellow",
         }
         let mapping = map[key];
         if(!mapping)
             return "grey";
         return mapping;
     }
-    let reqsFiltered = filter.getReqs([
-        { classKey: "COMP4620", tagColor: getTagColor("COMP4620"), name: "Assignment 4", due: new Date("March 12, 2023"), goal: "C" },
-        { classKey: "COMP2080", tagColor: getTagColor("COMP2080"), name: "Catch up", due: new Date("March 13, 2023"), goal: "C" },
-        { classKey: "COMP4350", tagColor: getTagColor("COMP4350"), name: "Final Exam", due: new Date("April 20, 2023"), goal: "A+" },
-    ]);
-    let chatsFiltered = filter.getChats([
-        { classKey: "COMP4620", tagColor: getTagColor("COMP4620"), name: "Assignment 4", due: new Date("March 12, 2023"), goal: "C" },
-        { classKey: "COMP2080", tagColor: getTagColor("COMP2080"), name: "Catch up", due: new Date("March 13, 2023"), goal: "C" },
-        { classKey: "COMP4350", tagColor: getTagColor("COMP4350"), name: "Final Exam", due: new Date("April 20, 2023"), goal: "A+" },
-    ]);
-    const reqs = ref(reqsFiltered);
-    const chats = ref(chatsFiltered);
+    const reqs = ref([]);
+    const chats = ref(["Press on the Play ▶ button on a class to start studying!"]);
 
     let chatIndex = 0;
     const chat = ref(chats.value[0]);
@@ -61,47 +45,59 @@
     },4000)
 
     onMounted(() => {
-        setPageName("Dashboard");
-        if(userId.value)
-            getData();  
+        setPageName("Dashboard");  
     })
 
-    const triggerGet = computed(() => {
+    const classes = ref([]);
+    const taskList = ref([]);
+    const classTrigger = computed(() => {
         if(userId.value){
-            getData();
-            return 1;
-        }
-        return 0;
-    });
+            const host = 'http://127.0.0.1:5000'; 
+            let apiUrlClass = '/api/class';
+            axios.get(host + apiUrlClass)
+                .then(function (response) {
+                    console.log(response);
+                    let result = response.data.result;
+                    classes.value = result;
 
-    function getData(){
-        // Get classes
-        const host = 'http://127.0.0.1:5000'; 
-        let apiUrlClass = '/api/class';
-        axios.get(host + apiUrlClass)
-            .then(function (response) {
-                console.log(response);
-                
-                // Get requirements from classes
-                let classList = Object.keys(response.json());
-                for (let classKey of classList){
-                    const apiUrlTask = `/api/class/${classKey}/task`;
-                    axios.get(host + apiUrlTask)
-                        .then(function (response) {
-                            console.log(response);
-                            let tasks = response.json();
-                            reqs.value = filter.getReqs(tasks);
-                            chats.value = filter.getChats(tasks);
-                        })
-                        .catch(function (error) {
-                            console.log(error.response);
-                        })
-                }
-            })
-            .catch(function (error) {
-                console.log(error.response);
-            })
-    }
+                    // Get requirements from classes
+                    let classList = result.map(c => c.class_Name);
+                    for (let classKey of classList){
+                        const apiUrlTask = `/api/class/${classKey}/task`;
+                        axios.get(host + apiUrlTask)
+                            .then(function (response) {
+                                console.log(response);
+                                // Handle null item defaults
+                                let result = response.data.result;
+                                for (let i=0; i<result.length; i++){
+                                    if(!result[i].deadline)
+                                        result[i].due = new Date(Date.now());
+                                    else
+                                        result[i].due = new Date(result[i].deadline);
+                                    result[i].classKey = classKey;
+                                    result[i].task_goal = "A";
+                                    result[i].tagColor = getTagColor(classKey);
+                                }
+                                taskList.value = taskList.value.concat(result);
+                            })
+                            .catch(function (error) {
+                                console.log(error.response);
+                            })
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error.response);
+                    classes.value = [];
+                })
+        }
+    })
+
+    const taskTrigger = computed(() => {
+        if(taskList.value.length > 0){
+            reqs.value = filter.getReqs(taskList.value);
+            chats.value = filter.getChats(taskList.value);
+        }
+    })
 </script>
 
 <template>
@@ -127,6 +123,7 @@
         </div>
         
     </div>
+    <span>{{ classTrigger }}{{ taskTrigger }}</span>
 </template>
 
 <style scoped>

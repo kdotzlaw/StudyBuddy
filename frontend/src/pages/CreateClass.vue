@@ -39,7 +39,7 @@
     </div>
     
     <!-- Professor details input forms -->
-    <div id="professor-container">
+    <div v-if="classRoute" id="professor-container">
       <h2>Professor Details</h2>
       <div id="professor-input">
         <div id="professor-name-container">
@@ -50,6 +50,12 @@
         </div>
         <div id="professor-office-container">
           <input type="text" id="professor-office-input" placeholder="Enter office location" v-model="profOffice">
+        </div>
+        <div id="professor-hours-container">
+          <input type="text" id="professor-hours-input" placeholder="Enter office hours" v-model="profHours">
+        </div>
+        <div id="professor-phone-container">
+          <input type="text" id="professor-phone-input" placeholder="Enter phone number" v-model="profPhone">
         </div>
         
       </div>
@@ -80,15 +86,36 @@
   const { updateSkin, setPageName, setStudyClass, setModal, toggleModal } = store;
 
   onMounted(() => {
-    if(classRoute)
+    if(classRoute){
       setPageName("Manage Class");
+      document.getElementById("class-name-input").value = classRoute;
+      const host = 'http://127.0.0.1:5000'; 
+      const apiUrlLoad = `/api/class/${classRoute}`;
+      axios.get(host + apiUrlLoad)
+        .then(function (response) {
+          console.log(response);
+          let result = response.data.result;
+          document.getElementById("section-name-input").value = result.section;
+          document.getElementById("class-code-input").value = result.courseCode;
+          document.getElementById("room-input").value = result.classroom;
+          document.getElementById("class-time-input").value = result.timeslot;
+          document.getElementById("professor-name-input").value = result.prof_Name;
+          document.getElementById("professor-email-input").value = result.prof_Email;
+          document.getElementById("professor-office-input").value = result.prof_Office;
+          document.getElementById("professor-hours-input").value = result.prof_Hours;
+          document.getElementById("professor-phone-input").value = result.prof_Phone;
+        })
+        .catch(function (error) {
+          console.log(error.response);
+        })
+    }
     else
       setPageName("Create New Class");
-  });
+  })
 
   // Get classRoute from URL
   let classRoute = useRoute().params.slug;
-  let className, sectionName, classCode, room, classTime, profName, profEmail, profOffice;
+  let className, sectionName, classCode, room, classTime, profName, profEmail, profOffice, profPhone, profHours;
 
   /*  createClass
    *    Creates a new class or updates an existing class.
@@ -99,29 +126,38 @@
     classCode = document.getElementById("class-code-input").value;
     room = document.getElementById("room-input").value;
     classTime = document.getElementById("class-time-input").value;
-    profName = document.getElementById("professor-name-input").value;
-    profEmail = document.getElementById("professor-email-input").value;
-    profOffice = document.getElementById("professor-office-input").value;
-
+    if(classRoute){
+      profName = document.getElementById("professor-name-input").value;
+      profEmail = document.getElementById("professor-email-input").value;
+      profOffice = document.getElementById("professor-office-input").value;
+      profHours = document.getElementById("professor-hours-input").value;
+      profPhone = document.getElementById("professor-phone-input").value;
+    }
 
     //  Send data to backend. Can either be a NEW class or an UPDATE to an existing class.
     const host = 'http://127.0.0.1:5000'; 
     const apiUrlNew = `/api/newclass`;
     const apiUrlUpdate = `/api/class/${classRoute}/update_meta`;
-    const data = {
-      className: className,
-      sectionName: sectionName,
-      classCode: classCode,
-      room: room,
-      classTime: classTime,
-      profName: profName,
-      profEmail: profEmail,
-      profOffice: profOffice
+    const createData = {
+      classname: className,
+      timeslot: classTime,
+      courseCode: classCode
+    };
+    const updateData = {
+      classname: className,
+      timeslot: classTime,
+      sectionnum: sectionName,
+      classroom: room,
+      prof: profName,
+      prof_phone: profPhone,
+      prof_email: profEmail,
+      prof_office: profOffice,
+      prof_hours: profHours
     };
 
     // Update current class information
     if(classRoute){
-      axios.post(host + apiUrlUpdate, data)
+      axios.post(host + apiUrlUpdate, updateData)
         .then(function (response) {
           console.log(response);
           setModal("Success", "success", response.data);
@@ -131,22 +167,22 @@
           console.log(error.response);
           setModal("Error", "error", error.response.data);
           toggleModal();
-        });
+        })
     }
     // Create new class
-    else{
-      axios.post(host + apiUrlNew, data)
+    else if(className && classTime){
+      axios.post(host + apiUrlNew, createData)
         .then(function (response) {
           console.log(response);
           setModal("Success", "success", response.data);
-          toggleModal();
         })
         .catch(function (error) {
           console.log(error.response);
           setModal("Error", "error", error.response.data);
-          toggleModal();
-        });
+        })
     }
+    else
+      setModal("Error", "error", "You need to provide a valid class name and timeslot.");
   };
 
 
@@ -333,7 +369,7 @@
 
   /*  
   Styling for the professor container. 
-  Uses grids to displau them
+  Uses grids to display them
   */
 
   #professor-name-container{
@@ -370,6 +406,34 @@
   }
   
   #professor-office-input{
+    width: 100%;
+    height: 5vh;
+    font-size: medium;
+    border-radius: 1em;
+    background: var(--white);
+    color: var(--black);
+  }
+
+  #professor-hours-container{
+    grid-column: 1/2;
+    grid-row: 6;
+  }
+  
+  #professor-hours-input{
+    width: 100%;
+    height: 5vh;
+    font-size: medium;
+    border-radius: 1em;
+    background: var(--white);
+    color: var(--black);
+  }
+
+  #professor-phone-container{
+    grid-column: 2/3;
+    grid-row: 6;
+  }
+  
+  #professor-phone-input{
     width: 100%;
     height: 5vh;
     font-size: medium;

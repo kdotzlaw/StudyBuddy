@@ -10,7 +10,7 @@
     import { useStore } from "../stores";
     
     const store = useStore();
-    const {setModal, toggleModal} = store;
+    const {setTaskName, setModal, toggleModal} = store;
 
     const props = defineProps({ 
         reqs: {type: Array, required: false, default: []},
@@ -42,6 +42,13 @@
             return "";
     }
 
+    // Autofill edit fields with existing data
+    function openEdit(event){
+        let titleContainer = event.target.previousElementSibling.previousElementSibling;
+        setTaskName(titleContainer.querySelector("h3").innerText);
+        setModal("Edit Requirement", "editRequirement");
+    }
+
     // Borderless style
     let borderClass = computed(() => {
         if(props.borderless)
@@ -53,9 +60,6 @@
 <template>
     <div id="reqCards" :class="borderClass">
 
-        <!-- Add new card -->
-        <div v-if="reqs.length==0" :class="`reqCard addNew`"> + </div>
-        
         <!-- Requirement card set -->
         <div v-for="req in reqs" :class="`reqCard fullCard`">
 
@@ -74,16 +78,16 @@
             <div>
 
                 <!-- Requirement name -->
-                <h3> {{ req.name }} </h3>
+                <h3> {{ req.task_Name }} </h3>
 
                 <p class="urgent"> {{ getUrgent(req.due) }} </p>
             </div>
 
             <!-- Grade goal -->
-            <h2 class="goal"> {{ req.goal }} </h2>
+            <h2 class="goal"> {{ req.task_Weight }} </h2>
 
             <!-- Open Settings control -->
-            <img class="reqManage" :src="Gear" alt="Manage requirement" @click="setModal('Edit Requirement', 'editRequirement')" />
+            <img v-if="!borderless" class="reqManage" :src="Gear" alt="Manage requirement" @click="openEdit($event)" />
 
         </div>
     </div>
@@ -189,6 +193,8 @@
         margin-bottom: 2vh;
         transform: scale(0.9);
         font-size: 80%;
+        grid-template-columns: 2.5em 12% 1fr 4em;
+        grid-column-gap: 8%;
     }
 
     @media screen and (max-width: 820px) {

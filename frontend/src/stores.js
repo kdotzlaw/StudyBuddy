@@ -101,9 +101,36 @@ export const useStore = defineStore('store', () => {
      *   ID of buddy character to display in dashboard
      *   setter @params - skin: String
      *=====================================*/
-    const buddyChoice = ref("corgi");
-    function updateBuddy(buddy="corgi"){
+    const buddyChoice = ref("Corgi");
+    function updateBuddy(buddy="Corgi"){
         buddyChoice.value = buddy;
+    }
+
+    /* taskName
+     *   Name of selected requirement to edit
+     *   setter @params - name: String
+     *=====================================*/
+    const taskName = ref(null);
+    function setTaskName(name=null){
+        taskName.value = name;
+    }
+
+    /* reqSignal
+     *   Detect new change in course requirement cards
+     *   setter @params - signal: Boolean
+     *=====================================*/
+    const reqSignal = ref(false);
+    function updateReqSignal(signal=false){
+        reqSignal.value = signal;
+    }
+
+    /* gradeSignal
+     *   Detect new change in course letter grade
+     *   setter @params - signal: Boolean
+     *=====================================*/
+    const gradeSignal = ref(false);
+    function updateGradeSignal(signal=false){
+        gradeSignal.value = signal;
     }
 
     // Export refs and getter/setter functions
@@ -114,6 +141,8 @@ export const useStore = defineStore('store', () => {
         studyTime, studyClass, setStudyTime, setStudyClass,
         isModalOpen, toggleModal,
         modalTitle, modalContent, modalRender, setModal,
-        uiSkin, updateSkin, buddyChoice, updateBuddy
+        uiSkin, updateSkin, buddyChoice, updateBuddy,
+        taskName, setTaskName,
+        reqSignal, updateReqSignal, gradeSignal, updateGradeSignal
     }
 })

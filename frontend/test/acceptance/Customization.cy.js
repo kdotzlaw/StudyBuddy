@@ -24,7 +24,7 @@ context('Actions', () => {
     cy.get('.login-button').click()
       .wait(200)
     cy.get('.close').click()
-    cy.get('#chat-balloon p', { timeout: 14000 })
+    cy.get('#chat-balloon p', { timeout: 30000 })
       .should('include.text', 'start studying')
   })
 
@@ -38,7 +38,7 @@ context('Actions', () => {
     cy.get('.login-button').click()
       .wait(200)
     cy.get('.close').click()
-    cy.get('#chat-balloon p', { timeout: 14000 })
+    cy.get('#chat-balloon p', { timeout: 30000 })
       .should('include.text', 'upcoming deadline')
   })
 

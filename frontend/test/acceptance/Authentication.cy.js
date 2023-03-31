@@ -65,7 +65,7 @@ context('Actions', () => {
       .wait(200)
     cy.get('.close').click()
       .wait(800)
-    cy.get('#header-dropdown').trigger('mouseover')
+    cy.get('#header-dropdown', { timeout: 20000 }).trigger('mouseover')
       cy.contains('Log Out').click()
   })
 

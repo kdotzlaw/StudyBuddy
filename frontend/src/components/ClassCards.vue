@@ -15,7 +15,7 @@
     const { userId, studyClass } = storeToRefs(store);
 
     const props = defineProps({ 
-        reqs: {type: Array, required: false, default: []}
+        reqs: {type: Array, required: false, default: []},
     })
 
     // Start or pause study for selected class
@@ -30,10 +30,10 @@
         
         <!-- Class card set -->
         <div v-for="req in reqs" :class="`classCard studyClass`">
-            <router-link :to="'/class/' + req.name">
+            <router-link :to="'/class/' + req.class_Name">
                 
                 <!-- Class name -->
-                <h3> {{ req.name }} </h3>
+                <h3> {{ req.class_Name }} </h3>
 
             </router-link>
             <div class="bottom-row">
@@ -41,16 +41,16 @@
                 <!-- Time studied -->
                 <div>
                     <span class="material-symbols-outlined">timer</span>
-                    &nbsp; {{ req.timeStudied }} hrs 
+                    &nbsp; {{ (req.studyTime/3600).toFixed(2) }} hrs 
                 </div>
 
                 <!-- Play control -->
                 <img
-                    v-if="req.name != studyClass" 
+                    v-if="req.class_Name != studyClass" 
                     class="play-btn" 
                     :src="Play" 
                     alt="Study for this class"
-                    @click="manageStudy(req.name)"
+                    @click="manageStudy(req.class_Name)"
                 />
 
             </div>

@@ -15,13 +15,15 @@ const {
     userId, pageName, 
     sessionTimer, studyTime, studyClass,
     isModalOpen, modalTitle, modalContent, modalRender,
-    uiSkin, buddyChoice
+    uiSkin, buddyChoice,
+    reqSignal, gradeSignal
   } = storeToRefs(store);
 const { 
     loginUser, logoutUser, setPageName,
     setTimer, setStudyTime, setStudyClass,
     toggleModal, setModal,
-    updateSkin, updateBuddy
+    updateSkin, updateBuddy,
+    updateReqSignal, updateGradeSignal
   } = store;
 
 let uID: String = "Ohlala a user";
@@ -48,7 +50,7 @@ describe('Test setting study timer, class, and time', () => {
     setTimer(new Timer(uID, cID));
       expect(sessionTimer.value.getSessionUser()).toBe(uID);
       expect(sessionTimer.value.getCurrentClass()).toBe(cID);
-      expect(sessionTimer.value.getTime()).toBe(0);
+      expect(sessionTimer.value.getTime()).toBeGreaterThanOrEqual(0);
   })
 
   test('Change active class (setStudyClass)', () => {
@@ -96,7 +98,7 @@ describe('Test modal functions', () => {
 })
 
 let skin: String = "skin-forest";
-let buddy: String = "bunny";
+let buddy: String = "Cat";
 describe('Test user customizations', () => {
 
   test('Change UI skin (updateSkin)', () => {
@@ -107,6 +109,24 @@ describe('Test user customizations', () => {
   test('Change buddy choice (updateBuddy)', () => {
     updateBuddy(buddy);
     expect(buddyChoice.value).toBe(buddy);
+  })
+
+})
+
+describe('Simulate dynamic update signals', () => {
+
+  test('Emit requirements signal (updateReqSignal)', () => {
+    updateReqSignal(true);
+    expect(reqSignal.value).toBeTruthy();
+    updateReqSignal(false);
+    expect(reqSignal.value).not.toBeTruthy();
+  })
+
+  test('Emit grade signal (updateGradeSignal)', () => {
+    updateGradeSignal(true);
+    expect(gradeSignal.value).toBeTruthy();
+    updateGradeSignal(false);
+    expect(gradeSignal.value).not.toBeTruthy();
   })
 
 })

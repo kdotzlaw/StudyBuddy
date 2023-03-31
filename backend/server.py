@@ -11,6 +11,10 @@ from werkzeug.security import check_password_hash, generate_password_hash
 import uuid
 import flask_cors
 
+'''
+CLASS: customJSON(): Custom json parsing class for flask app
+'''
+
 
 class customJSON(flask.json.provider.JSONProvider):
 
@@ -21,48 +25,47 @@ class customJSON(flask.json.provider.JSONProvider):
         return json.loads(s, **kwargs)
 
 
+# initialize flask app
 app = flask.Flask(__name__)
 app.json = customJSON(app)
-app.secret_key = uuid.uuid4().hex  # reset secret key each time the server starts
+
+app.config["SECRET_KEY"] = uuid.uuid4().hex  # reset secret key each time the server starts
+app.config['SESSION_COOKIE_HTTPONLY'] = False
 
 # instantiate flask login manager
+
+flask_login.config.COOKIE_HTTPONLY = False
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-flask_cors.CORS(app)
+flask_cors.CORS(app, supports_credentials=True)
 
-# mock persistence layer
-users = {"testuser": {"username": "testuser", "password": "123"}}
+# session storage
+sessions = {}
+
+# Handlers and Helpers
+'''
+CLASS: User(): Tell flask how to load a user from a flask request and from its session
+-> Just uses default flask_login user mixin
+'''
 
 
-# for debug
-def setTest(boo):
-    app.config["TESTING"] = boo
-
-
-# tell flask how to load a user from a flask request and from its session
 class User(flask_login.UserMixin):
     pass
 
 
-def user_check(username):
-    if app.testing:
-        selection = users[username]
-    else:
-        selection = db.getUser(username)
-    return selection
+'''
+METHOD: user_loader():
+PRE-CONDITION: given <username>
+POST-CONDITION: return a User object if <username> exists, else return None
+'''
 
 
-# loads user from session
 @login_manager.user_loader
 def user_loader(username):
-    # print("u loader")
     selection = db.getUser(username)
-    if app.testing:
-        uname = selection['username']
-    else:
-        uname = selection.username
+    uname = selection.username
     if uname == username:
         user = User()
         user.id = username
@@ -71,146 +74,53 @@ def user_loader(username):
         return None
 
 
-# loads user from flask request
+'''
+METHOD: request_loader(): loads user from flask request
+PRE-CONDITION: given a user sends a request, <request>
+POST-CONDITION: the user is given access to endpoints that require a login,
+    if they have an existing (and valid) <session> header, else they are denied access
+'''
+
+
 @login_manager.request_loader
 def request_loader(request):
-    # print("req loader")
-    username = request.get_json(force=True)['username']
-    # check database for username
-    selection = db.getUser(username)
-    if app.testing:
-        uname = selection['username']
-    else:
+    # grab session from request
+    session = request.headers.get('session')
+    # if there's a session header
+    if session in sessions.keys():
+        # grab the username from the sessions dictionary
+        username = sessions[session]
+        # check database for username
+        selection = db.getUser(username)
         uname = selection.username
-    if uname == username:
-        user = User()
-        user.id = username
-        return user
+        # the same values, and neither are None
+        if uname == username and uname and username:
+            user = User()
+            user.id = username
+            return user
+        else:
+            return None
     else:
         return None
 
 
-# deal with unauthorized access attempts
+'''
+METHOD: unauthorized_handler(): deals with unauthorized access attempts
+'''
+
+
 @login_manager.unauthorized_handler
 def unauthorized_handler():
     return "Unauthorized", 401
 
 
-# login api request
-@app.route("/api/login", methods=["POST"])
-def login():
-    # print("attempting login")
-    # grab the username from the header
-    # print(flask.request.get_json())
-    if flask.request.get_json(force=True) is not None:
-        # username header exists
-        username = flask.request.get_json(force=True)['username']
-        password = flask.request.get_json(force=True)['password']
-        # print(username)
-        # print(password)
-        # check db for username and password
-        # selection is a list of rows (SHOULD BE LENGTH 1)
-        selection = db.getUser(username)
-
-        if selection is None:
-            # username not in database
-            # be ambiguous for security reasons
-            response = "Bad Request: Invalid Username or Password", 401
-            # print("no user")
-            return response
-        else:
-            # selection returned
-            # grab values for username and password from db
-            # print("yes user")
-            uname = selection.username
-            pword = selection.password
-
-            if uname == username and pword == password:
-                user = User()
-                user.id = username
-                flask_login.login_user(user)
-                # print("logged in: ", username)
-                # redirect to homepage
-                # flask.redirect("../../frontend/index.html", 200)
-                return "Logged In", 200
-            else:
-                # invalid password
-                # send 401 bad request response
-                # print("failed login: ", username)
-                # print("Incorrect password")
-                # be ambiguous for security reasons
-                response = "Bad Request: Invalid Username or Password", 401
-                return response
-    else:
-        # send 400 bad request response
-        # print("login missing json")
-        response = "Bad Request: Missing required JSON", 400
-        return response
+'''
+METHOD: parse_rows(): 
+PRE-CONDITION: given a list of pyodbc.Row <row> objects
+POST-CONDITION: return a list of dictionaries in the form [{<column name>: <column value>, ... }, ... ]
+'''
 
 
-# logout api request
-@app.route("/api/logout", methods=["POST"])
-@flask_login.login_required
-def logout():
-    # just delete the cookie from the users browser
-    # and log out the user
-    flask_login.logout_user()
-    resp = flask.make_response()
-    resp.delete_cookie('SessionID')
-    resp.data = "Logged Out"
-    resp.status_code = 200
-    return resp
-
-
-# create a new user
-@app.route("/api/newuser", methods=["POST"])
-def newuser():
-    username = flask.request.get_json(force=True)['username']
-    password = flask.request.get_json(force=True)['password']
-    # check database for already existing user with the same name
-    selection = db.getUser(username)
-    if selection is None:
-        # if there are no existing users with that username in the db...
-        # create a new account with the username and password
-        db.createAccount(username, password)
-        user = User()
-        user.id = username
-        flask_login.login_user(user)
-        return "Account created", 200
-    else:
-        return "Account already exists with username", 400
-
-
-# increases the study_time attribute for 'classname' by 'added' seconds
-@app.route("/api/class/<classname>/update_time", methods=["POST"])
-@flask_login.login_required
-def update_time(classname):
-    # updates the time studied for a class
-    username = flask_login.current_user.get_id()
-    t = flask.request.get_json(force=True)['added']
-    res = db.addStudyTime(username, classname, t)
-    if res is not None:
-        # print(username, " increased ", classname, "'s study time by: ", t, " seconds")
-        return "Time for class updated successfully", 200
-    else:
-        return "Bad Request: No class found", 400
-
-
-# returns the data for a single class of classname: 'classname'
-@app.route("/api/class/<classname>", methods=["GET"])
-@flask_login.login_required
-def getClass(classname):
-    username = flask_login.current_user.get_id()
-    res = db.getSingleClass(username, classname)
-    # print("the class is: ", res, ' and logic says: ', res is None)
-    if res is None:
-        # no class found
-        return "Bad Request: No class found", 400
-    else:
-        return {"result": parse_row(res)}, 200
-
-
-# converts a list of rows into a list of dictionaries
 def parse_rows(rows):
     res = []
     if rows is not None:
@@ -219,30 +129,172 @@ def parse_rows(rows):
     return res
 
 
-# converts a row into a dictionary
+'''
+METHOD: parse_row():
+PRE-CONDITION: given a single pyodbc.Row <row> objects
+POST-CONDITION: return a dictionary in the form {<column name>: <column value>, ... }
+'''
+
+
 def parse_row(row):
     return dict(zip([t[0] for t in row.cursor_description], row))
 
 
-# returns a list of tasks associated with 'classname'
-@app.route("/api/class/<classname>/task", methods=["GET"])
+'''
+METHOD: Adds required headers to a login/register endpoint response
+'''
+
+
+def session_handle(resp, session, username):
+    resp.headers.add_header('session', session)
+    resp.access_control_allow_headers = ['session']
+    resp.headers.set('Access-Control-Expose-Headers', 'session')
+    resp.headers.set("Access-Control-Allow-Credentials", True)
+    # tell flask_login to log in user
+    user = User()
+    user.id = username
+    flask_login.login_user(user)
+    return resp
+
+
+# API Endpoints
+'''
+METHOD: login():
+PRE-CONDITION: given a user's <username> and <password>(hashed)
+POST-CONDITION: returns session info, logging them in
+'''
+
+
+@app.route("/api/login", methods=["POST"])
+def login():
+    # grab the username from the header
+    if flask.request.get_json(force=True) is not None:
+        # username header exists
+        username = flask.request.get_json(force=True)['username']
+        password = flask.request.get_json(force=True)['password']
+        # check db for username and password
+        # selection is a list of rows (SHOULD BE LENGTH 1)
+        selection = db.getUser(username)
+
+        if selection is None:
+            # username not in database
+            # be ambiguous for security reasons
+            response = "Bad Request: Invalid Username or Password", 401
+            return response
+        else:
+            # selection returned
+            # grab values for username and password from db
+            uname = selection.username
+            pword = selection.password
+
+            if uname == username and pword == password:
+                session = str(uuid.uuid4())
+                sessions[session] = username
+
+                resp = flask.make_response()
+                resp.status_code = 200
+                resp.data = 'Logged In'
+
+                return session_handle(resp, session, username)
+            else:
+                # invalid password
+                # send 401 bad request response
+                # be ambiguous for security reasons
+                response = "Bad Request: Invalid Username or Password", 401
+                return response
+    else:
+        # send 400 bad request response
+        response = "Bad Request: Missing required JSON", 400
+        return response
+
+
+'''
+METHOD: logout():
+PRE-CONDITION: given a user is logged in
+POST-CONDITION: logs them out
+--> login is required for this endpoint
+'''
+
+
+@app.route("/api/logout", methods=["POST"])
 @flask_login.login_required
-def all_tasks(classname):
+def logout():
+    # delete session
+    # print(flask.request.headers)
+    if 'session' in flask.request.headers.keys():
+        sessions.pop(flask.request.headers['session'])
+
+    # log out
+    flask_login.logout_user()
+
+    resp = flask.make_response()
+    resp.data = "Logged Out"
+    resp.status_code = 200
+    return resp
+
+
+'''
+METHOD: newuser(): creates a new user as long as the username provided doesnt have an existing account
+PRE-CONDITION: given some new user data
+POST-CONDITION: creates a new user and returns session info, logging them in
+'''
+
+
+@app.route("/api/newuser", methods=["POST"])
+def new_user():
+    username = flask.request.get_json(force=True)['username']
+    password = flask.request.get_json(force=True)['password']
+    # check database for already existing user with the same name
+    selection = db.getUser(username)
+    if selection is None:
+        # if there are no existing users with that username in the db...
+        # create a new account with the username and password
+        db.createAccount(username, password)
+        # create session
+        session = str(uuid.uuid4())
+        sessions[session] = username
+
+        resp = flask.make_response()
+        resp.status_code = 200
+        resp.data = 'Account Created'
+
+        return session_handle(resp, session, username)
+    else:
+        return "Account already exists with username", 400
+
+
+# Class Methods
+'''
+METHOD: getClass():
+PRE-CONDITION: given <classname>
+POST-CONDITION: returns the data for the class <classname>
+--> login required for this endpoint
+'''
+
+
+@app.route("/api/class/<classname>", methods=["GET"])
+@flask_login.login_required
+def get_class(classname):
     username = flask_login.current_user.get_id()
     res = db.getSingleClass(username, classname)
     if res is None:
         # no class found
         return "Bad Request: No class found", 400
     else:
-        res = db.getTaskList(username, classname)
-        # need to parse
-        return {"result": parse_rows(res)}, 200
+        return {"result": parse_row(res)}, 200
 
 
-# sets the is_complete attribute of 'classname' to true
+'''
+METHOD: completeClass(): 
+PRE-CONDITION: given <classname>
+POST-CONDITION: sets the 'is_complete' attribute of <classname> to true
+--> login required for this endpoint
+'''
+
+
 @app.route("/api/class/<classname>/complete", methods=["POST"])
 @flask_login.login_required
-def completeClass(classname):
+def complete_class(classname):
     username = flask_login.current_user.get_id()
     res = db.getSingleClass(username, classname)
     if res is not None and res.is_complete == 0:
@@ -254,17 +306,22 @@ def completeClass(classname):
         return "Bad Request: Class already completed", 400
 
 
-# updates the metadata for class: 'classname', any missing metadata remains the same
+'''
+METHOD: classMeta():
+PRE-CONDITION: given <classname> and (optional) metadata attributes
+POST-CONDITION: updates the given metadata for <classname>, non-given attributes remain the same
+--> login required for this endpoint
+'''
+
+
 @app.route("/api/class/<classname>/update_meta", methods=["POST"])
 @flask_login.login_required
-def classMeta(classname):
+def class_meta(classname):
     username = flask_login.current_user.get_id()
     req = flask.request.get_json(force=True)
     res = db.getSingleClass(username, classname)
-
     if res is None:
         return "Bad Request: No class found", 400
-
     # since json attributes are optional, only update if they're given
     if 'breakdown' not in req.keys():
         breakdown = res.breakdown
@@ -314,51 +371,37 @@ def classMeta(classname):
     return 'Class Meta updated successfully', 200
 
 
-# creates a new task for the current user for the class: 'classname'
-@app.route("/api/class/<classname>/newtask", methods=["POST"])
-@flask_login.login_required
-def newtask(classname):
-    req = flask.request.get_json(force=True)
-    username = flask_login.current_user.get_id()
-
-    # since json attributes are optional, only update if they're given
-    if 'weight' not in req.keys():
-        # use undef weight
-        weight = -1
-    else:
-        weight = req['weight']
-
-    if 'deadline' not in req.keys():
-        # use undef deadline
-        deadline = None
-    else:
-        deadline = req['deadline']
-
-    # add task to class
-    res = db.addTask(username, classname, req['taskname'], weight, deadline)
-    if res is None:
-        return "Bad Request: No class found", 400
-    else:
-        return "Successfully added task", 200
+'''
+METHOD: newclass(): 
+PRE-CONDITION: given some data for a new class
+POST-CONDITION: creates a new class with the associated data
+--> login required for this endpoint
+'''
 
 
-# creates new class associated with logged-in user
 @app.route('/api/newclass', methods=["POST"])
 @flask_login.login_required
-def newclass():
+def new_class():
     req = flask.request.get_json(force=True)
     username = flask_login.current_user.get_id()
     # classname and timeslot are required
-    if 'classname' not in req.keys() or 'timeslot' not in req.keys():
+    if 'classname' not in req.keys() or 'timeslot' not in req.keys() or 'courseCode' not in req.keys():
         return "Bad Request: JSON missing required value(s)", 400
     else:
-        res = db.addClass(username, req['classname'], req['timeslot'])
+        res = db.addClass(username, req['classname'], req['timeslot'], req['courseCode'])
         if res is None:
             return "Error", 400
         return "Added Class", 200
 
 
-# returns a list of classes associated with logged-in user
+'''
+METHOD: all_classes():
+PRE-CONDITION: once logged in
+POST-CONDITION: returns a list of all classes
+--> login required for this endpoint
+'''
+
+
 @app.route("/api/class", methods=["GET"])
 @flask_login.login_required
 def all_classes():
@@ -374,54 +417,14 @@ def all_classes():
         return {"result": []}, 200
 
 
-# get specific task: 'taskname'
-@app.route('/api/class/<classname>/task/<taskname>', methods=["GET"])
-@flask_login.login_required
-def get_task(classname, taskname):
-    username = flask_login.current_user.get_id()
-    res = db.getTaskID(username, classname, taskname)
-    if res is None:
-        # no class found
-        return "Bad Request: No task found", 400
-    else:
-        return {"result": parse_row(res)}, 200
+'''
+METHOD: edit_class():
+PRE-CONDITION: given <classname> and given (optional) values: <new_classname> and <new_timeslot>
+POST-CONDITION: update <classname>'s 'classname' and 'timeslot' if new values are given
+--> login required for this endpoint
+'''
 
 
-# modify the name, weight, and/or deadline of a task
-@app.route('/api/class/<classname>/task/<taskname>/edit', methods=["POST"])
-@flask_login.login_required
-def edit_task(classname, taskname):
-    username = flask_login.current_user.get_id()
-    req = flask.request.get_json(force=True)
-
-    # attributes are optional, so keep the same if they're not given
-    if 'newname' not in req.keys():
-        newname = ""
-    else:
-        newname = req['newname']
-    if 'newdeadline' not in req.keys():
-        newdeadline = ""
-    else:
-        newdeadline = req['newdeadline']
-    if 'newweight' not in req.keys():
-        newweight = ""
-    else:
-        newweight = req['newweight']
-
-    db.editTask(username, classname, taskname, newname, newdeadline, newweight)
-    return "Task edited", 200
-
-
-# delete a task
-@app.route('/api/class/<classname>/task/<taskname>/delete', methods=["POST"])
-@flask_login.login_required
-def delete_task(classname, taskname):
-    username = flask_login.current_user.get_id()
-    res = db.removeTask(username, classname, taskname)
-    return "Task removed", 200
-
-
-# edit a class's name, and/or timeslot
 @app.route('/api/class/<classname>/edit', methods=["POST"])
 @flask_login.login_required
 def edit_class(classname):
@@ -442,7 +445,14 @@ def edit_class(classname):
     return "Class edited", 200
 
 
-# deletes a class
+'''
+METHOD: delete_class():
+PRE-CONDITION: given <classname>
+POST-CONDITION: deletes <classname> for the user
+--> login required for this endpoint
+'''
+
+
 @app.route('/api/class/<classname>/delete', methods=["POST"])
 @flask_login.login_required
 def delete_class(classname):
@@ -451,7 +461,169 @@ def delete_class(classname):
     return "Class removed", 200
 
 
-# marks a task as complete by setting the grade value
+'''
+METHOD: update_time():
+PRE-CONDITION: given <classname> and <added> seconds
+POST-CONDITION: increase <classname>'s study time by <added>
+--> login required for this endpoint
+'''
+
+
+@app.route("/api/class/<classname>/update_time", methods=["POST"])
+@flask_login.login_required
+def update_time(classname):
+    # updates the time studied for a class
+    username = flask_login.current_user.get_id()
+    t = flask.request.get_json(force=True)['added']
+    res = db.addStudyTime(username, classname, t)
+    if res is not None:
+        return "Time for class updated successfully", 200
+    else:
+        return "Bad Request: No class found", 400
+
+
+# Task Methods
+'''
+METHOD: all_tasks():
+PRE-CONDITION: given <classname>
+POST-CONDITION: return a list of tasks for <classname>
+--> login required for this endpoint
+'''
+
+
+@app.route("/api/class/<classname>/task", methods=["GET"])
+@flask_login.login_required
+def all_tasks(classname):
+    username = flask_login.current_user.get_id()
+    res = db.getSingleClass(username, classname)
+    if res is None:
+        # no class found
+        return "Bad Request: No class found", 400
+    else:
+        res = db.getTaskList(username, classname)
+        # need to parse
+        return {"result": parse_rows(res)}, 200
+
+
+'''
+METHOD: newtask():
+PRE-CONDITION: given <classname> and some task data
+POST-CONDITION: create a new task for <classname> with the associated data
+--> login required for this endpoint
+'''
+
+
+@app.route("/api/class/<classname>/newtask", methods=["POST"])
+@flask_login.login_required
+def new_task(classname):
+    req = flask.request.get_json(force=True)
+    username = flask_login.current_user.get_id()
+
+    # since json attributes are optional, only update if they're given
+    if 'weight' not in req.keys():
+        # use undef weight
+        weight = -1
+    else:
+        weight = req['weight']
+
+    if 'deadline' not in req.keys():
+        # use undef deadline
+        deadline = None
+    else:
+        deadline = req['deadline']
+    if 'task_goal' not in req.keys():
+        # use default
+        task_goal = 'A'
+    else:
+        task_goal = req['task_goal']
+    # add task to class
+    res = db.addTask(username, classname, req['taskname'], weight, deadline, task_goal)
+    if res is None:
+        return "Bad Request: No class found", 400
+    else:
+        return "Successfully added task", 200
+
+
+'''
+METHOD: get_task(): 
+PRE-CONDITION: given <classname> and <taskname>
+POST-CONDITION: returns the task <taskname>
+--> login required for this endpoint
+'''
+
+
+@app.route('/api/class/<classname>/task/<taskname>', methods=["GET"])
+@flask_login.login_required
+def get_task(classname, taskname):
+    username = flask_login.current_user.get_id()
+    res = db.getTaskID(username, classname, taskname)
+    if res is None:
+        # no class found
+        return "Bad Request: No task found", 400
+    else:
+        return {"result": parse_row(res)}, 200
+
+
+'''
+METHOD: edit_task():
+PRE-CONDITION: given <taskname> and <classname>
+POST-CONDITION: modify name, weight, and deadline for <taskname>
+--> login required for this endpoint
+'''
+
+
+@app.route('/api/class/<classname>/task/<taskname>/edit', methods=["POST"])
+@flask_login.login_required
+def edit_task(classname, taskname):
+    username = flask_login.current_user.get_id()
+    req = flask.request.get_json(force=True)
+
+    # attributes are optional, so keep the same if they're not given
+    if 'newname' not in req.keys():
+        newname = ""
+    else:
+        newname = req['newname']
+    if 'newdeadline' not in req.keys():
+        newdeadline = ""
+    else:
+        newdeadline = req['newdeadline']
+    if 'newweight' not in req.keys():
+        newweight = ""
+    else:
+        newweight = req['newweight']
+    if 'eGoal' not in req.keys():
+        eGoal = 'A'
+    else:
+        eGoal = req['eGoal']
+
+    db.editTask(username, classname, taskname, newname, newdeadline, newweight, eGoal)
+    return "Task edited", 200
+
+
+'''
+METHOD: delete_task():
+PRE-CONDITION: given <taskname> and <classname>
+POST-CONDITION: deletes <taskname>
+--> login required for this endpoint
+'''
+
+
+@app.route('/api/class/<classname>/task/<taskname>/delete', methods=["POST"])
+@flask_login.login_required
+def delete_task(classname, taskname):
+    username = flask_login.current_user.get_id()
+    res = db.removeTask(username, classname, taskname)
+    return "Task removed", 200
+
+
+'''
+METHOD: complete_task(): 
+PRE-CONDITION: given <classname> and <taskname>
+POST-CONDITION: marks <taskname> as complete by setting grade value
+--> login required for this endpoint
+'''
+
+
 @app.route('/api/class/<classname>/task/<taskname>/complete', methods=["POST"])
 @flask_login.login_required
 def complete_task(classname, taskname):
@@ -471,23 +643,38 @@ def complete_task(classname, taskname):
     return "Completed Task Successfully", 200
 
 
-# returns all the complete tasks for class: 'classname'
+'''
+METHOD: get_done_tasks():
+PRE-CONDITION: given <classname>
+POST-CONDITION: returns a JSON object containing a list of all the completed tasks for <classname>
+--> login required for this endpoint
+'''
+
+
 @app.route('/api/class/<classname>/done_tasks', methods=["GET"])
 @flask_login.login_required
 def get_done_tasks(classname):
     username = flask_login.current_user.get_id()
     res = db.getCompleteTasksForClass(username, classname)
     if type(res) is Row:
+        # print(parse_row(res))
         return {"result": parse_row(res)}, 200
     elif type(res) is list:
+        # print(parse_rows(res))
         return {"result": parse_rows(res)}, 200
     else:
         # no done tasks
         return {"result": []}, 200
 
 
-# calculates a letter grade via the class's grade breakdown and the done tasks
-# sends the letter grade and a message
+'''
+METHOD: grade(): 
+PRE-CONDITION: grabs data for complete tasks associated with <classname>
+POST-CONDITION: returns letter grade and buddy message
+--> login required for this endpoint
+'''
+
+
 @app.route('/api/class/<classname>/grade', methods=["GET"])
 @flask_login.login_required
 def grade(classname):
@@ -500,7 +687,6 @@ def grade(classname):
                 "D": "You can do better than that, I believe in you!",
                 "F": "Uh oh."}
     username = flask_login.current_user.get_id()
-
     # get <classname> class, process grade breakdown
     res = db.getSingleClass(username, classname)
     if res is not None and res.breakdown is not None:
@@ -518,26 +704,24 @@ def grade(classname):
         if t.task_Weight != -1:
             total_weight = total_weight + t.task_Weight
             total_grade = total_grade + t.task_grade * t.task_Weight
-    if total_weight > 1:
-        # print(username, classname, "has a total task weight > 100!")
+    if total_weight > 100:
+        print(username, classname, "has a total task weight > 100%!")
         return "Server Error", 500
     if total_weight == 0:
         # realistically, should never occur, b/c 'comp_tasks is None' check, but I've been wrong before so...
         return {"result": "-", "message": "You haven't got any grades yet."}, 200
     class_grade = total_grade / total_weight
     # return letter grade based on breakdown and done task grades
-    # print(classname, "has a grade of: ", class_grade)
     for k in breakdown.keys():
-        # print(eval(breakdown[k])[0] / 100, " < ", str(class_grade), " <= ", eval(breakdown[k])[1] / 100)
-        if eval(breakdown[k])[0] / 100 < class_grade <= eval(breakdown[k])[1] / 100:
+
+        if eval(breakdown[k])[0] <= class_grade <= eval(breakdown[k])[1]:
             return {"result": k, "message": messages[k]}, 200
-    # print(username, "didn't find grade range for", classname)
+    print(username, "didn't find grade range for", classname)
     return "Server Error: Grade range wasn't found", 500
 
 
 # for debugging
 @app.before_request
 def log_request():
-    # print(flask.request.headers)
-    # print(flask.request.get_json(force=True))
+    # print(flask.request)
     return None

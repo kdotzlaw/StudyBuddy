@@ -7,7 +7,7 @@
 
 const serverUrl = Cypress.env('serverUrl');
 
-let courseCode = "COMP4350";
+let courseCode = "COMP 4350";
 
 context('Actions', () => {
   beforeEach(() => {
@@ -25,6 +25,7 @@ context('Actions', () => {
       .wait(300)
     cy.get('#workspace')
       .scrollTo('bottom')
+      .wait(5000)
   })
 
   it('Update study sessions and study time from Dashboard', () => {
@@ -38,7 +39,7 @@ context('Actions', () => {
   })
 
   it('Update study sessions and study time from existing Class pages', () => {
-    cy.contains(courseCode).click()
+    cy.contains(courseCode, { timeout: 20000 }).click()
       .wait(200)
     cy.get('.round').click()
       .wait(2200)

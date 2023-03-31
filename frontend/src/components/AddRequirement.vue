@@ -13,8 +13,8 @@
       <input type="text" id="name-req-input" placeholder="Enter requirement name" v-model="reqName" @keydown="checkEnter">
     </div>
     <div id="grade-req">
-      <h3>Letter Goal</h3>
-      <input type="text" id="grade-req-input" placeholder="A" v-model="gradeReq" @keydown="checkEnter">
+      <h3>Weight</h3>
+      <input type="text" id="grade-req-input" placeholder="%" v-model="gradeReq" @keydown="checkEnter">
     </div>
     <div id="date-req">
       <h3>Due Date</h3>
@@ -42,13 +42,15 @@
 
 <script setup>
   import { default as axios } from 'axios';
+  import { onMounted } from 'vue';
   import { useRoute } from 'vue-router';
   import { storeToRefs } from "pinia";
   import { ref, computed } from "vue";
   import { useStore } from "../stores";
 
   const store = useStore();
-  const {setModal, toggleModal} = store;
+  const { setModal, toggleModal, updateReqSignal, updateGradeSignal } = store;
+  const { taskName } = storeToRefs(store);
 
   const props = defineProps({ 
     edit: {type: Boolean, required: false, default: false},
@@ -56,6 +58,25 @@
   
   let classRoute = useRoute().params.slug;
   let reqName, gradeReq, reqDate, finishReq;
+
+  onMounted(() => {
+    // Autofill edit fields
+    if(props.edit){
+      document.getElementById("name-req-input").value = taskName.value;
+      const host = 'http://127.0.0.1:5000'; 
+      const apiUrlLoad = `/api/class/${classRoute}/task/${taskName.value}`;
+      axios.get(host + apiUrlLoad)
+        .then(function (response) {
+          console.log(response);
+          let result = response.data.result;
+          document.getElementById("grade-req-input").value = result.task_Weight;
+          document.getElementById("date-req-input").value = result.deadline;
+        })
+        .catch(function (error) {
+          console.log(error.response);
+        })
+    }
+  })
 
   /*  checkEnter
    *    Detect when ENTER key pressed to submit form
@@ -75,15 +96,26 @@
     if(reqName){
       gradeReq = document.getElementById("grade-req-input").value;
       reqDate = document.getElementById("date-req-input").value;
+      if(reqDate)
+        reqDate = new Date(reqDate).toISOString();
+      else
+        reqDate = new Date(Date.now()).toISOString();
 
       const host = 'http://127.0.0.1:5000'; 
       const apiUrlNew = `/api/class/${classRoute}/newtask`;
       const apiUrlUpdate = `/api/class/${classRoute}/task/${reqName}/edit`;
       const apiUrlComplete = `/api/class/${classRoute}/task/${reqName}/complete`;
       let data = {
+        classname: classRoute,
         taskname: reqName,
         weight: gradeReq,
         deadline: reqDate,
+      };
+      let updateData = {
+        classname: classRoute,
+        newname: reqName,
+        newdeadline: reqDate,
+        newweight: gradeReq
       };
       
       // Checks to see if they are editting the requirement
@@ -103,6 +135,8 @@
             console.log(response);
             setModal("Success", "success", response.data);
             toggleModal();
+            updateReqSignal(true);
+            updateGradeSignal(true);
           })
           .catch(function (error) {
             console.log(error.response);
@@ -112,10 +146,11 @@
       }
       // Update current task information
       else if (props.edit && !complete){
-        axios.post(host + apiUrlUpdate, data)
+        axios.post(host + apiUrlUpdate, updateData)
           .then(function (response) {
             console.log(response);
             setModal("Success", "success", response.data);
+            updateReqSignal(true);
             toggleModal();
           })
           .catch(function (error) {
@@ -130,6 +165,7 @@
         .then(function (response) {
           console.log(response);
           setModal("Success", "success", response.data);
+          updateReqSignal(true);
           toggleModal();
         })
         .catch(function (error) {
@@ -153,7 +189,7 @@
       const apiUrl = `/api/class/${classRoute}/task/${reqName}/delete`;
 
       let data = {
-        taskname: reqName,
+        classname: classRoute,
       };
 
       if(props.edit){
@@ -162,6 +198,7 @@
           console.log(response);
           setModal("Success", "success", response.data);
           toggleModal();
+          updateReqSignal(true);
         })
         .catch(function (error) {
           console.log(error.response);
@@ -232,6 +269,8 @@
   border-radius: 1em;
   background: var(--white);
   color: var(--black);
+  text-align: left !important;
+  padding-left: 1.5em;
 }
 
 #grade-req-input, #finish-req-input{

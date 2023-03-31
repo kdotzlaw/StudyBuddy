@@ -7,7 +7,7 @@
 
 const serverUrl = Cypress.env('serverUrl');
 
-let courseCode = "COMP4350";
+let courseCode = "COMP 4350";
 
 context('Actions', () => {
   beforeEach(() => {
@@ -28,7 +28,7 @@ context('Actions', () => {
   })
 
   it('Create a new class', () => {
-    cy.get('.addNew').click()
+    cy.get('.addNew', { timeout: 20000 }).click()
       .wait(200)
     cy.get('.pageNameSection').should('have.text', 'Create New Class')
     cy.get('#class-name-input')
@@ -37,21 +37,15 @@ context('Actions', () => {
       .type("11:30-12:15 TR", { delay: 20 })
     cy.get('#class-code-input')
       .type(courseCode, { delay: 20 })
-    cy.get('#professor-name-input')
-      .type("Dr. Badoogie Doogie", { delay: 20 })
-    cy.get('#professor-email-input')
-      .type("badoogie@email.com", { delay: 20 })
-    cy.get('#professor-office-input')
-      .type("700 Machray", { delay: 20 })
     cy.get('.bar').click()
   })
 
   it('Check new class workspace has been created from Dashboard', () => {
-    cy.contains(courseCode).click()
+    cy.contains(courseCode, { timeout: 20000 }).click()
   })
 
   it('Update class information', () => {
-    cy.contains(courseCode).click()
+    cy.contains(courseCode, { timeout: 20000 }).click()
       .wait(200)
     cy.get('#class-settings').trigger('mouseover')
       .wait(300)

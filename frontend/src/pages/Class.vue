@@ -19,8 +19,8 @@
     import { useStore } from "../stores";
     
     const store = useStore();
-    const { sessionTimer, userId, studyClass } = storeToRefs(store);
-    const { updateSkin, setPageName, setStudyClass, setModal } = store;
+    const { sessionTimer, userId, studyClass, reqSignal, gradeSignal } = storeToRefs(store);
+    const { updateSkin, setPageName, setStudyClass, setModal, updateReqSignal, updateGradeSignal } = store;
 
     let classRoute = useRoute().params.slug;
 
@@ -28,65 +28,92 @@
        MANAGE CLASS METADATA
      *===========================*/
 
+    // Page data placeholders
+    const grade = ref(null);
+    const comment = ref("Calculating grade..");
+    const classInfo = ref({
+        class_Name: "Loading...", // Class primary key
+        studyTime: 0,
+        classroom: null,
+        prof_Name: null,
+        prof_Email: null,
+        prof_Phone: null,
+        prof_Office: null,
+        prof_Hours: null,
+        section: null,
+        timeslot: "Loading..."
+    })
+    const reqs = ref([]);
+    
     onMounted(() => {
         setPageName("Class View");
 
         // Get this class' metadata
         const host = 'http://127.0.0.1:5000'; 
         const apiUrlMeta = `/api/class/${classRoute}`;
-
         axios.get(host + apiUrlMeta)
             .then(function (response) {
                 console.log(response);
-                classInfo.value = response.json();
+                classInfo.value = response.data.result;
             })
             .catch(function (error) {
                 console.log(error.response);
             })
+        
+        updateReqSignal(true);
+        updateGradeSignal(true);
+    })
 
-        // Get this class' requirements
-        const apiUrlReq = `/api/class/${classRoute}/task`;
-
-        axios.get(host + apiUrlReq)
-            .then(function (response) {
-                console.log(response);
-                reqs.value = response.json();
-            })
-            .catch(function (error) {
-                console.log(error.response);
-            })
-
-        // Get this class' letter grade
-        const apiUrlGrade = `/api/class/${classRoute}/grade`;
-
-        axios.get(host + apiUrlGrade)
-            .then(function (response) {
-                console.log(response);
-                let received = response.json();
-                grade.value = received.data;
-            })
-            .catch(function (error) {
-                console.log(error.response);
-            })
-    });
-
-    const grade = ref("C+");
-    const classInfo = ref({
-        name: "COMP 2080", // Class primary key
-        timeStudied: 2.3,
-        details: {
-            name: "Analysis of Algorithms",
-            section: "A02",
-            room: "Armes 201"
-        },
-        professor: {
-            name: "Hello surname",
-            email: "hellosur@email.com",
-            phone: "204-505-6060",
-            officeLocation: "Machray 200",
-            officeHours: "5:00-6:00"
+    // Get this class' requirements
+    const reqTrigger = computed(() => {
+        if(reqSignal.value){
+            const host = 'http://127.0.0.1:5000'; 
+            const apiUrlReq = `/api/class/${classRoute}/task`;
+            axios.get(host + apiUrlReq)
+                .then(function (response) {
+                    console.log(response);
+                    // Handle null dates; default to today
+                    let result = response.data.result;
+                    for (let i=0; i<result.length; i++){
+                        if(!result[i].deadline)
+                            result[i].due = new Date(Date.now());
+                        else
+                            result[i].due = new Date(result[i].deadline);
+                        result[i].tagColor = getTagColor(result[i].task_Name);
+                    }
+                    reqs.value = result;
+                })
+                .catch(function (error) {
+                    console.log(error.response);
+                    reqs.value = [];
+                })
+            updateReqSignal(false);
         }
-    });
+    })
+
+    // Get this class' letter grade
+    const gradeTrigger = computed(() => {
+        if(gradeSignal.value){
+            const host = 'http://127.0.0.1:5000'; 
+            const apiUrlGrade = `/api/class/${classRoute}/grade`;
+            axios.get(host + apiUrlGrade)
+                .then(function (response) {
+                    console.log(response);
+                    grade.value = response.data.result;
+                    comment.value = response.data.message;
+                })
+                .catch(function (error) {
+                    console.log(error.response);
+                    comment.value = error.response.data;
+                })
+            updateGradeSignal(false);
+        }
+    })
+
+    /*===========================
+       ASSIGN TAG COLOR
+     *===========================*/
+
     // Smart detect requirement type by checking keywords in title
     function getMatch(title){
         let matchList = [ 
@@ -121,16 +148,6 @@
             return "grey";
         return mapping;
     }
-    const reqs = ref([
-        { name: "Quiz 5", tagColor: getTagColor("Quiz 5"), due: new Date("February 12, 2023"), goal: "C" },
-        { name: "Homework 4", tagColor: getTagColor("Homework 4"), due: new Date("March 1, 2023"), goal: "C" },
-        { name: "Quiz 6", tagColor: getTagColor("Quiz 6"), due: new Date("March 5, 2023"), goal: "B" },
-        { name: "Assignment 5", tagColor: getTagColor("Assignment 5"), due: new Date("March 8, 2023"), goal: "C" },
-        { name: "Midterm Exam", tagColor: getTagColor("Midterm Exam"), due: new Date("March 13, 2023"), goal: "B" },
-        { name: "Final Project", tagColor: getTagColor("Final Project"), due: new Date("April 16, 2023"), goal: "C" },
-        { name: "Final Exam", tagColor: getTagColor("Final Exam"), due: new Date("April 17, 2023"), goal: "C" },
-        { name: "Become a Bee", tagColor: getTagColor("Become a Bee"), due: new Date("October 10, 2023"), goal: "" },
-    ]);
 
 
     /*===========================
@@ -148,12 +165,12 @@
         if(studyClass.value == classRoute && !sessionTimer.value.isPaused())
             return "Pause session";
         return "Study now";
-    });
+    })
     const studyIcon = computed(() => {
         if(studyClass.value == classRoute && !sessionTimer.value.isPaused())
             return Pause;
         return Play;
-    });
+    })
 
 
     /*===========================
@@ -172,7 +189,7 @@
             if(diffDays > -1)
                 return req;
         })
-    });
+    })
     const expiredReqs = computed(() => {
         return reqs.value.filter(req => {
             let diffTime = req.due - today;
@@ -180,19 +197,19 @@
             if(diffDays < 0)
                 return req;
         })
-    });
+    })
 
     // Change displayed requirements based on active filter
     const reqSet = computed(() => {
         if(current.value)
             return currentReqs.value;
         return expiredReqs.value;
-    });
+    })
     const viewNote = computed(() => {
         if(current.value)
             return "View expired requirements";
         return "View current requirements";
-    });
+    })
 
     // Toggle between current/expired filter states
     function changeView(){
@@ -229,7 +246,7 @@
 
                     <!-- Class name and time studied -->
                     <h1 v-motion-pop> {{ classRoute }} </h1>
-                    <h2 v-motion-pop> Studied {{ classInfo.timeStudied }} hours this week </h2>
+                    <h2 v-motion-pop> Studied {{ (classInfo.studyTime/3600).toFixed(2) }} hours this week </h2>
 
                 </div>
                 <div v-motion-pop>
@@ -263,10 +280,7 @@
                 <!-- Class grade projection -->
                 <div id="grade-ctr" v-motion-slide-right>
                     <h1 id="grade"> {{ grade }} </h1>
-                    <div id="grade-note" class="delius">
-                        Wow! <br/>
-                        You are doing okay
-                    </div>
+                    <div id="grade-note" class="delius"> {{ comment }} </div>
                     <router-link :to="'/gradeCalculator/' + classRoute">
                       <button class="button bar">
                         Grade breakdown
@@ -280,15 +294,19 @@
                     <table>
                         <tr>
                             <td> Name </td>
-                            <td> {{ classInfo.details.name }} </td>
+                            <td> {{ classRoute }} </td>
+                        </tr>
+                        <tr>
+                            <td> Timeslot </td>
+                            <td> {{ classInfo.timeslot }} </td>
                         </tr>
                         <tr>
                             <td> Section </td>
-                            <td> {{ classInfo.details.section }} </td>
+                            <td> {{ classInfo.section }} </td>
                         </tr>
                         <tr>
                             <td> Room </td>
-                            <td> {{ classInfo.details.room }} </td>
+                            <td> {{ classInfo.classroom }} </td>
                         </tr>
                     </table>
                     
@@ -296,23 +314,23 @@
                     <table>
                         <tr>
                             <td> Name </td>
-                            <td> {{ classInfo.professor.name }} </td>
+                            <td> {{ classInfo.prof_Name }} </td>
                         </tr>
                         <tr>
                             <td> Email </td>
-                            <td> {{ classInfo.professor.email }} </td>
+                            <td> {{ classInfo.prof_Email }} </td>
                         </tr>
                         <tr>
                             <td> Phone </td>
-                            <td> {{ classInfo.professor.phone }} </td>
+                            <td> {{ classInfo.prof_Phone }} </td>
                         </tr>
                         <tr>
                             <td> Office Location </td>
-                            <td> {{ classInfo.professor.officeLocation }} </td>
+                            <td> {{ classInfo.prof_Office }} </td>
                         </tr>
                         <tr>
                             <td> Office Hours </td>
-                            <td> {{ classInfo.professor.officeHours }} </td>
+                            <td> {{ classInfo.prof_Hours }} </td>
                         </tr>
                     </table>
                 </div>
@@ -320,6 +338,7 @@
             </div>
         </section>
     </div>
+    <span>{{ reqTrigger }}{{ gradeTrigger }}</span>
 </template>
 
 <style scoped>

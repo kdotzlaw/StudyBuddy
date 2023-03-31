@@ -51,7 +51,7 @@ This feature will allow for users to level up their buddy.
 <img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/locust.png" alt="Locust logo" align="center">
 <img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/jest.png" alt="Jest logo" align="center">
 <img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/cypress.png" alt="Cypress logo" align="center">
-<img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/sonarqube.png" alt="SonarQube logo" align="center">
+<img height="75" width="75" src="https://raw.githubusercontent.com/kdotzlaw/StudyBuddy/main/frontend/public/assets/tech/sonarcloud.png" alt="SonarCloud logo" align="center">
 </p>
 
 ### CI/CD
@@ -162,6 +162,8 @@ The following documentation were prepared as part of StudyBuddy deliverables.
 - [Sequence Diagrams](https://github.com/kdotzlaw/StudyBuddy/wiki/Sprint-2)
 - [Changelog](https://github.com/kdotzlaw/StudyBuddy/wiki/Changelog)
 - [Coding Standards](/docs/CodeStandards.md)
+- [Load Test Report](/docs/load-test_report.pdf)
+- [Meeting Minutes](https://github.com/kdotzlaw/StudyBuddy/wiki/Meeting-Minutes)
 
 # Team Members
 

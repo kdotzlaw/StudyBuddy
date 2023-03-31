@@ -41,6 +41,7 @@
   import validate from "../logic/validate"
   import { useStore } from "../stores"
   import { storeToRefs } from "pinia";
+  import CryptoJS from "crypto-js";
 
   let username, email, password, confirmPassword;
   const usernameErrorMsg = ref('');
@@ -134,29 +135,26 @@
     // Validation checks pass; Send data to server endpoint
     if (userNameValid && emailValid && passwordErrorValid && passwordConfirmErrorValid && passwordLengthValid) {
       const host = 'http://127.0.0.1:5000';
-      const apiUrl = '/api/newuser'; 
+      const apiUrl = '/api/newuser';
+      // Encrypt password from plaintext
+
+      const cipher = CryptoJS.SHA256(password)
+
       const data = {
         username: username,
         email: email,
-        password: password
+        password: cipher.toString()
       };
 
       axios.post(host + apiUrl, data)
       .then(function (response) {
         console.log(response);
-        loginUser(username);
         setModal("Success", "success", response.data);
         toggleModal();
       })
       .catch(function (error) {
         console.log(error.response);
-        // Temporary superuser admission for offline debugging. Removed before final release
-        if(username == "admin" && "admitpls"){
-          loginUser(username);
-          setModal("So be it.", "success", "Welcome StudyBuddy Superuser!");
-        }
-        else
-          setModal("Error", "error", error.response.data);
+        setModal("Error", "error", error.response.data);
         toggleModal();
       });
     }

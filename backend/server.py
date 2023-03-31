@@ -179,6 +179,8 @@ METHOD: logout(): removes the session cookie and logs out the user
 def logout():
     # delete session
     sessions.pop(flask.request.headers['session'])
+    if 'session' in flask.request.headers.keys():
+        sessions.pop(flask.request.headers['session'])
 
     # log out
     flask_login.logout_user()
@@ -552,9 +554,11 @@ def get_done_tasks(classname):
     res = db.getCompleteTasksForClass(username, classname)
     if type(res) is Row:
         print(parse_row(res))
+        # print(parse_row(res))
         return {"result": parse_row(res)}, 200
     elif type(res) is list:
         print(parse_rows(res))
+        # print(parse_rows(res))
         return {"result": parse_rows(res)}, 200
     else:
         # no done tasks

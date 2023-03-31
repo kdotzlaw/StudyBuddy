@@ -607,7 +607,7 @@ def grade(classname):
     # return letter grade based on breakdown and done task grades
     for k in breakdown.keys():
 
-        if eval(breakdown[k])[0] < class_grade <= eval(breakdown[k])[1]:
+        if eval(breakdown[k])[0] <= class_grade <= eval(breakdown[k])[1]:
             return {"result": k, "message": messages[k]}, 200
     print(username, "didn't find grade range for", classname)
     return "Server Error: Grade range wasn't found", 500

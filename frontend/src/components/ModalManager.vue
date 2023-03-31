@@ -11,6 +11,11 @@
     import Register from "./Register.vue"; 
     import Settings from "./Settings.vue";
     import AddRequirement from "./AddRequirement.vue";
+    import { storeToRefs } from "pinia";
+    import { useStore } from "../stores";
+
+    const store = useStore();
+    const { reqName } = storeToRefs(store);
 
 
     const props = defineProps({ 
@@ -41,7 +46,7 @@
         <AddRequirement />
     </div>
     <div v-else-if="contentId=='editRequirement'" class="form-ctr">
-        <AddRequirement :edit="true" />
+        <AddRequirement :edit="true" :taskName="reqName" />
     </div>
 
     <!-- HTML render -->

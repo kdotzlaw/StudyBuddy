@@ -89,10 +89,29 @@
     if(classRoute){
       setPageName("Manage Class");
       document.getElementById("class-name-input").value = classRoute;
+      const host = 'http://127.0.0.1:5000'; 
+      const apiUrlLoad = `/api/class/${classRoute}`;
+      axios.get(host + apiUrlLoad)
+        .then(function (response) {
+          console.log(response);
+          let result = response.data.result;
+          document.getElementById("section-name-input").value = result.section;
+          document.getElementById("class-code-input").value = result.courseCode;
+          document.getElementById("room-input").value = result.classroom;
+          document.getElementById("class-time-input").value = result.timeslot;
+          document.getElementById("professor-name-input").value = result.prof_Name;
+          document.getElementById("professor-email-input").value = result.prof_Email;
+          document.getElementById("professor-office-input").value = result.prof_Office;
+          document.getElementById("professor-hours-input").value = result.prof_Hours;
+          document.getElementById("professor-phone-input").value = result.prof_Phone;
+        })
+        .catch(function (error) {
+          console.log(error.response);
+        })
     }
     else
       setPageName("Create New Class");
-  });
+  })
 
   // Get classRoute from URL
   let classRoute = useRoute().params.slug;
@@ -110,6 +129,8 @@
     profName = document.getElementById("professor-name-input").value;
     profEmail = document.getElementById("professor-email-input").value;
     profOffice = document.getElementById("professor-office-input").value;
+    profHours = document.getElementById("professor-hours-input").value;
+    profPhone = document.getElementById("professor-phone-input").value;
 
 
     //  Send data to backend. Can either be a NEW class or an UPDATE to an existing class.

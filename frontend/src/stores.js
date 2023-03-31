@@ -106,6 +106,15 @@ export const useStore = defineStore('store', () => {
         buddyChoice.value = buddy;
     }
 
+    /* taskName
+     *   Name of selected requirement to edit
+     *   setter @params - name: String
+     *=====================================*/
+    const taskName = ref(null);
+    function setTaskName(name=null){
+        taskName.value = name;
+    }
+
     /* reqSignal
      *   Detect new change in course requirement cards
      *   setter @params - signal: Boolean
@@ -133,6 +142,7 @@ export const useStore = defineStore('store', () => {
         isModalOpen, toggleModal,
         modalTitle, modalContent, modalRender, setModal,
         uiSkin, updateSkin, buddyChoice, updateBuddy,
+        taskName, setTaskName,
         reqSignal, updateReqSignal, gradeSignal, updateGradeSignal
     }
 })

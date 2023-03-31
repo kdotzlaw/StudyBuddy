@@ -10,7 +10,7 @@
     import { useStore } from "../stores";
     
     const store = useStore();
-    const {setModal, toggleModal} = store;
+    const {setTaskName, setModal, toggleModal} = store;
 
     const props = defineProps({ 
         reqs: {type: Array, required: false, default: []},
@@ -40,6 +40,13 @@
             return "Due in " + diffDays + " days";
         else
             return "";
+    }
+
+    // Autofill edit fields with existing data
+    function openEdit(event){
+        let titleContainer = event.target.previousElementSibling.previousElementSibling;
+        setTaskName(titleContainer.querySelector("h3").innerText);
+        setModal("Edit Requirement", "editRequirement");
     }
 
     // Borderless style
@@ -80,7 +87,7 @@
             <h2 class="goal"> {{ req.task_grade }} </h2>
 
             <!-- Open Settings control -->
-            <img class="reqManage" :src="Gear" alt="Manage requirement" @click="setModal('Edit Requirement', 'editRequirement')" />
+            <img class="reqManage" :src="Gear" alt="Manage requirement" @click="openEdit($event)" />
 
         </div>
     </div>

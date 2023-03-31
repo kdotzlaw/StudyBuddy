@@ -42,13 +42,15 @@
 
 <script setup>
   import { default as axios } from 'axios';
+  import { onMounted } from 'vue';
   import { useRoute } from 'vue-router';
   import { storeToRefs } from "pinia";
   import { ref, computed } from "vue";
   import { useStore } from "../stores";
 
   const store = useStore();
-  const {setModal, toggleModal, updateReqSignal, updateGradeSignal} = store;
+  const { setModal, toggleModal, updateReqSignal, updateGradeSignal } = store;
+  const { taskName } = storeToRefs(store);
 
   const props = defineProps({ 
     edit: {type: Boolean, required: false, default: false},
@@ -56,6 +58,25 @@
   
   let classRoute = useRoute().params.slug;
   let reqName, gradeReq, reqDate, finishReq;
+
+  onMounted(() => {
+    // Autofill edit fields
+    if(props.edit){
+      document.getElementById("name-req-input").value = taskName.value;
+      const host = 'http://127.0.0.1:5000'; 
+      const apiUrlLoad = `/api/class/${classRoute}/task/${taskName.value}`;
+      axios.get(host + apiUrlLoad)
+        .then(function (response) {
+          console.log(response);
+          let result = response.data.result;
+          document.getElementById("grade-req-input").value = result.task_Weight;
+          document.getElementById("date-req-input").value = result.deadline;
+        })
+        .catch(function (error) {
+          console.log(error.response);
+        })
+    }
+  })
 
   /*  checkEnter
    *    Detect when ENTER key pressed to submit form
@@ -248,6 +269,8 @@
   border-radius: 1em;
   background: var(--white);
   color: var(--black);
+  text-align: left !important;
+  padding-left: 1.5em;
 }
 
 #grade-req-input, #finish-req-input{

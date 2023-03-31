@@ -171,12 +171,10 @@ def login():
     if flask.request.get_json(force=True) is not None:
         # username header exists
         username = flask.request.get_json(force=True)['username']
-        print(username)
         password = flask.request.get_json(force=True)['password']
         # check db for username and password
         # selection is a list of rows (SHOULD BE LENGTH 1)
         selection = db.getUser(username)
-        print(selection)
 
         if selection is None:
             # username not in database
@@ -202,8 +200,6 @@ def login():
                 # invalid password
                 # send 401 bad request response
                 # be ambiguous for security reasons
-                print(uname)
-                print(pword)
                 response = "Bad Request: Invalid Username or Password", 401
                 return response
     else:
@@ -259,8 +255,6 @@ def new_user():
         sessions[session] = username
 
         resp = flask.make_response()
-        print(resp)
-        print(resp.get_json())
         resp.status_code = 200
         resp.data = 'Account Created'
 

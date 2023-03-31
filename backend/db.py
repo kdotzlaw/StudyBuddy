@@ -11,9 +11,6 @@ conn = (r'Driver=ODBC Driver 17 for SQL Server;'
         r'PWD=dbtools.IO'
         )
 
-#cnxn = pyodbc.connect(conn)
-#print("Connection successful!")
-
 '''
 METHOD: getUserData(): Debugging method used in tests to make sure that database contains the stub user data
 '''

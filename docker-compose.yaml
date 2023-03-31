@@ -1,33 +1,15 @@
 version: '3.9'
 
 services:
-  # Reverse Proxy
-  #reverse_proxy:
-  #  image: nginx:stable-alpine
-  #  container_name: reverse_proxy
-    #build:
-    #  context: ./nginx
-    #  dockerfile: Dockerfile
-  #  ports:
-  #    - '80:80'
-  #  volumes:
-  #    - ./nginx/nginx.conf:/etc/nginc/nginx.conf
-  #  depends_on:
-  #    - vue
-  #    - flask
-  #  restart: always
-  #  networks:
-  #    - app-network
-
   # MS SQL Container
   ms_sql:
     container_name: database_container
     # The base image for the container
-    #image: mcr.microsoft.com/mssql/server:2022-latest
+    image: capillae/studybuddy-mssql-database:2.0.0
     # Location of the Dockerfile to build the base image
-    build:
-      context: ./backend/mssql/
-      dockerfile: Dockerfile
+    #build:
+    #  context: ./backend/mssql/
+    #  dockerfile: Dockerfile
     restart: always
     ports:
       - '1433:1433'
@@ -45,11 +27,11 @@ services:
   vue:
     container_name: frontend_container
     # The base image for the container
-    #image: capillae/studybuddy-vue-frontend:1.1.77
+    image: capillae/studybuddy-vue-frontend:2.0.0
     # Location of the Dockerfile to build the base image
-    build:
-      context: ./frontend/
-      dockerfile: Dockerfile
+    #build:
+    #  context: ./frontend/
+    #  dockerfile: Dockerfile
     ports:
       - '5173:80'
     depends_on:
@@ -62,11 +44,11 @@ services:
   flask:
     container_name: backend_container
     # The base image for the container
-    #image: capillae/studybuddy-python-backend:1.1.16
+    image: capillae/studybuddy-python-backend:2.0.0
     # Location of the Dockerfile to build the base image
-    build:
-      context: ./backend/
-      dockerfile: Dockerfile
+    #build:
+    #  context: ./backend/
+    #  dockerfile: Dockerfile
     ports:
       - '5000:5000'
     environment:

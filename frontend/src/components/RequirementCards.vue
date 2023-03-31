@@ -84,10 +84,10 @@
             </div>
 
             <!-- Grade goal -->
-            <h2 class="goal"> {{ req.task_grade }} </h2>
+            <h2 class="goal"> {{ req.task_Weight }} </h2>
 
             <!-- Open Settings control -->
-            <img class="reqManage" :src="Gear" alt="Manage requirement" @click="openEdit($event)" />
+            <img v-if="!borderless" class="reqManage" :src="Gear" alt="Manage requirement" @click="openEdit($event)" />
 
         </div>
     </div>
@@ -193,6 +193,8 @@
         margin-bottom: 2vh;
         transform: scale(0.9);
         font-size: 80%;
+        grid-template-columns: 2.5em 12% 1fr 4em;
+        grid-column-gap: 8%;
     }
 
     @media screen and (max-width: 820px) {

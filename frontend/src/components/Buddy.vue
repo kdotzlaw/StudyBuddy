@@ -53,7 +53,7 @@
 
     <!-- Buddy container -->
     <div id="buddy">
-        <div v-if="buddyChoice == 'corgi'" >
+        <div v-if="buddyChoice == 'Corgi'" >
             <Corgi />
         </div>
         <div v-else>
@@ -71,7 +71,7 @@
 
     <!-- Level card -->
     <div v-if="showLevel" id="level-card" class="delius">
-        Level 0
+        Buddy the {{ buddyChoice }}
     </div>
     
 </template>

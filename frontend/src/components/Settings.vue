@@ -48,10 +48,10 @@
         </div>
         <h2>Swap Buddy</h2>
         <div class="buddies">
-            <div :class="`buddy-preview`" @click="updateTheBuddy('corgi')">
+            <div :class="`buddy-preview`" @click="updateTheBuddy('Corgi')">
                 <Corgi />
             </div>
-            <div :class="`buddy-preview`" @click="updateTheBuddy('buddy')">
+            <div :class="`buddy-preview`" @click="updateTheBuddy('Bunny')">
                 <Bunny />
             </div>
         </div>

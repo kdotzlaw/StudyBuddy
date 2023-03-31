@@ -101,8 +101,8 @@ export const useStore = defineStore('store', () => {
      *   ID of buddy character to display in dashboard
      *   setter @params - skin: String
      *=====================================*/
-    const buddyChoice = ref("corgi");
-    function updateBuddy(buddy="corgi"){
+    const buddyChoice = ref("Corgi");
+    function updateBuddy(buddy="Corgi"){
         buddyChoice.value = buddy;
     }
 

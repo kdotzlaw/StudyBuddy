@@ -98,7 +98,7 @@ describe('Test modal functions', () => {
 })
 
 let skin: String = "skin-forest";
-let buddy: String = "bunny";
+let buddy: String = "Bunny";
 describe('Test user customizations', () => {
 
   test('Change UI skin (updateSkin)', () => {

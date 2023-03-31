@@ -126,12 +126,13 @@
     classCode = document.getElementById("class-code-input").value;
     room = document.getElementById("room-input").value;
     classTime = document.getElementById("class-time-input").value;
-    profName = document.getElementById("professor-name-input").value;
-    profEmail = document.getElementById("professor-email-input").value;
-    profOffice = document.getElementById("professor-office-input").value;
-    profHours = document.getElementById("professor-hours-input").value;
-    profPhone = document.getElementById("professor-phone-input").value;
-
+    if(classRoute){
+      profName = document.getElementById("professor-name-input").value;
+      profEmail = document.getElementById("professor-email-input").value;
+      profOffice = document.getElementById("professor-office-input").value;
+      profHours = document.getElementById("professor-hours-input").value;
+      profPhone = document.getElementById("professor-phone-input").value;
+    }
 
     //  Send data to backend. Can either be a NEW class or an UPDATE to an existing class.
     const host = 'http://127.0.0.1:5000'; 
@@ -169,19 +170,19 @@
         })
     }
     // Create new class
-    else{
+    else if(className && classTime){
       axios.post(host + apiUrlNew, createData)
         .then(function (response) {
           console.log(response);
           setModal("Success", "success", response.data);
-          toggleModal();
         })
         .catch(function (error) {
           console.log(error.response);
           setModal("Error", "error", error.response.data);
-          toggleModal();
         })
     }
+    else
+      setModal("Error", "error", "You need to provide a valid class name and timeslot.");
   };
 
 

@@ -1,5 +1,5 @@
-<!-- 
-  Register.vue 
+<!--
+  Register.vue
     Renders form fields and controls, and runs validation checks for creating an account.
 -->
 
@@ -134,7 +134,7 @@
 
     // Validation checks pass; Send data to server endpoint
     if (userNameValid && emailValid && passwordErrorValid && passwordConfirmErrorValid && passwordLengthValid) {
-      const host = 'http://127.0.0.1:5000';
+      const host = 'http://localhost:5000';
       const apiUrl = '/api/newuser';
       // Encrypt password from plaintext
 
@@ -179,7 +179,7 @@ body {
   margin: 1rem;
   padding: 1rem;
   border-radius: var(--border-radius);
-  
+
 }
 
 .container,
@@ -224,7 +224,7 @@ body {
 .form-input-group {
   margin-bottom: 1rem;
   margin-left: auto;
-  margin-right: auto;  
+  margin-right: auto;
 }
 
 .form-input {

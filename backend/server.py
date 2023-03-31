@@ -115,7 +115,7 @@ def unauthorized_handler():
 
 
 '''
-METHOD: parse_rows(): 
+METHOD: parse_rows():
 PRE-CONDITION: given a list of pyodbc.Row <row> objects
 POST-CONDITION: return a list of dictionaries in the form [{<column name>: <column value>, ... }, ... ]
 '''
@@ -171,10 +171,12 @@ def login():
     if flask.request.get_json(force=True) is not None:
         # username header exists
         username = flask.request.get_json(force=True)['username']
+        print(username)
         password = flask.request.get_json(force=True)['password']
         # check db for username and password
         # selection is a list of rows (SHOULD BE LENGTH 1)
         selection = db.getUser(username)
+        print(selection)
 
         if selection is None:
             # username not in database
@@ -200,6 +202,8 @@ def login():
                 # invalid password
                 # send 401 bad request response
                 # be ambiguous for security reasons
+                print(uname)
+                print(pword)
                 response = "Bad Request: Invalid Username or Password", 401
                 return response
     else:
@@ -255,6 +259,8 @@ def new_user():
         sessions[session] = username
 
         resp = flask.make_response()
+        print(resp)
+        print(resp.get_json())
         resp.status_code = 200
         resp.data = 'Account Created'
 
@@ -285,7 +291,7 @@ def get_class(classname):
 
 
 '''
-METHOD: completeClass(): 
+METHOD: completeClass():
 PRE-CONDITION: given <classname>
 POST-CONDITION: sets the 'is_complete' attribute of <classname> to true
 --> login required for this endpoint
@@ -372,7 +378,7 @@ def class_meta(classname):
 
 
 '''
-METHOD: newclass(): 
+METHOD: newclass():
 PRE-CONDITION: given some data for a new class
 POST-CONDITION: creates a new class with the associated data
 --> login required for this endpoint
@@ -545,7 +551,7 @@ def new_task(classname):
 
 
 '''
-METHOD: get_task(): 
+METHOD: get_task():
 PRE-CONDITION: given <classname> and <taskname>
 POST-CONDITION: returns the task <taskname>
 --> login required for this endpoint
@@ -617,7 +623,7 @@ def delete_task(classname, taskname):
 
 
 '''
-METHOD: complete_task(): 
+METHOD: complete_task():
 PRE-CONDITION: given <classname> and <taskname>
 POST-CONDITION: marks <taskname> as complete by setting grade value
 --> login required for this endpoint
@@ -668,7 +674,7 @@ def get_done_tasks(classname):
 
 
 '''
-METHOD: grade(): 
+METHOD: grade():
 PRE-CONDITION: grabs data for complete tasks associated with <classname>
 POST-CONDITION: returns letter grade and buddy message
 --> login required for this endpoint

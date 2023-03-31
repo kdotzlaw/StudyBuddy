@@ -1,5 +1,5 @@
-<!-- 
-  Login.vue 
+<!--
+  Login.vue
     Renders form fields and controls, and runs validation checks for logging in an existing account.
 -->
 
@@ -105,7 +105,7 @@
 
     // Validation checks pass; Send data to server endpoint
     if (!userNameCheck && !passwordErrorCheck) {
-      const host = 'http://127.0.0.1:5000'; 
+      const host = 'http://localhost:5000';
       const apiUrl = '/api/login';
       // Encrypt password from plaintext
       const cipher = CryptoJS.SHA256(password)
@@ -122,6 +122,21 @@
         toggleModal();
       })
       .catch(function (error) {
+        if (error.response) {
+          // Request made and server responded
+          console.log('Request made and server responded');
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.log('The request was made but no response was received');
+          console.log(error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log('Something happened in setting up the request that triggered an Error', error.message);
+        }
+        console.log(JSON.parse(JSON.stringify(error)));
         console.log(error.response);
         setModal("Error", "error", error.response.data);
         toggleModal();
@@ -150,7 +165,7 @@ body {
   margin: 1rem;
   padding: 1rem;
   border-radius: var(--border-radius);
-  
+
 }
 
 .container,

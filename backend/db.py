@@ -5,11 +5,14 @@ and SQL prepared statements
 import pyodbc
 #define connection string
 conn = (r'Driver=ODBC Driver 17 for SQL Server;'
-        r'Server=localhost;'
+        r'Server=database_container;'
         r'Database=StudyBuddy;'
         r'UID=sa;'
         r'PWD=dbtools.IO'
         )
+
+#cnxn = pyodbc.connect(conn)
+#print("Connection successful!")
 
 '''
 METHOD: getUserData(): Debugging method used in tests to make sure that database contains the stub user data
@@ -46,6 +49,7 @@ POSTCONDITION:
 '''
 def getUser(name):
     cnxn = pyodbc.connect(conn,autocommit=True)
+    print(cnxn)
     cursor = cnxn.cursor()
     result = cursor.execute("SELECT * FROM Users WHERE username = ?", name).fetchall()
     if not result:
@@ -65,6 +69,7 @@ POSTCONDITION:
 
 def createAccount(username, password):
     cnxn = pyodbc.connect(conn,autocommit=True)
+    print(cnxn)
     cursor = cnxn.cursor()
     prep_stmt = "INSERT INTO Users (username, password) VALUES (?,?);"
     cursor.execute(prep_stmt, username, password)

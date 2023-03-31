@@ -12,7 +12,7 @@ BEGIN
 	CREATE TABLE Users (
 	uID INT NOT NULL IDENTITY (1,1) PRIMARY KEY,
 	username VARCHAR(50) NOT NULL UNIQUE,
-	password VARCHAR(8) NOT NULL,
+	password VARCHAR(2048) NOT NULL,
 	user_email VARCHAR(50),
 	xp FLOAT DEFAULT 0.0
 	);
@@ -64,15 +64,15 @@ GO
 
 /* ADD USER STUB DATA */
 INSERT INTO Users (username,password)
-	VALUES ('ryan2023','password');
+	VALUES ('ryan2023','5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8');
 INSERT INTO Users(username,password)
-	VALUES('katDot','1234');
+	VALUES('katDot','03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4');
 INSERT INTO Users(username,password)
-	VALUES('andrea22','2222');
+	VALUES('andrea22','edee29f882543b956620b26d0ee0e7e950399b1c4222f5de05e06425b4c995e9');
 INSERT INTO Users(username,password)
-	VALUES('EliStudy','2#!6A');
+	VALUES('EliStudy','3459d4e034fb958e5f6c836ac00558ee7a614c0234a55f4df16535845a6cb186');
 INSERT INTO Users(username,password)
-	VALUES('sneakerbot101','Shoes!');
+	VALUES('sneakerbot101','73b2e90162bdd5ff6151294bee6fa72d602680e29b0bcb6702f952262ffb7055');
 
 /* ADD CLASSES STUB DATA */
 INSERT INTO Classes(class_Name, timeslot, is_Complete, studyTime,breakdown,FK_uID )

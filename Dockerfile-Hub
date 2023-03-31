@@ -1,0 +1,16 @@
+# Fetch Database Image
+#FROM capillae/studybuddy-mssql-database:1.1.5
+
+# Fetch Frontend Image
+#FROM capillae/studybuddy-vue-frontend:1.1.89
+
+# Fetch Backend Image
+#FROM capillae/studybuddy-python-backend:1.1.28
+
+FROM backend
+FROM frontend
+FROM db
+
+WORKDIR /app
+COPY docker-startup.sh ./
+CMD ["/bin/sh", "docker-startup.sh"]

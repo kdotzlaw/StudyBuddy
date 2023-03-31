@@ -1,6 +1,24 @@
 version: '3.9'
 
 services:
+  # Reverse Proxy
+  #reverse_proxy:
+  #  image: nginx:stable-alpine
+  #  container_name: reverse_proxy
+    #build:
+    #  context: ./nginx
+    #  dockerfile: Dockerfile
+  #  ports:
+  #    - '80:80'
+  #  volumes:
+  #    - ./nginx/nginx.conf:/etc/nginc/nginx.conf
+  #  depends_on:
+  #    - vue
+  #    - flask
+  #  restart: always
+  #  networks:
+  #    - app-network
+
   # MS SQL Container
   ms_sql:
     container_name: database_container
@@ -10,7 +28,6 @@ services:
     build:
       context: ./backend/mssql/
       dockerfile: Dockerfile
-    # If the container fails, default to always restart
     restart: always
     ports:
       - '1433:1433'
@@ -20,7 +37,9 @@ services:
     # Allow data persistency when starting & stopping containers
     volumes:
       - ms_sql:/var/opt/mssql
-    #network_mode: 'host'
+    restart: always
+    networks:
+      - app-network
 
   # Vue Container
   vue:
@@ -33,11 +52,11 @@ services:
       dockerfile: Dockerfile
     ports:
       - '5173:80'
-    environment:
-      PORT: 5173
     depends_on:
       - ms_sql
-
+    restart: on-failure
+    networks:
+      - app-network
 
   # Flask Container
   flask:
@@ -50,17 +69,18 @@ services:
       dockerfile: Dockerfile
     ports:
       - '5000:5000'
-    #extra_hosts:
-      #- 'host.docker.internal:host-gateway'
-      #- 'localhost:1433'
     environment:
-      PORT: 5000
       MSSQL_URI: mssql://localhost:1433//StudyBuddy/
       DB_NAME: StudyBuddy
     depends_on:
       - ms_sql
-    #network_mode: 'host'
-
+    restart: on-failure
+    networks:
+      - app-network
 
 volumes:
   ms_sql: {}
+
+networks:
+  app-network:
+    external: true

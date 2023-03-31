@@ -1,0 +1,53 @@
+# Build and Host Frontend Image
+# Build Vue Application
+FROM node:lts-alpine AS build-stage
+WORKDIR /app
+COPY ./frontend/package*.json ./
+RUN npm ci
+COPY ./frontend ./
+RUN npm run build
+
+# Create MSSQL Image and Initialize Data
+FROM mcr.microsoft.com/mssql/server:2022-latest AS db-stage
+EXPOSE 1433
+ENV ACCEPT_EULA=Y
+ENV MSSQL_SA_PASSWORD=dbtools.IO
+
+#VOLUME ms_sql:/var/opt/mssql
+COPY ./backend/mssql/StudyBuddy_create.sql ./docker-entrypoint-initdb.d/
+COPY ./backend/mssql/setup_database.sh ./docker-entrypoint-initdb.d/
+COPY ./backend/mssql/entrypoint.sh ./docker-entrypoint-initdb.d/
+RUN ./opt/mssql/bin/sqlservr & ./docker-entrypoint-initdb.d/setup_database.sh
+
+# Build Backend Image
+FROM python:3.11.1 AS backend-stage
+WORKDIR /app/backend
+COPY ./backend/requirements.txt .
+RUN pip install -r requirements.txt
+COPY ./backend ./
+
+# Install ODBC Driver 17
+RUN apt-get install curl
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+RUN curl https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list
+RUN apt-get update
+RUN ACCEPT_EULA=Y apt-get install -y msodbcsql17
+RUN ACCEPT_EULA=Y apt-get install -y mssql-tools
+RUN apt-get install -y unixodbc
+
+EXPOSE 5000
+CMD python3 -m flask --app ./app/backend/server.py run
+
+# Create NGINX Server to Host Image
+FROM nginx:stable-alpine AS production-stage
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+COPY --from=db-stage ./docker-entrypoint-initdb.d/ ./docker-entrypoint-initdb.d/
+COPY --from=backend-stage /app/backend /app/backend
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+
+#WORKDIR /app
+#COPY docker-startup.sh ./
+#EXPOSE 80
+#EXPOSE 5000
+#CMD ["/bin/sh", "docker-startup.sh"]

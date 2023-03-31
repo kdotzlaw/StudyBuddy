@@ -49,6 +49,11 @@ jobs:
         run:
           sqlcmd -S localhost -U sa -P dbtools.IO -i ./StudyBuddy_create.sql
 
+      - name: Run Flask Server
+        working-directory: ./backend
+        run:
+          python3 -m flask --app server.py run
+
       - name: Run Acceptance Tests
         working-directory: ./frontend
         run:

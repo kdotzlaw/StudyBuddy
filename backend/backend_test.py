@@ -664,6 +664,9 @@ class apiClassTests(flask_unittest.ClientTestCase):
         resp = client.get('/api/class/COMP 9999')
         self.assertStatus(resp, 200)
         resp = client.get('/api/class')
+        #remove class
+        resp = client.post('/api/class/COMP 9999/delete')
+        self.assertStatus(resp,200)
 
     def test_updatemeta(self, client):
         # log in
@@ -701,6 +704,9 @@ class apiClassTests(flask_unittest.ClientTestCase):
         self.assertStatus(resp, 200)
         # timeslot didn't change
         self.assertEqual(resp.get_json(force=True)['result']['timeslot'], "11:30:00")
+        # remove class
+        resp = client.post('/api/class/COMP 8888/delete')
+        self.assertStatus(resp, 200)
 
     def test_completeclass(self, client):
         # log in
@@ -724,7 +730,9 @@ class apiClassTests(flask_unittest.ClientTestCase):
         # ensure class is gone
         resp = client.get('/api/class/COMP 4350')
         self.assertStatus(resp, 400)
-
+        #now put it back
+        resp = client.post('/api/newclass', json={"classname": "COMP 4350", "timeslot": "11:30:00", "courseCode": ""})
+        self.assertStatus(resp,200)
 
 class apiTaskTests(flask_unittest.ClientTestCase):
     # assign flask app
@@ -778,6 +786,9 @@ class apiTaskTests(flask_unittest.ClientTestCase):
         self.assertStatus(resp, 200)
         resp = client.post('/api/class/COMP 4350/newtask', json={'taskname': 'Study some stuff'})
         self.assertStatus(resp, 200)
+        #remove task
+        resp = client.post('/api/class/COMP 4350/task/Study some stuff/delete')
+        self.assertStatus(resp,200)
 
     def test_complete_task(self, client):
         # log in

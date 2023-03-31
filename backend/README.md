@@ -2,7 +2,11 @@
 
 ## Running flask server
 
-        python3 -m flask --app server.py run
+        python server.py -t true
+
+## Running the production server
+
+        python server.py
         
 ## Dev DB Connection String
         conn = (r'Driver=SQL Server;'
@@ -12,7 +16,7 @@
             
 ## LOAD-TESTING STEPS
 1. `pip install locust`
-2. In backend directory, run the flask server: `python3 -m flask --app server.py run`
+2. In backend directory, run the production server: `python server.py`
 3. In backend directory, run locust: `python -m locust`
 4. Visit `http://localhost:8089/`
 5. Enter **100 users**, **20 users started/second**, and **localhost:5000**

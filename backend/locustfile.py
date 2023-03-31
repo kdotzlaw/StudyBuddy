@@ -1,7 +1,7 @@
 from locust import HttpUser, task, between
 '''
 1. pip install locust
-2. run flask server:  python3 -m flask --app server.py run
+2. run flask server:  python server.py run
 3. In backend directory: python -m locust
 4. Visit: http://localhost:8089/
 '''

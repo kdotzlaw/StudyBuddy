@@ -1,6 +1,7 @@
 import datetime
 import json
 import time
+import argparse
 
 import flask
 import flask_login
@@ -10,6 +11,15 @@ import db
 from werkzeug.security import check_password_hash, generate_password_hash
 import uuid
 import flask_cors
+from waitress import serve
+
+# get testing argument, if true run flask server
+# else: run production waitress server
+parser = argparse.ArgumentParser()
+parser.add_argument("-t", '--testing', type=bool, default=False)
+args = parser.parse_args()
+testing = args.testing
+
 
 '''
 CLASS: customJSON(): Custom json parsing class for flask app
@@ -23,6 +33,7 @@ class customJSON(flask.json.provider.JSONProvider):
         return json.loads(s, **kwargs)
 
 
+# initialize flask app
 app = flask.Flask(__name__)
 app.json = customJSON(app)
 
@@ -38,11 +49,8 @@ login_manager.login_view = 'login'
 
 flask_cors.CORS(app, supports_credentials=True)
 
-
 # session storage
 sessions = {}
-
-
 
 # Handlers and Helpers
 '''
@@ -621,3 +629,11 @@ def log_request():
     # print(flask.request.headers)
     # print(flask.request.get_json(force=True))
     return None
+
+
+print("Server is now running")
+if not args.testing:
+    serve(app, host='0.0.0.0', port=5000)
+else:
+    app.run(host='0.0.0.0', port=5000)
+

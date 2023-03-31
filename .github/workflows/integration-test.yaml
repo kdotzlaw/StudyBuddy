@@ -49,6 +49,11 @@ jobs:
         run:
           sqlcmd -S localhost -U sa -P dbtools.IO -i ./StudyBuddy_create.sql
 
+      - name: Start production server
+        working-directory: ./backend
+        run:
+          python start.py
+
       - name: Run Integration Tests
         working-directory: ./frontend
         run:

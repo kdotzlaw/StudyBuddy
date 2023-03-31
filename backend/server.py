@@ -1,7 +1,6 @@
 import datetime
 import json
 import time
-import argparse
 
 import flask
 import flask_login
@@ -11,14 +10,7 @@ import db
 from werkzeug.security import check_password_hash, generate_password_hash
 import uuid
 import flask_cors
-from waitress import serve
 
-# get testing argument, if true run flask server
-# else: run production waitress server
-parser = argparse.ArgumentParser()
-parser.add_argument("-t", '--testing', type=bool, default=False)
-args = parser.parse_args()
-testing = args.testing
 
 
 '''
@@ -561,11 +553,9 @@ def get_done_tasks(classname):
     username = flask_login.current_user.get_id()
     res = db.getCompleteTasksForClass(username, classname)
     if type(res) is Row:
-        print(parse_row(res))
         # print(parse_row(res))
         return {"result": parse_row(res)}, 200
     elif type(res) is list:
-        print(parse_rows(res))
         # print(parse_rows(res))
         return {"result": parse_rows(res)}, 200
     else:
@@ -631,9 +621,4 @@ def log_request():
     return None
 
 
-print("Server is now running")
-if not args.testing:
-    serve(app, host='0.0.0.0', port=5000)
-else:
-    app.run(host='0.0.0.0', port=5000)
 

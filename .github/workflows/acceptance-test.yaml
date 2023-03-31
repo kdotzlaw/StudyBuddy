@@ -52,7 +52,7 @@ jobs:
       - name: Run Flask Server
         working-directory: ./backend
         run:
-          python server.py
+          python start.py
 
       - name: Run Acceptance Tests
         working-directory: ./frontend

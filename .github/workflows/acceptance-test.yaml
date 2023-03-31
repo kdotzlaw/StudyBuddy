@@ -8,7 +8,7 @@ on:
     branches: [ main ] # Run regression tests upon PR to main
 
 jobs:
-  get_dependencies:
+  start_flask_server:
     runs-on: ubuntu-latest
     services:
       mssql:
@@ -21,17 +21,6 @@ jobs:
     steps:
       - name: Push Code onto VM
         uses: actions/checkout@v3.3.0
-
-      - name: Setup Node.js Environment
-        uses: actions/setup-node@v3.6.0
-        with:
-          node-version: 16
-
-      - name: Install Packages and Build Vue App
-        working-directory: ./frontend
-        run:
-          npm ci
-          npm run build
 
       - name: Setup Python Environment
         uses: actions/setup-python@v4.5.0
@@ -49,10 +38,6 @@ jobs:
         run:
           sqlcmd -S localhost -U sa -P dbtools.IO -i ./StudyBuddy_create.sql
 
-  start_flask_server:
-    runs-on: ubuntu-latest
-    needs: [ get_dependencies ]
-    steps:
       - name: Start Flask server
         working-directory: ./backend
         run:
@@ -60,11 +45,26 @@ jobs:
 
   run_acceptance_test:
     runs-on: ubuntu-latest
-    needs: [ get_dependencies ]
+
     steps:
+      - name: Push Code onto VM
+        uses: actions/checkout@v3.3.0
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v3.6.0
+        with:
+          node-version: 16
+
+      - name: Install Packages and Build Vue App
+        working-directory: ./frontend
+        run:
+          npm ci
+          npm run build
+
       - name: Wait for Flask server to start up
         run:
-          sleep 10
+          sleep 60
+
       - name: Run Acceptance Tests
         working-directory: ./frontend
         run:

@@ -51,7 +51,7 @@
             <div :class="`buddy-preview`" @click="updateTheBuddy('Corgi')">
                 <Corgi />
             </div>
-            <div :class="`buddy-preview`" @click="updateTheBuddy('Bunny')">
+            <div :class="`buddy-preview`" @click="updateTheBuddy('Cat')">
                 <Bunny />
             </div>
         </div>

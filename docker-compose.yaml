@@ -5,43 +5,61 @@ services:
   ms_sql:
     container_name: database_container
     # The base image for the container
-    image: mcr.microsoft.com/mssql/server:2022-latest
+    #image: mcr.microsoft.com/mssql/server:2022-latest
+    # Location of the Dockerfile to build the base image
+    build:
+      context: ./backend/mssql/
+      dockerfile: Dockerfile
     # If the container fails, default to always restart
     restart: always
+    ports:
+      - '1433:1433'
     environment:
-      SQL_SERVER: 1433
-      SQL_USER: sa
-      SQL_PASSWORD: dbtools.IO
-      SQL_DATABASE: StudyBuddy
+      ACCEPT_EULA: Y
+      SA_PASSWORD: dbtools.IO
     # Allow data persistency when starting & stopping containers
     volumes:
-      - ms_sql:/data/db
+      - ms_sql:/var/opt/mssql
+    #network_mode: 'host'
 
   # Vue Container
   vue:
-    container-name: frontend_container
+    container_name: frontend_container
+    # The base image for the container
+    #image: capillae/studybuddy-vue-frontend:1.1.77
     # Location of the Dockerfile to build the base image
-    build: ./frontend
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile
     ports:
-      - 5173:5173
+      - '5173:80'
     environment:
       PORT: 5173
-      # PLACEHOLDER. TODO: Find actual URI
-      # mssql://[Server_Name[:Portno]]/[Database_Instance_Name]/[Database_Name]?FailoverPartner=[Partner_Server_Name]&InboundId=[Inbound_ID]
-      MSSQL_URI: mssql://ms_sql:1433/StudyBuddy/StudyBuddy/
-      DB_NAME: StudyBuddy
     depends_on:
       - ms_sql
 
+
   # Flask Container
   flask:
-    container-name: backend_container
+    container_name: backend_container
+    # The base image for the container
+    #image: capillae/studybuddy-python-backend:1.1.16
     # Location of the Dockerfile to build the base image
-    build: ./backend
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile
     ports:
-      - 5000:5000
+      - '5000:5000'
+    #extra_hosts:
+      #- 'host.docker.internal:host-gateway'
+      #- 'localhost:1433'
+    environment:
+      PORT: 5000
+      MSSQL_URI: mssql://localhost:1433//StudyBuddy/
+      DB_NAME: StudyBuddy
     depends_on:
       - ms_sql
+    #network_mode: 'host'
 
 
 volumes:

@@ -8,7 +8,7 @@ on:
     branches: [ main ] # Run regression tests upon PR to main
 
 jobs:
-  run_integration_test:
+  get_dependencies:
     runs-on: ubuntu-latest
     services:
       mssql:
@@ -49,12 +49,23 @@ jobs:
         run:
           sqlcmd -S localhost -U sa -P dbtools.IO -i ./StudyBuddy_create.sql
 
-      - name: Start production server
+  start_flask_server:
+    runs-on: ubuntu-latest
+    needs: [ get_dependencies ]
+    steps:
+      - name: Start Flask server
         working-directory: ./backend
         run:
-          python start.py
+          python3 -m flask --app server.py run
 
-      - name: Run Integration Tests
+  run_integration_test:
+    runs-on: ubuntu-latest
+    needs: [ get_dependencies ]
+    steps:
+      - name: Wait for Flask server to start up
+        run:
+          sleep 10
+      - name: Run Acceptance Tests
         working-directory: ./frontend
         run:
           npm run compotest

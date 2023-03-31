@@ -1,0 +1,24 @@
+name: Security Scan using SonarCloud
+
+on:
+  workflow_dispatch:  # Allows this workflow to be ran manually from the Actions tab
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ main ]
+    types: [opened, synchronize, reopened]
+
+jobs:
+  perform_security_scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Push Code onto VM
+        uses: actions/checkout@v3.3.0
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

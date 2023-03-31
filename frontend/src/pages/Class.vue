@@ -246,7 +246,7 @@
 
                     <!-- Class name and time studied -->
                     <h1 v-motion-pop> {{ classRoute }} </h1>
-                    <h2 v-motion-pop> Studied {{ classInfo.studyTime }} hours this week </h2>
+                    <h2 v-motion-pop> Studied {{ (classInfo.studyTime/3600).toFixed(2) }} hours this week </h2>
 
                 </div>
                 <div v-motion-pop>

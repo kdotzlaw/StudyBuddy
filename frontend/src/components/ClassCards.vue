@@ -41,7 +41,7 @@
                 <!-- Time studied -->
                 <div>
                     <span class="material-symbols-outlined">timer</span>
-                    &nbsp; {{ req.studyTime }} hrs 
+                    &nbsp; {{ (req.studyTime/3600).toFixed(2) }} hrs 
                 </div>
 
                 <!-- Play control -->

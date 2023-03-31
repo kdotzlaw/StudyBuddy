@@ -11,11 +11,11 @@ from werkzeug.security import check_password_hash, generate_password_hash
 import uuid
 import flask_cors
 
-
-
 '''
 CLASS: customJSON(): Custom json parsing class for flask app
 '''
+
+
 class customJSON(flask.json.provider.JSONProvider):
 
     def dumps(self, obj, **kwargs):
@@ -46,15 +46,22 @@ sessions = {}
 
 # Handlers and Helpers
 '''
-METHOD: User(): Tell flask how to load a user from a flask request and from its session
+CLASS: User(): Tell flask how to load a user from a flask request and from its session
+-> Just uses default flask_login user mixin
 '''
+
+
 class User(flask_login.UserMixin):
     pass
 
 
 '''
-METHOD: user_loader(): loads user from session
+METHOD: user_loader():
+PRE-CONDITION: given <username>
+POST-CONDITION: return a User object if <username> exists, else return None
 '''
+
+
 @login_manager.user_loader
 def user_loader(username):
     selection = db.getUser(username)
@@ -66,9 +73,15 @@ def user_loader(username):
     else:
         return None
 
+
 '''
 METHOD: request_loader(): loads user from flask request
+PRE-CONDITION: given a user sends a request, <request>
+POST-CONDITION: the user is given access to endpoints that require a login,
+    if they have an existing (and valid) <session> header, else they are denied access
 '''
+
+
 @login_manager.request_loader
 def request_loader(request):
     # grab session from request
@@ -90,15 +103,24 @@ def request_loader(request):
     else:
         return None
 
+
 '''
 METHOD: unauthorized_handler(): deals with unauthorized access attempts
 '''
+
+
 @login_manager.unauthorized_handler
 def unauthorized_handler():
     return "Unauthorized", 401
+
+
 '''
-METHOD: parse_rows(): converts a list of rows into a list of dictionaries (for db results processing)
+METHOD: parse_rows(): 
+PRE-CONDITION: given a list of pyodbc.Row <row> objects
+POST-CONDITION: return a list of dictionaries in the form [{<column name>: <column value>, ... }, ... ]
 '''
+
+
 def parse_rows(rows):
     res = []
     if rows is not None:
@@ -106,16 +128,43 @@ def parse_rows(rows):
             res.append(dict(zip([t[0] for t in row.cursor_description], row)))
     return res
 
+
 '''
-METHOD: parse_row(): converts a single row into a dictionary (for db results processing)
+METHOD: parse_row():
+PRE-CONDITION: given a single pyodbc.Row <row> objects
+POST-CONDITION: return a dictionary in the form {<column name>: <column value>, ... }
 '''
+
+
 def parse_row(row):
     return dict(zip([t[0] for t in row.cursor_description], row))
 
+
+'''
+METHOD: Adds required headers to a login/register endpoint response
+'''
+
+
+def session_handle(resp, session, username):
+    resp.headers.add_header('session', session)
+    resp.access_control_allow_headers = ['session']
+    resp.headers.set('Access-Control-Expose-Headers', 'session')
+    resp.headers.set("Access-Control-Allow-Credentials", True)
+    # tell flask_login to log in user
+    user = User()
+    user.id = username
+    flask_login.login_user(user)
+    return resp
+
+
 # API Endpoints
 '''
-METHOD: login(): preforms login api request by checking validity of username and password
+METHOD: login():
+PRE-CONDITION: given a user's <username> and <password>(hashed)
+POST-CONDITION: returns session info, logging them in
 '''
+
+
 @app.route("/api/login", methods=["POST"])
 def login():
     # grab the username from the header
@@ -146,17 +195,7 @@ def login():
                 resp.status_code = 200
                 resp.data = 'Logged In'
 
-                resp.headers.add_header('session', session)
-                resp.access_control_allow_headers = ['session']
-                resp.headers.set('Access-Control-Expose-Headers', 'session')
-                resp.headers.set("Access-Control-Allow-Credentials", True)
-
-                # tell flask_login to log in user
-                user = User()
-                user.id = username
-                flask_login.login_user(user)
-
-                return resp
+                return session_handle(resp, session, username)
             else:
                 # invalid password
                 # send 401 bad request response
@@ -170,15 +209,18 @@ def login():
 
 
 '''
-METHOD: logout(): removes the session cookie and logs out the user
+METHOD: logout():
+PRE-CONDITION: given a user is logged in
+POST-CONDITION: logs them out
 --> login is required for this endpoint
 '''
+
 
 @app.route("/api/logout", methods=["POST"])
 @flask_login.login_required
 def logout():
     # delete session
-    sessions.pop(flask.request.headers['session'])
+    # print(flask.request.headers)
     if 'session' in flask.request.headers.keys():
         sessions.pop(flask.request.headers['session'])
 
@@ -191,10 +233,13 @@ def logout():
     return resp
 
 
-
 '''
 METHOD: newuser(): creates a new user as long as the username provided doesnt have an existing account
+PRE-CONDITION: given some new user data
+POST-CONDITION: creates a new user and returns session info, logging them in
 '''
+
+
 @app.route("/api/newuser", methods=["POST"])
 def new_user():
     username = flask.request.get_json(force=True)['username']
@@ -213,24 +258,20 @@ def new_user():
         resp.status_code = 200
         resp.data = 'Account Created'
 
-        resp.headers.add_header('session', session)
-        resp.access_control_allow_headers = ['session']
-        resp.headers.set('Access-Control-Expose-Headers', 'session')
-        resp.headers.set("Access-Control-Allow-Credentials", True)
-
-        # tell flask_login to log in user
-        user = User()
-        user.id = username
-        flask_login.login_user(user)
-
-        return resp
+        return session_handle(resp, session, username)
     else:
         return "Account already exists with username", 400
+
+
 # Class Methods
 '''
-METHOD: getClass(): returns the data for a single class of classname: 'classname'
+METHOD: getClass():
+PRE-CONDITION: given <classname>
+POST-CONDITION: returns the data for the class <classname>
 --> login required for this endpoint
 '''
+
+
 @app.route("/api/class/<classname>", methods=["GET"])
 @flask_login.login_required
 def get_class(classname):
@@ -242,10 +283,15 @@ def get_class(classname):
     else:
         return {"result": parse_row(res)}, 200
 
+
 '''
-METHOD: completeClass(): sets the is_complete attribute of 'classname' to true
+METHOD: completeClass(): 
+PRE-CONDITION: given <classname>
+POST-CONDITION: sets the 'is_complete' attribute of <classname> to true
 --> login required for this endpoint
 '''
+
+
 @app.route("/api/class/<classname>/complete", methods=["POST"])
 @flask_login.login_required
 def complete_class(classname):
@@ -259,10 +305,15 @@ def complete_class(classname):
     else:
         return "Bad Request: Class already completed", 400
 
+
 '''
-METHOD: classMeta(): updates the metadata for class: 'classname', any missing metadata remains the same
+METHOD: classMeta():
+PRE-CONDITION: given <classname> and (optional) metadata attributes
+POST-CONDITION: updates the given metadata for <classname>, non-given attributes remain the same
 --> login required for this endpoint
 '''
+
+
 @app.route("/api/class/<classname>/update_meta", methods=["POST"])
 @flask_login.login_required
 def class_meta(classname):
@@ -318,10 +369,16 @@ def class_meta(classname):
     # update breakdown
     res = db.addClassBreakdown(username, classname, breakdown)
     return 'Class Meta updated successfully', 200
+
+
 '''
-METHOD: newclass(): creates a new class associated with the current user
+METHOD: newclass(): 
+PRE-CONDITION: given some data for a new class
+POST-CONDITION: creates a new class with the associated data
 --> login required for this endpoint
 '''
+
+
 @app.route('/api/newclass', methods=["POST"])
 @flask_login.login_required
 def new_class():
@@ -336,10 +393,15 @@ def new_class():
             return "Error", 400
         return "Added Class", 200
 
+
 '''
-METHOD: all_classes(): returns a list of classes associated with the current user
+METHOD: all_classes():
+PRE-CONDITION: once logged in
+POST-CONDITION: returns a list of all classes
 --> login required for this endpoint
 '''
+
+
 @app.route("/api/class", methods=["GET"])
 @flask_login.login_required
 def all_classes():
@@ -353,10 +415,16 @@ def all_classes():
     elif res is None:
         # no classes found
         return {"result": []}, 200
+
+
 '''
-METHOD: edit_class(): modify required class information (classname and/or timeslot) for current user with 'classname'
+METHOD: edit_class():
+PRE-CONDITION: given <classname> and given (optional) values: <new_classname> and <new_timeslot>
+POST-CONDITION: update <classname>'s 'classname' and 'timeslot' if new values are given
 --> login required for this endpoint
 '''
+
+
 @app.route('/api/class/<classname>/edit', methods=["POST"])
 @flask_login.login_required
 def edit_class(classname):
@@ -376,11 +444,15 @@ def edit_class(classname):
     db.editClassReqData(username, classname, newname, newtime)
     return "Class edited", 200
 
+
 '''
-METHOD: delete_class(): deletes 'classname' for current user
+METHOD: delete_class():
+PRE-CONDITION: given <classname>
+POST-CONDITION: deletes <classname> for the user
 --> login required for this endpoint
 '''
-# deletes a class
+
+
 @app.route('/api/class/<classname>/delete', methods=["POST"])
 @flask_login.login_required
 def delete_class(classname):
@@ -388,10 +460,15 @@ def delete_class(classname):
     res = db.removeClass(username, classname)
     return "Class removed", 200
 
+
 '''
-METHOD: update_time(): increases the study_time attribute for 'classname' by 'added' seconds
+METHOD: update_time():
+PRE-CONDITION: given <classname> and <added> seconds
+POST-CONDITION: increase <classname>'s study time by <added>
 --> login required for this endpoint
 '''
+
+
 @app.route("/api/class/<classname>/update_time", methods=["POST"])
 @flask_login.login_required
 def update_time(classname):
@@ -405,12 +482,15 @@ def update_time(classname):
         return "Bad Request: No class found", 400
 
 
-
 # Task Methods
 '''
-METHOD: all_tasks(): returns a list of tasks associated with 'classname'
+METHOD: all_tasks():
+PRE-CONDITION: given <classname>
+POST-CONDITION: return a list of tasks for <classname>
 --> login required for this endpoint
 '''
+
+
 @app.route("/api/class/<classname>/task", methods=["GET"])
 @flask_login.login_required
 def all_tasks(classname):
@@ -426,9 +506,13 @@ def all_tasks(classname):
 
 
 '''
-METHOD: newtask(): creates a new task for the current user for the class: 'classname'
+METHOD: newtask():
+PRE-CONDITION: given <classname> and some task data
+POST-CONDITION: create a new task for <classname> with the associated data
 --> login required for this endpoint
 '''
+
+
 @app.route("/api/class/<classname>/newtask", methods=["POST"])
 @flask_login.login_required
 def new_task(classname):
@@ -461,10 +545,13 @@ def new_task(classname):
 
 
 '''
-METHOD: get_task(): returns a specific task with 'taskname' for the current user and 'classname'
+METHOD: get_task(): 
+PRE-CONDITION: given <classname> and <taskname>
+POST-CONDITION: returns the task <taskname>
 --> login required for this endpoint
 '''
-# get specific task: 'taskname'
+
+
 @app.route('/api/class/<classname>/task/<taskname>', methods=["GET"])
 @flask_login.login_required
 def get_task(classname, taskname):
@@ -476,11 +563,15 @@ def get_task(classname, taskname):
     else:
         return {"result": parse_row(res)}, 200
 
+
 '''
-METHOD: edit_task(): modify name, weight, and/or deadline of a task with 'taskname' for current user and 'classname'
+METHOD: edit_task():
+PRE-CONDITION: given <taskname> and <classname>
+POST-CONDITION: modify name, weight, and deadline for <taskname>
 --> login required for this endpoint
 '''
-# modify the name, weight, and/or deadline of a task
+
+
 @app.route('/api/class/<classname>/task/<taskname>/edit', methods=["POST"])
 @flask_login.login_required
 def edit_task(classname, taskname):
@@ -508,11 +599,15 @@ def edit_task(classname, taskname):
     db.editTask(username, classname, taskname, newname, newdeadline, newweight, eGoal)
     return "Task edited", 200
 
+
 '''
-METHOD: delete_task(): delete task with 'taskname' for current user with 'classname'
+METHOD: delete_task():
+PRE-CONDITION: given <taskname> and <classname>
+POST-CONDITION: deletes <taskname>
 --> login required for this endpoint
 '''
-# delete a task
+
+
 @app.route('/api/class/<classname>/task/<taskname>/delete', methods=["POST"])
 @flask_login.login_required
 def delete_task(classname, taskname):
@@ -522,9 +617,13 @@ def delete_task(classname, taskname):
 
 
 '''
-METHOD: complete_task(): marks a task as complete by setting grade value for current user and 'classname'
+METHOD: complete_task(): 
+PRE-CONDITION: given <classname> and <taskname>
+POST-CONDITION: marks <taskname> as complete by setting grade value
 --> login required for this endpoint
 '''
+
+
 @app.route('/api/class/<classname>/task/<taskname>/complete', methods=["POST"])
 @flask_login.login_required
 def complete_task(classname, taskname):
@@ -543,10 +642,15 @@ def complete_task(classname, taskname):
     res = db.completeTask(username, classname, taskname, grade)
     return "Completed Task Successfully", 200
 
+
 '''
-METHOD: get_done_tasks(): returns all completed tasks for class 'classname' for current user
+METHOD: get_done_tasks():
+PRE-CONDITION: given <classname>
+POST-CONDITION: returns a JSON object containing a list of all the completed tasks for <classname>
 --> login required for this endpoint
 '''
+
+
 @app.route('/api/class/<classname>/done_tasks', methods=["GET"])
 @flask_login.login_required
 def get_done_tasks(classname):
@@ -562,12 +666,15 @@ def get_done_tasks(classname):
         # no done tasks
         return {"result": []}, 200
 
+
 '''
 METHOD: grade(): 
-- calculates a letter grade via the class grade breakdown and completed tasks
-- returns letter grade and buddy message
+PRE-CONDITION: grabs data for complete tasks associated with <classname>
+POST-CONDITION: returns letter grade and buddy message
 --> login required for this endpoint
 '''
+
+
 @app.route('/api/class/<classname>/grade', methods=["GET"])
 @flask_login.login_required
 def grade(classname):
@@ -616,9 +723,5 @@ def grade(classname):
 # for debugging
 @app.before_request
 def log_request():
-    # print(flask.request.headers)
-    # print(flask.request.get_json(force=True))
+    # print(flask.request)
     return None
-
-
-

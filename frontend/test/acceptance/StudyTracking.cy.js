@@ -39,7 +39,8 @@ context('Actions', () => {
   })
 
   it('Update study sessions and study time from existing Class pages', () => {
-    cy.contains(courseCode, { timeout: 20000 }).click()
+    cy.get('#classCards')
+      .contains(courseCode, { timeout: 20000 }).click()
       .wait(200)
     cy.get('.round').click()
       .wait(2200)

@@ -21,7 +21,7 @@
 4. Visit `http://localhost:8089/`
 5. Enter **100 users**, **20 users started/second**, and **localhost:5000**
 6. Start Swarm
-7. On stop, view report. Alternatively, download `loadtest_report.html` in the backend directory.
+7. On stop, view report. Alternatively, download the [load test report](/docs/load-test_report.pdf).
 
 
  

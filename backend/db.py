@@ -5,20 +5,20 @@ and SQL prepared statements
 import pyodbc
 #define connection string
 # PROD STRING FOR DOCKER
-'''conn = (r'Driver=ODBC Driver 17 for SQL Server;'
+conn = (r'Driver=ODBC Driver 17 for SQL Server;'
         r'Server=database_container;'
         r'Database=StudyBuddy;'
         r'UID=sa;'
         r'PWD=dbtools.IO'
         )
-'''
+
 # DEV STRING FOR REMOTE TESTS AND LOCAL TESTING
-conn = (r'Driver=ODBC Driver 17 for SQL Server;'
+'''conn = (r'Driver=ODBC Driver 17 for SQL Server;'
         r'Server=localhost;'
         r'Database=StudyBuddy;'
         r'UID=sa;'
         r'PWD=dbtools.IO'
-        )
+        )'''
 '''
 METHOD: getUserData(): Debugging method used in tests to make sure that database contains the stub user data
 '''

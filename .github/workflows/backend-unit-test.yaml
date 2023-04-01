@@ -37,7 +37,7 @@ jobs:
 
       - name: Create StudyBuddy Database
         run:
-          sqlcmd -S localhost -U sa -P dbtools.IO -i ./StudyBuddy_create.sql
+          sqlcmd -S localhost -U sa -P dbtools.IO -i ./mssql/StudyBuddy_create.sql
 
       - name: Run Unit Tests
         env:

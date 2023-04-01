@@ -5,12 +5,11 @@ services:
   ms_sql:
     container_name: database_container
     # The base image for the container
-    #image: mcr.microsoft.com/mssql/server:2022-latest
+    image: capillae/studybuddy-mssql-database:2.0.0
     # Location of the Dockerfile to build the base image
-    build:
-      context: ./backend/mssql/
-      dockerfile: Dockerfile
-    # If the container fails, default to always restart
+    #build:
+    #  context: ./backend/mssql/
+    #  dockerfile: Dockerfile
     restart: always
     ports:
       - '1433:1433'
@@ -20,47 +19,50 @@ services:
     # Allow data persistency when starting & stopping containers
     volumes:
       - ms_sql:/var/opt/mssql
-    #network_mode: 'host'
+    restart: always
+    networks:
+      - app-network
 
   # Vue Container
   vue:
     container_name: frontend_container
     # The base image for the container
-    #image: capillae/studybuddy-vue-frontend:1.1.77
+    image: capillae/studybuddy-vue-frontend:2.0.0
     # Location of the Dockerfile to build the base image
-    build:
-      context: ./frontend/
-      dockerfile: Dockerfile
+    #build:
+    #  context: ./frontend/
+    #  dockerfile: Dockerfile
     ports:
       - '5173:80'
-    environment:
-      PORT: 5173
     depends_on:
       - ms_sql
-
+    restart: on-failure
+    networks:
+      - app-network
 
   # Flask Container
   flask:
     container_name: backend_container
     # The base image for the container
-    #image: capillae/studybuddy-python-backend:1.1.16
+    image: capillae/studybuddy-python-backend:2.0.0
     # Location of the Dockerfile to build the base image
-    build:
-      context: ./backend/
-      dockerfile: Dockerfile
+    #build:
+    #  context: ./backend/
+    #  dockerfile: Dockerfile
     ports:
       - '5000:5000'
-    #extra_hosts:
-      #- 'host.docker.internal:host-gateway'
-      #- 'localhost:1433'
     environment:
-      PORT: 5000
       MSSQL_URI: mssql://localhost:1433//StudyBuddy/
       DB_NAME: StudyBuddy
     depends_on:
       - ms_sql
-    #network_mode: 'host'
-
+    restart: on-failure
+    networks:
+      - app-network
 
 volumes:
   ms_sql: {}
+
+networks:
+  app-network:
+    external: true

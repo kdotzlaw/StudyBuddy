@@ -4,13 +4,21 @@ and SQL prepared statements
 '''
 import pyodbc
 #define connection string
+# PROD STRING FOR DOCKER
+'''conn = (r'Driver=ODBC Driver 17 for SQL Server;'
+        r'Server=database_container;'
+        r'Database=StudyBuddy;'
+        r'UID=sa;'
+        r'PWD=dbtools.IO'
+        )
+'''
+# DEV STRING FOR REMOTE TESTS AND LOCAL TESTING
 conn = (r'Driver=ODBC Driver 17 for SQL Server;'
         r'Server=localhost;'
         r'Database=StudyBuddy;'
         r'UID=sa;'
         r'PWD=dbtools.IO'
         )
-
 '''
 METHOD: getUserData(): Debugging method used in tests to make sure that database contains the stub user data
 '''
@@ -47,11 +55,13 @@ POSTCONDITION:
 def getUser(name):
     cnxn = pyodbc.connect(conn,autocommit=True)
     cursor = cnxn.cursor()
+    cursor.execute('SET ANSI_WARNINGS OFF;')
     result = cursor.execute("SELECT * FROM Users WHERE username = ?", name).fetchall()
     if not result:
         cnxn.close()
         return None
     cnxn.close()
+
     return result[0]
 
 

@@ -76,7 +76,7 @@ This feature will allow for users to level up their buddy.
 
 ### Other Utilities
 
-- Security scanning: **SonarQube**
+- Security scanning: **SonarCloud**
 - Load Testing: **Locust**
 
 ## Software Architecture

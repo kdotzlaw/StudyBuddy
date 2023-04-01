@@ -1,6 +1,6 @@
 # Create Python Flask Image
 FROM python:3.11.1
-WORKDIR /app
+WORKDIR /app/backend
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY . .
@@ -15,4 +15,4 @@ RUN ACCEPT_EULA=Y apt-get install -y mssql-tools
 RUN apt-get install -y unixodbc
 
 EXPOSE 5000
-CMD python3 -m flask --app server.py run
+CMD python3 -m flask --app server.py run --host=0.0.0.0 -p 5000

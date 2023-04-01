@@ -115,7 +115,7 @@ def unauthorized_handler():
 
 
 '''
-METHOD: parse_rows(): 
+METHOD: parse_rows():
 PRE-CONDITION: given a list of pyodbc.Row <row> objects
 POST-CONDITION: return a list of dictionaries in the form [{<column name>: <column value>, ... }, ... ]
 '''
@@ -285,7 +285,7 @@ def get_class(classname):
 
 
 '''
-METHOD: completeClass(): 
+METHOD: completeClass():
 PRE-CONDITION: given <classname>
 POST-CONDITION: sets the 'is_complete' attribute of <classname> to true
 --> login required for this endpoint
@@ -372,7 +372,7 @@ def class_meta(classname):
 
 
 '''
-METHOD: newclass(): 
+METHOD: newclass():
 PRE-CONDITION: given some data for a new class
 POST-CONDITION: creates a new class with the associated data
 --> login required for this endpoint
@@ -545,7 +545,7 @@ def new_task(classname):
 
 
 '''
-METHOD: get_task(): 
+METHOD: get_task():
 PRE-CONDITION: given <classname> and <taskname>
 POST-CONDITION: returns the task <taskname>
 --> login required for this endpoint
@@ -617,7 +617,7 @@ def delete_task(classname, taskname):
 
 
 '''
-METHOD: complete_task(): 
+METHOD: complete_task():
 PRE-CONDITION: given <classname> and <taskname>
 POST-CONDITION: marks <taskname> as complete by setting grade value
 --> login required for this endpoint
@@ -668,7 +668,7 @@ def get_done_tasks(classname):
 
 
 '''
-METHOD: grade(): 
+METHOD: grade():
 PRE-CONDITION: grabs data for complete tasks associated with <classname>
 POST-CONDITION: returns letter grade and buddy message
 --> login required for this endpoint

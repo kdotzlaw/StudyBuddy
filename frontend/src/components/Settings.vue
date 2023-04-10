@@ -9,6 +9,7 @@
     import { useStore } from "../stores";
     import Corgi from "./Corgi.vue";
     import Bunny from "./Bunny.vue";
+    import Parakeet from "./Parakeet.vue";
     
     const store = useStore();
     const { uiSkin } = storeToRefs(store);
@@ -51,8 +52,11 @@
             <div :class="`buddy-preview`" @click="updateTheBuddy('Corgi')">
                 <Corgi />
             </div>
-            <div :class="`buddy-preview`" @click="updateTheBuddy('Cat')">
+            <div :class="`buddy-preview`" @click="updateTheBuddy('Bunny')">
                 <Bunny />
+            </div>
+            <div :class="`buddy-preview`" @click="updateTheBuddy('Parakeet')">
+                <Parakeet />
             </div>
         </div>
     </div>

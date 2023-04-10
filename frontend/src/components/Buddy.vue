@@ -11,6 +11,7 @@
     import { useStore } from "../stores";
     import Corgi from "./Corgi.vue";
     import Bunny from "./Bunny.vue";
+    import Parakeet from "./Parakeet.vue";
     
     const store = useStore();
     const { buddyChoice } = storeToRefs(store);
@@ -56,8 +57,11 @@
         <div v-if="buddyChoice == 'Corgi'" >
             <Corgi />
         </div>
-        <div v-else>
+        <div v-else-if="buddyChoice == 'Bunny'">
             <Bunny />
+        </div>
+        <div v-else>
+            <Parakeet />
         </div>
 
         <!-- Chat balloon -->
